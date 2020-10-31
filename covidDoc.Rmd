@@ -1,0 +1,129 @@
+---
+title: "Covid Plots"
+author: "Anthony Gibbons"
+date: "10/31/2020"
+output: 
+  pdf_document:
+    number_sections: true
+---
+
+```{r setup, include=FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(extrafont)
+#extrafont::loadfonts()
+#require(forecast)
+source("covidplots-group.r")
+```
+
+# Introduction
+```{r fig0, echo=FALSE, fig.cap="\\label{fig:fig0} Daily cases Globally to date", fig.height=4}
+plotslist$WorldTotal$`xn*`
+```
+
+```{r fig1, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig1} $x$-diagram for Ireland: the numbers of actually registered daily cases", fig.height=4}
+plotslist$Ireland$`xn*`
+```
+
+```{r fig2, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig2} $x$-diagram for Ireland: the numbers of actually registered daily cases", fig.height=4}
+plotslist$Ireland$`yn*`
+```
+
+```{r fig3, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig3} Comparison of the basic model with the actual data, Ireland ($x$-diagram)", fig.height=4}
+plotslist$Ireland$basexn
+```
+
+```{r fig4, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig4} Comparison of the basic model with the actual data, Ireland ($x$-diagram)", fig.height=4}
+plotslist$Ireland$baseyn
+```
+
+```{r fig5, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig5} Comparison of $x^*_n$, $x_n$ and $Cr^n$, Ireland", fig.height=4}
+plotslist$Ireland$Crn
+```
+
+```{r fig6, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig6} Comparison of basic model with moving averages, Ireland", fig.height=4}
+plotslist$Ireland$mavgx3
+```
+
+```{r fig7, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig7} Comparison of basic and periodic models with moving averages, Ireland", fig.height=4}
+plotslist$Ireland$periodic
+```
+
+
+```{r fig8, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig8} Comparison of basic and periodic models with HoltWinters model, Ireland", fig.height=4}
+plotslist$Ireland$hw
+```
+
+```{r fig9, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig9} Comparison of Cumulative basic and periodic models with HoltWinters Prediction, Ireland", fig.height=4}
+plotslist$Ireland$hwy
+```
+
+
+```{r fig10, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig10} Comparison of basic and periodic models with ARIMA model, Ireland", fig.height=4}
+plotslist$Ireland$arima
+```
+
+```{r fig11, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig11} Comparison of Cumulative basic and periodic models with ARIMA model, Ireland", fig.height=4}
+plotslist$Ireland$arimay
+```
+
+```{r fig12, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig12} Comparison of basic and periodic models with Neural Network model, Ireland", fig.height=4}
+plotslist$Ireland$nn
+```
+
+```{r fig13, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig13} Comparison of Cumulative basic and periodic models with Neural Network model, Ireland", fig.height=4}
+plotslist$Ireland$nny
+```
+
+
+
+
+```{r fig3Italy, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig3Italy} Comparison of the basic model with the actual data, Italy ($x$-diagram)", fig.height=4}
+plotslist$Italy$basexn
+```
+
+```{r fig4Italy, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig4Italy} Comparison of the basic model with the actual data, Italy ($x$-diagram)", fig.height=4}
+plotslist$Italy$baseyn
+```
+
+```{r fig7Italy, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig7Italy} Comparison of basic and periodic models with moving averages, Italy", fig.height=4}
+plotslist$Italy$periodic
+```
+
+```{r fig8Italy, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig8Italy} Comparison of basic and periodic models with HoltWinters model, Italy", fig.height=4}
+plotslist$Italy$hw
+```
+
+```{r fig10Italy, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig10Italy} Comparison of basic and periodic models with ARIMA model, Italy", fig.height=4}
+plotslist$Italy$arima
+```
+
+```{r fig12Italy, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig12Italy} Comparison of basic and periodic models with Neural Network model, Italy", fig.height=4}
+plotslist$Italy$nn
+```
+
+
+```{r fig3USA, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig3USA} Comparison of the basic model with the actual data, USA ($x$-diagram)", fig.height=4}
+plotslist$USA$basexn
+```
+
+```{r fig4USA, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig4USA} Comparison of the basic model with the actual data, USA ($x$-diagram)", fig.height=4}
+plotslist$USA$baseyn
+```
+
+```{r fig7USA, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig7USA} Comparison of basic and periodic models with moving averages, USA", fig.height=4}
+plotslist$USA$periodic
+```
+
+```{r fig8USA, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig8USA} Comparison of basic and periodic models with HoltWinters model, USA", fig.height=4}
+plotslist$USA$hw
+```
+
+```{r fig10USA, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig10USA} Comparison of basic and periodic models with ARIMA model, USA", fig.height=4}
+plotslist$USA$arima
+```
+
+```{r fig12USA, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig12USA} Comparison of basic and periodic models with Neural Network model, USA", fig.height=4}
+plotslist$USA$nn
+```
+
+
