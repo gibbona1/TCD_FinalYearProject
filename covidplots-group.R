@@ -1029,7 +1029,8 @@ comparelist <- list()
 comparepairs <- list("IreUK" = c("Ireland", "UK"),
                      "IreUS" = c("Ireland", "USA"),
                      "IreIta" = c("Ireland", "Italy"),
-                     "IreNl" = c("Ireland", "Netherlands"))
+                     "IreNl" = c("Ireland", "Netherlands"),
+                     "IreIce" = c("Ireland", "Iceland"))
 
 compDates <- c("2020-09-15", "2020-11-15")
 
