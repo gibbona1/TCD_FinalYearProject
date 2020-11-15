@@ -11,3 +11,15 @@ for(country in names(plotslist)){
            )
   }
 }
+
+for(country in names(multilist)){
+  for(p in names(multilist[[country]])){
+    ggsave(filename = paste0(country, "-", p, "mult.png"),
+           plot = multilist[[country]][[p]],
+           path = "Plots",
+           height = 10,
+           width  = 16,
+           units  = "cm"
+    )
+  }
+}
