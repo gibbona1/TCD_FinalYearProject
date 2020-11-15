@@ -127,3 +127,31 @@ plotslist$USA$nn
 ```
 
 
+```{r multiItalyxn, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:multiItalyxn} A multi-phase periodic model for Italy (x-diagram)", fig.height=4}
+multilist$Italy$perxn
+```
+
+```{r multiItalyyn, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:multiItalyyn} A multi-phase periodic model for Italy (y-diagram)", fig.height=4}
+multilist$Italy$peryn
+```
+
+
+```{r multiIrelandxn, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:multiIrelandxn} A multi-phase periodic model for Ireland (x-diagram)", fig.height=4}
+multilist$Ireland$perxn
+```
+
+```{r multiIrelandyn, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:multiIrelandyn} A multi-phase periodic model for Ireland (y-diagram)", fig.height=4}
+multilist$Ireland$peryn
+```
+
+
+```{r multiUSAxn, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:multiUSAxn} A multi-phase periodic model for the USA (x-diagram)", fig.height=4}
+multilist$USA$perxn
+```
+
+```{r multiUSAyn, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:multiUSAyn} A multi-phase periodic model for the USA (y-diagram)", fig.height=4}
+multilist$USA$peryn
+```
+
+
+

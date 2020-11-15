@@ -477,8 +477,7 @@ covidPlots <- function(country, dateBounds, data){
   #normdat$abnormy <- normalize(abnormy)
   #normdat$combnorm <- normdat$abnorm+normdat$abnormy
   newnormdat <- normdat %>% 
-    top_n(abnorm
-          ,n = -0.05*nrow(.))
+    top_n(abnorm ,n = -0.05*nrow(.))
   
   abnormy <- apply(newnormdat, 1, function(x) normy(c(7,x[1],x[2]), countrydat$xn, countrydat$yn))
   
@@ -526,7 +525,7 @@ covidPlots <- function(country, dateBounds, data){
   
   plots[["basexn"]] <- plot_basexn(countrydat, modeldat, cols, labs)
   
-  baseyn   <- xntoyn(modeldat$basexn)
+  baseyn <- xntoyn(modeldat$basexn)
   modeldat$baseyn <- baseyn
   
   ynnorm <- floor(sum(abs(countrydat$yn-baseyn[1:length(countrydat$yn)]))/(length(countrydat$yn)+1))
@@ -708,9 +707,9 @@ covidPlots <- function(country, dateBounds, data){
 
 grigorDates <- c("2020-04-26", "2020-06-09")
 datebounds <- list(
-  "Italy"       = c("2020-09-21", "2020-10-30"),
-  "USA"         = c("2020-09-21", "2020-10-30"), 
-  "Ireland"     = c("2020-09-21", "2020-10-30")
+  "Italy"       = c("2020-09-21", "2020-11-30")
+  #"USA"         = c("2020-09-21", "2020-11-30"), 
+  #"Ireland"     = c("2020-09-21", "2020-11-30")
   #"Germany"     = c("2020-09-21", "2020-10-30"), 
   #"Netherlands" = c("2020-09-21", "2020-10-27"), 
   #"Spain"       = c("2020-09-21", "2020-10-27"), 
@@ -735,3 +734,297 @@ for(country in names(datebounds)){
                                      dateBounds = datebounds[[country]], 
                                      webdat)
 }
+
+multidates <- list(
+  "Italy"   = list(c("2020-02-21", "2020-03-21"),
+                   c("2020-03-22", "2020-07-23"),
+                   c("2020-07-24", "2020-09-24")),
+                   #c("2020-09-25", "2020-10-15"),
+                   #c("2020-10-16", "2020-11-15")),
+  "Ireland" = list(c("2020-02-21", "2020-04-13"),
+                   c("2020-04-14", "2020-07-14"),
+                   c("2020-07-15", "2020-09-30")),
+                   #c("2020-10-01", "2020-10-20"),
+                   #c("2020-10-21", "2020-11-15")),
+  "USA"     = list(c("2020-03-05", "2020-04-03"),
+                   c("2020-04-04", "2020-06-17"),
+                   c("2020-06-18", "2020-07-17"))#,
+                   #c("2020-07-18", "2020-09-05"),
+                   #c("2020-09-06", "2020-11-15"))
+)
+
+multiphasePlots <- function(country, dates, data){
+  plots <- list()
+  countryrows <- grep(country, data$countriesAndTerritories)
+  countrydat <- data.frame(date = as.Date(data$dateRep[countryrows], tryFormats = c("%d/%m/%Y")), 
+                           xn   = data$cases[countryrows])
+  countrydat <- countrydat[nrow(countrydat):1,]
+  countrydat <- countrydat[which(countrydat$xn != 0)[1]:nrow(countrydat),]
+  countrydat <- countrydat[countrydat$xn >= 0,]
+  countrydat$yn <- xntoyn(countrydat$xn)
+  countrydat <- countrydat[countrydat$date >= dates[[1]][1],]
+  countrydat <- countrydat[countrydat$date <= dates[[length(dates)]][2],]
+  latest_date <- as.Date(countrydat$date[nrow(countrydat)], tryFormats = c("%d/%m/%Y"))
+  
+  forecastlen <- 5
+  
+  multimodx <- function(x,multix, pars, start=FALSE, len=0){
+    q <- floor(pars[1])
+    a <- pars[2]
+    b <- pars[3]
+    fitstd <- length(multix)+1
+    
+    if(start){
+      multix[fitstd:(fitstd+q-1)] <- x[1:q]
+      for(i in (fitstd+q):(fitstd+length(x)+len-1)){
+        multix[i] <- (1-b)*multix[i-1] + a*multix[i-q]
+      }
+    } else {
+      for(i in fitstd:(fitstd+length(x)+len-1)){
+        multix[i] <- (1-b)*multix[i-1] + a*multix[i-q]
+      }
+    }
+    return(multix)
+  }
+  
+  #Specific dates
+  multimodel <- c()
+  multimodelp <- c()
+  for(i in 1:length(dates)){
+    phase <- dates[[i]]
+    phasedat <- countrydat[countrydat$date >= phase[1] & countrydat$date <= phase[2],]
+    
+    aseq <- seq(from = 0.1, to = 2.5, length.out = 80)
+    bseq <- seq(from = 0.1, to = 0.9, length.out = 80)
+    normdat <- expand.grid(a = aseq, b = bseq)   
+    
+    if(i == 1)
+      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), start=TRUE)[1:nrow(phasedat)], phasedat$xn))
+    else
+      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]))[(length(multimodel)+1):(length(multimodel)+nrow(phasedat))], phasedat$xn))
+    
+    normalize <- function(x){
+      return((x-min(x))/(max(x)-min(x)))
+    }
+    normdat$abnorm  <- normalize(abnorm)
+    newnormdat <- normdat %>% 
+      top_n(abnorm,n = -0.05*nrow(.))
+    
+    if(i == 1)
+      abnormy <- apply(newnormdat, 1, function(x) modnorm(xntoyn(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), start=TRUE))[1:nrow(phasedat)], phasedat$yn))
+    else
+      abnormy <- apply(newnormdat, 1, function(x) modnorm(xntoyn(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2])))[(length(multimodel)+1):(length(multimodel)+nrow(phasedat))], phasedat$yn))
+    
+    newnormdat$abnormy  <- normalize(abnormy)
+    newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
+    tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:2]
+    optimpars <- c(7,tileoptim$a, tileoptim$b)
+    
+    dates[[i]] <- c(dates[[i]],round(optimpars,3))
+    
+    if(i == 1 & i != length(dates))
+      multimodel <- multimodx(phasedat$xn, multimodel, optimpars, start=TRUE)
+    if(i == 1 & i == length(dates))
+      multimodel <- multimodx(phasedat$xn, multimodel, optimpars, start=TRUE, len=forecastlen)
+    if(i > 1 & i == length(dates))
+      multimodel <- multimodx(phasedat$xn, multimodel, optimpars, len=forecastlen)
+    if(length(dates) > 2 & i %in% 2:(length(dates)-1))
+      multimodel <- multimodx(phasedat$xn, multimodel, optimpars)
+
+  
+    aseqper <- seq(from = optimpars[2]*0.8, to = optimpars[2]*1.2, length.out = 5)
+    bseqper <- seq(from = optimpars[3]*0.8, to = optimpars[2]*1.2, length.out = 5)
+    c_1seq  <- c_2seq <- seq(0.04, 0.2, length.out = 10)
+    n_1seq  <- n_2seq <- 1#1:8
+    p_1seq  <- p_2seq <- 6:7
+    normdatp <- expand.grid(a  = aseqper,   b  = bseqper,
+                            c1 = c_1seq, c2 = c_2seq,
+                            p1 = p_1seq, p2 = p_2seq,
+                            n1 = n_1seq, n2 = n_2seq)
+    
+    multimodxper <- function(par, q, x, multix, start=FALSE, len=0){
+      #a,b,c1,c2,p1,p2,n1,n2
+      
+      fitstd <- length(multix)+1
+      an  <- par[1]*(1+par[3]*sin(2*pi*(1:(fitstd+length(x)+len-1) - par[7])/par[5]))
+      bn  <- par[2]*(1+par[4]*sin(2*pi*(1:(fitstd+length(x)+len-1) - par[8])/par[6]))
+      
+      if(start){
+        multix[fitstd:(fitstd+q-1)] <- x[1:q]
+        for(i in (fitstd+q):(fitstd+length(x)+len-1)){
+          multix[i] <- (bn[i]*(1-bn[i-1]))*multix[i-1]/bn[i-1] +
+            (an[i-q]*bn[i])*multix[i-q]/bn[i-q]
+        }
+      } else {
+        for(i in fitstd:(fitstd+length(x)+len-1)){
+          multix[i] <- (bn[i]*(1-bn[i-1]))*multix[i-1]/bn[i-1] +
+            (an[i-q]*bn[i])*multix[i-q]/bn[i-q]
+        }
+      }
+      return(multix)
+    }
+    
+    if(i == 1)
+      pernorm <- apply(normdatp, 1, function(par) modnorm(multimodxper(par, q = 7, phasedat$xn, multimodelp, start=TRUE), phasedat$xn))
+    else
+      pernorm <- apply(normdatp, 1, function(par) modnorm(multimodxper(par, q = 7, phasedat$xn, multimodelp), phasedat$xn))
+    
+    normdatp$pernorm <- normalize(pernorm)
+    
+    newnormdatp <- normdatp %>% 
+      top_n(pernorm,n = -0.05*nrow(.))
+    
+    peroptim <- normdatp[which.min(normdatp$pernorm),1:8]
+    
+    #if(i == 1)
+    #  pernormy <- apply(newnormdatp, 1, function(par) modnorm(xntoyn(multimodxper(par, q = 7, multimodelp, start=TRUE)), phasedat$yn))
+    #else
+    #  pernormy <- apply(newnormdatp, 1, function(par) modnorm(xntoyn(multimodxper(par, q = 7, multimodelp)), phasedat$yn))
+    
+    
+    #newnormdatp$pernormy <- normalize(pernormy)
+    #newnormdatp$combnorm <- newnormdat$pernorm + newnormdat$pernormy
+    #tileoptim <- newnormdatp[which.min(newnormdatp$combnorm),1:2]
+    
+    
+    dates[[i]] <- c(dates[[i]],round(peroptim[1:2],3))
+    
+    peroptim <- as.numeric(peroptim)
+    if(i == 1 & i != length(dates))
+      multimodelp <- multimodxper(peroptim, q = 7, phasedat$xn, multimodelp, start=TRUE)
+    if(i == 1 & i == length(dates))
+      multimodelp <- multimodxper(peroptim, q = 7, phasedat$xn, multimodelp, start=TRUE, len=forecastlen)
+    if(i > 1 & i == length(dates))
+      multimodelp <- multimodxper(peroptim, q = 7, phasedat$xn, multimodelp, start=TRUE, len=forecastlen)
+    if(length(dates) > 2 & i %in% 2:(length(dates)-1))
+      multimodelp <- multimodxper(peroptim, q = 7, phasedat$xn, multimodelp, start=TRUE)
+  }
+  cols <- list(
+    xn       = wes_palettes$Zissou1[1],
+    yn       = wes_palettes$Darjeeling2[2],
+    multixn   = wes_palettes$Darjeeling1[1],
+    multiyn   = wes_palettes$Darjeeling1[1],
+    multip    = "magenta4"
+  )
+  
+  labs <- list(
+    xn = list(bquote(.(country)*","~x[n]*"*=new cases/day, actual till"~.(format(latest_date,"%d.%m.%Y")))),
+    yn = list(bquote(.(country)*","~y[n]*"*=cumulative cases, actual till"~.(format(latest_date,"%d.%m.%Y"))))
+  )
+  multimodnormval  <- modnorm(multimodel[1:length(countrydat$xn)], countrydat$xn)
+  multimodnormyval <- modnorm(xntoyn(multimodel[1:length(countrydat$xn)]), countrydat$yn)
+  
+
+  multilabd <- c()
+  for(i in 1:length(dates)){
+    multilabd <- c(multilabd, 
+                   paste0("(", as.roman(i), ")", 
+                          " from ", format(as.Date(as.character(dates[[i]][1])),"%d.%m")))
+  }
+  multilabd <- paste0(multilabd, collapse = "; ")
+  
+  multilabp <- c()
+  for(i in 1:length(dates)){
+    multilabp <- c(multilabp, 
+                   paste0("(", as.roman(i), ")", 
+                          " a=", dates[[i]][4],
+                          ", b=", dates[[i]][5]))
+  }
+  multilabp <- paste0(multilabp, collapse = "; ")
+  
+  labs$multixn <- list(bquote("base"~.(length(dates))*"-phase model"~x[n]*"=new cases/day: "*
+                               .(multilabd)*
+                               "; ||x*-x||="*.(multimodnormval)*
+                               .(multilabp)))
+  labs$multiyn <- list(bquote("base"~.(length(dates))*"-phase model"~y[n]*"=cumulative cases: "*
+                               .(multilabd)*
+                               "; ||y*-y||="*.(multimodnormyval)*
+                               .(multilabp)))
+  
+  modeldat <- data.frame(date = c(countrydat$date,as.Date(latest_date) + 1:forecastlen),
+                         multixn = multimodel,
+                         multiyn = xntoyn(multimodel),
+                         multipxn = multimodelp,
+                         multipyn = xntoyn(multimodelp))
+  
+  plots[["xn"]] <- ggplot(countrydat, binwidth=0) + 
+    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
+    geom_point(data = modeldat, aes(x = date, y = multixn, colour = cols$multixn)) + 
+    geom_line(data = modeldat, aes(x = date, y = multixn, colour = cols$multixn)) +
+    gg_scale_xy + 
+    scale_fill_manual(  name = "leg",values = cols$xn, labels = labs$xn) +
+    scale_colour_manual(name = "leg",values = cols$multixn, labels = labs$multixn) +
+    xntheme()
+  
+  plots[["yn"]] <- ggplot(countrydat) + 
+    geom_point(aes(x = date, y = yn, colour = "blue")) + 
+    geom_line(aes(x = date, y = yn, colour = "blue")) +
+    geom_point(data = modeldat, aes(x = date, y = multiyn, colour = "base"), shape = 1) + 
+    geom_line(data = modeldat, aes(x = date, y = multiyn, colour = "base")) +
+    gg_scale_xy + 
+    scale_colour_manual(name = "leg",values = c("blue" = cols$yn, "base" = cols$multiyn), 
+                        labels = c("blue" = labs$yn, "base" = labs$multiyn),
+                        guide = guide_legend(override.aes = list(
+                          shape = c("blue"=1, "base" = 16)))) +
+    yntheme()
+  
+  
+   
+  multilabp <- c()
+  for(i in 1:length(dates)){
+    multilabp <- c(multilabp, 
+                   paste0("(", as.roman(i), ")", 
+                          " a=", dates[[i]]$a,
+                          ", b=", dates[[i]]$b))
+  }
+  multilabp <- paste0(multilabp, collapse = "; ")
+  
+  
+  labs$multipxn <- list(bquote("periodic"~.(length(dates))*"-phase model"~x[n]*"=new cases/day: "*
+                                .(multilabd)*
+                                "; ||x*-x||="*.(multimodnormval)~
+                                .(multilabp)))
+  labs$multipyn <- list(bquote("periodic"~.(length(dates))*"-phase model"~y[n]*"=cumulative cases: "*
+                                .(multilabd)*
+                                "; ||y*-y||="*.(multimodnormyval)*
+                                .(multilabp)))
+  
+  
+  plots[["perxn"]] <- ggplot(countrydat, binwidth=0) + 
+    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
+    geom_point(data = modeldat, aes(x = date, y = multipxn, colour = cols$multip)) + 
+    geom_line(data = modeldat, aes(x = date, y = multipxn, colour = cols$multip)) +
+    gg_scale_xy + 
+    scale_fill_manual(  name = "leg",values = cols$xn, labels = labs$xn) +
+    scale_colour_manual(name = "leg",values = cols$multip, labels = labs$multipxn) +
+    xntheme()
+  
+  plots[["peryn"]] <- ggplot(countrydat) + 
+    geom_point(aes(x = date, y = yn, colour = "blue")) + 
+    geom_line(aes(x = date, y = yn, colour = "blue")) +
+    geom_point(data = modeldat, aes(x = date, y = multipyn, colour = "base"), shape = 1) + 
+    geom_line(data = modeldat, aes(x = date, y = multipyn, colour = "base")) +
+    gg_scale_xy + 
+    scale_colour_manual(name = "leg",values = c("blue" = cols$yn, "base" = cols$multip), 
+                        labels = c("blue" = labs$yn, "base" = labs$multipyn),
+                        guide = guide_legend(override.aes = list(
+                          shape = c("blue"=1, "base" = 16)))) +
+    yntheme()
+  
+  
+  
+  return(plots)
+}
+
+multilist <- list()
+
+for(country in names(multidates)){
+  multilist[[country]] <- multiphasePlots(country, 
+                                     dates = multidates[[country]], 
+                                     webdat)
+}
+
+
+
+
+
