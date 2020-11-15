@@ -154,4 +154,14 @@ multilist$USA$peryn
 ```
 
 
+```{r compIreUK, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:compIreUK} A Comparison of the cumulative number of cases for 14 days per 100,000 of the populaiton - Ireland vs UK", fig.height=4}
+comparelist$IreUK
+```
 
+```{r compIreUS, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:compIreUS} A Comparison of the cumulative number of cases for 14 days per 100,000 of the populaiton - Ireland vs USA", fig.height=4}
+comparelist$IreUS
+```
+
+```{r compIreIta, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:compIreIta} A Comparison of the cumulative number of cases for 14 days per 100,000 of the populaiton - Ireland vs Italy", fig.height=4}
+comparelist$IreIta
+```

@@ -23,3 +23,13 @@ for(country in names(multilist)){
     )
   }
 }
+
+for(pair in names(comparelist)){
+  ggsave(filename = paste0("compare-", pair, ".png"),
+         plot = comparelist[[pair]],
+         path = "Plots",
+         height = 10,
+         width  = 16,
+         units  = "cm"
+  )
+}

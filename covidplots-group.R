@@ -1025,6 +1025,58 @@ for(country in names(multidates)){
 }
 
 
+comparelist <- list()
+comparepairs <- list("IreUK" = c("Ireland", "UK"),
+                     "IreUS" = c("Ireland", "USA"),
+                     "IreIta" = c("Ireland", "Italy"),
+                     "IreNl" = c("Ireland", "Netherlands"))
+
+compDates <- c("2020-09-15", "2020-11-15")
+
+compareplots <- function(dat, countries, dates){
+  getcountrydat <- function(dat, country, dates){
+    countryrows <- grep(country, dat$countriesAndTerritories)
+    countrydat <- data.frame(date = as.Date(dat$dateRep[countryrows], tryFormats = c("%d/%m/%Y")), 
+                             cumnumperpop   = dat$Cumulative_number_for_14_days_of_COVID.19_cases_per_100000[countryrows])
+    countrydat <- countrydat[nrow(countrydat):1,]
+    #Specific dates
+    countrydat <- countrydat[countrydat$date >= dates[1] & countrydat$date <= dates[2],]
+    return(countrydat)
+  }
+  
+  countryA <- countries[1]
+  countryB <- countries[2]
+  countryAdat <- getcountrydat(webdat, countryA, compDates)
+  countryBdat <- getcountrydat(webdat, countryB, compDates)
+  
+  compcols <- wes_palettes$Darjeeling1[1:2]
+  p <- ggplot(countryAdat) + 
+    geom_point(data = countryAdat, aes(x = date, y = cumnumperpop, colour = countryA)) + 
+    geom_line(data = countryAdat, aes(x = date, y = cumnumperpop, colour = countryA)) +
+    geom_point(data = countryBdat, aes(x = date, y = cumnumperpop, colour = countryB)) + 
+    geom_line(data = countryBdat, aes(x = date, y = cumnumperpop, colour = countryB)) +
+    gg_scale_xy + ggtitle("Cumulative number of cases for 14 days per 100,000") +
+    ylab(" ") + xlab(" ") + labs(colour = "Country")+
+    scale_colour_manual(values = compcols) +
+    theme(axis.text.x        = element_text(angle = 90),
+          axis.line          = element_line(),
+          panel.background   = element_rect(fill  = "grey"),
+          panel.grid         = element_line(colour = "darkgrey"),
+          panel.grid.major.x = element_blank(),
+          panel.grid.minor.x = element_blank(),
+          legend.key = element_blank(),
+          legend.key.size    = unit(0.8,"line"),
+          legend.text        = element_text(size = 8))
+  return(p)
+}
+
+for(pair in names(comparepairs)){
+  comparelist[[pair]] <- compareplots(webdat, comparepairs[[pair]], compDates)
+}
+
+
+
+
 
 
 
