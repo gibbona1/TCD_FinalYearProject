@@ -17,15 +17,15 @@ source("covidplots-group.r")
 
 # Introduction
 ```{r fig0, echo=FALSE, fig.cap="\\label{fig:fig0} Daily cases Globally to date", fig.height=4}
-plotslist$WorldTotal$`xn*`
+plotslist$WorldTotal$xn
 ```
 
 ```{r fig1, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig1} $x$-diagram for Ireland: the numbers of actually registered daily cases", fig.height=4}
-plotslist$Ireland$`xn*`
+plotslist$Ireland$xn
 ```
 
 ```{r fig2, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig2} $x$-diagram for Ireland: the numbers of actually registered daily cases", fig.height=4}
-plotslist$Ireland$`yn*`
+plotslist$Ireland$yn
 ```
 
 ```{r fig3, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig3} Comparison of the basic model with the actual data, Ireland ($x$-diagram)", fig.height=4}
@@ -164,4 +164,12 @@ comparelist$IreUS
 
 ```{r compIreIta, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:compIreIta} A Comparison of the cumulative number of cases for 14 days per 100,000 of the populaiton - Ireland vs Italy", fig.height=4}
 comparelist$IreIta
+```
+
+```{r compIreNl, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:compIreNl} A Comparison of the cumulative number of cases for 14 days per 100,000 of the populaiton - Ireland vs Netherlands", fig.height=4}
+comparelist$IreNl
+```
+
+```{r compIreIce, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:compIreIce} A Comparison of the cumulative number of cases for 14 days per 100,000 of the populaiton - Ireland vs Iceland", fig.height=4}
+comparelist$IreIce
 ```
