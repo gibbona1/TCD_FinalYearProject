@@ -135,11 +135,11 @@ plot_hwy <- function(countrydat, modeldat, cols, labs){
   p <- ggplot(countrydat) + 
     geom_point(aes(x = date, y = yn, colour = "blue")) + 
     geom_line(aes(x = date, y = yn, colour = "blue")) +
-    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
-    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
+    geom_ribbon(data = modeldat, aes(x = date, ymin = hwylo, ymax = hwyhi, fill = "pi"), alpha = 0.5) +
     geom_point(data = modeldat, aes(x = date, y = hwyn, colour = "hw"), shape = 5) + 
     geom_line(data = modeldat, aes(x = date, y = hwyn, colour = "hw")) +
-    geom_ribbon(data = modeldat, aes(x = date, ymin = hwylo, ymax = hwyhi, fill = "pi"), alpha = 0.5) +
+    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
+    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=1,byrow=TRUE)) +
@@ -157,12 +157,12 @@ plot_arima <- function(countrydat, modeldat, cols, labs){
   p <- ggplot(countrydat, binwidth=0) + 
     geom_bar(aes(x = date, y = xn, fill = "actual"), stat="identity") + 
     geom_ribbon(data = modeldat, aes(x = date, ymin = arimalo, ymax = arimahi, fill = "pi"), alpha = 0.5) +
+    geom_point(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) + 
+    geom_line(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) +
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
     geom_point(data = modeldat,aes(x = date, y = modxPeriodic, colour = "periodic")) +
     geom_line(data = modeldat, aes(x = date, y = modxPeriodic, colour = "periodic")) +
-    geom_point(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) + 
-    geom_line(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
@@ -178,11 +178,11 @@ plot_arimay <- function(countrydat, modeldat, cols, labs){
   p <- ggplot(countrydat) + 
     geom_point(aes(x = date, y = yn, colour = "blue")) + 
     geom_line(aes(x = date, y = yn, colour = "blue")) +
-    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
-    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
+    geom_ribbon(data = modeldat, aes(x = date, ymin = arimaylo, ymax = arimayhi, fill = "pi"), alpha = 0.5) +
     geom_point(data = modeldat, aes(x = date, y = arimayn, colour = "arima"), shape = 2) + 
     geom_line(data = modeldat, aes(x = date, y = arimayn, colour = "arima")) +
-    geom_ribbon(data = modeldat, aes(x = date, ymin = arimaylo, ymax = arimayhi, fill = "pi"), alpha = 0.5) +
+    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
+    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
     gg_scale_xy + 
     scale_fill_manual(values = c("pi" = cols$arimapi), 
                       labels = c("pi" = labs$arimapi)) +
@@ -297,7 +297,7 @@ modnorm <- function(x,modx){
 }
 
 xntheme <- function(){
-  p <- theme(axis.text.x        = element_text(angle = 90),
+  p <- theme(axis.text.x        = element_text(angle = 90, vjust=0.5),
              axis.title         = element_blank(),
              axis.line          = element_line(),
              panel.background   = element_rect(fill  = "grey"),
@@ -321,7 +321,7 @@ xntheme <- function(){
 }
 
 yntheme <- function(){
-  p <- theme(axis.text.x        = element_text(angle = 90),
+  p <- theme(axis.text.x        = element_text(angle = 90, vjust=0.5),
              axis.title         = element_blank(),
              panel.background   = element_rect(fill  = "grey"),
              panel.grid         = element_line(colour = "darkgrey"),
@@ -936,7 +936,7 @@ compareplots <- function(dat, countries, dates){
     geom_line(data = countryBdat, aes(x = date, y = cumnumperpop, colour = countryB)) +
     gg_scale_xy +  ylab(" ") + xlab(" ") + labs(colour = "Country")+
     scale_colour_manual(values = compcols) +
-    theme(axis.text.x        = element_text(angle = 90),
+    theme(axis.text.x        = element_text(angle = 90, vjust=0.5),
           axis.line          = element_line(),
           panel.background   = element_rect(fill  = "grey"),
           panel.grid         = element_line(colour = "darkgrey"),
