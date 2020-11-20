@@ -1,6 +1,6 @@
 # TCD_FinalYearProject
  
- Code and plots (alro displayed in an ``Rmd`` file) repository for my final year project at TCD.
+ Code and plots (also displayed in an ``Rmd`` file) repository for my final year project at TCD.
  
  To-do List:
  - Map cases by county (e.g. 14 day rate per 100,000) in Ireland.
