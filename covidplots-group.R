@@ -689,7 +689,7 @@ multiphasePlots <- function(country, dates, data){
   
   forecastlen <- 5
   
-  multimodx <- function(x,multix, pars, start=FALSE, len=0){
+  multimodx <- function(x, multix, pars, oldp = rep(1,10), start=FALSE, len=0){
     q <- floor(pars[1])
     a <- pars[2]
     b <- pars[3]
@@ -701,8 +701,37 @@ multiphasePlots <- function(country, dates, data){
         multix[i] <- (1-b)*multix[i-1] + a*multix[i-q]
       }
     } else {
-      for(i in fitstd:(fitstd+length(x)+len-1)){
+      for(i in (fitstd):(fitstd+length(x)+len-1)){
         multix[i] <- (1-b)*multix[i-1] + a*multix[i-q]
+      }
+      #multix[fitstd] <- b/oldp[[3]]*((1-oldp[[3]])*multix[fitstd-1] + oldp[[2]]*multix[fitstd-q])
+      #for(i in (fitstd+1):(fitstd+q-1)){
+      #  multix[i] <- (1-b)*multix[i-1] + b/oldp[[3]]*oldp[[2]]*multix[i-q]
+      #}
+      #for(i in (fitstd+q):(fitstd+length(x)+len-1)){
+      #  multix[i] <- (1-b)*multix[i-1] + a*multix[i-q]
+      #}
+    }
+    return(multix)
+  }
+  
+  multimodxper <- function(par, q=7, x, multix, oldp = rep(1,10), start=FALSE, len=0){
+    #a,b,c1,c2,p1,p2,n1,n2
+    #first day of this phase
+    fitstd <- length(multix)+1
+    an  <- par[1]*(1+par[3]*sin(2*pi*(1:(fitstd+length(x)+len-1) - par[7])/par[5]))
+    bn  <- par[2]*(1+par[4]*sin(2*pi*(1:(fitstd+length(x)+len-1) - par[8])/par[6]))
+    
+    if(start){
+      multix[fitstd:(fitstd+q-1)] <- x[1:q]
+      for(i in (fitstd+q):(fitstd+length(x)+len-1)){
+        multix[i] <- (bn[i]*(1-bn[i-1]))*multix[i-1]/bn[i-1] +
+          (an[i-q]*bn[i])*multix[i-q]/bn[i-q]
+      }
+    } else {
+      for(i in fitstd:(fitstd+length(x)+len-1)){
+        multix[i] <- (bn[i]*(1-bn[i-1]))*multix[i-1]/bn[i-1] +
+          (an[i-q]*bn[i])*multix[i-q]/bn[i-q]
       }
     }
     return(multix)
@@ -711,6 +740,7 @@ multiphasePlots <- function(country, dates, data){
   #Specific dates
   multimodel  <- c()
   multimodelp <- c()
+  phasepars   <- list()
   for(i in 1:length(dates)){
     phase    <- dates[[i]]
     phasedat <- countrydat[countrydat$date >= phase[1] & countrydat$date <= phase[2],]
@@ -718,75 +748,53 @@ multiphasePlots <- function(country, dates, data){
     #get basic model for each phase first in order to get 
     # starting a and b to guess for periodic an and bn
     
-    aseq    <- seq(from = 0.1, to = 2.5, length.out = 80)
-    bseq    <- seq(from = 0.1, to = 0.9, length.out = 80)
+    aseq    <- seq(from = 0.1, to = 2.5, length.out = 50)
+    bseq    <- seq(from = 0.1, to = 0.9, length.out = 50)
     normdat <- expand.grid(a = aseq, b = bseq)   
     
     if(i == 1)
-      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), start=TRUE)[1:nrow(phasedat)], phasedat$xn))
+      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), start=TRUE), phasedat$xn))
     else
-      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]))[(length(multimodel)+1):(length(multimodel)+nrow(phasedat))], phasedat$xn))
+      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), oldp = phasepars[[i-1]])[length(multimodel)+1:nrow(phasedat)], phasedat$xn))
     
     normalize <- function(x){
       return((x-min(x))/(max(x)-min(x)))
     }
     normdat$abnorm  <- normalize(abnorm)
-    newnormdat      <- normdat %>% top_n(abnorm,n = -0.05*nrow(.))
+    newnormdat      <- normdat %>% top_n(abnorm,n = -0.1*nrow(.))
     
     if(i == 1)
-      abnormy <- apply(newnormdat, 1, function(x) modnorm(xntoyn(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), start=TRUE))[1:nrow(phasedat)], phasedat$yn))
+      abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases+xntoyn(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), start=TRUE)), phasedat$yn))
     else
-      abnormy <- apply(newnormdat, 1, function(x) modnorm(xntoyn(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2])))[(length(multimodel)+1):(length(multimodel)+nrow(phasedat))], phasedat$yn))
+      abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases+xntoyn(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), oldp = phasepars[[i-1]]))[length(multimodel)+1:nrow(phasedat)], phasedat$yn))
     
     newnormdat$abnormy  <- normalize(abnormy)
     newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
     tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:2]
     optimpars <- c(7,tileoptim$a, tileoptim$b)
     
-    dates[[i]] <- c(dates[[i]],round(optimpars,3))
+    phasepars[[i]] <- round(optimpars,3)
     
     if(i == 1 & i != length(dates))
       multimodel <- multimodx(phasedat$xn, multimodel, optimpars, start=TRUE)
     if(i == 1 & i == length(dates))
       multimodel <- multimodx(phasedat$xn, multimodel, optimpars, start=TRUE, len=forecastlen)
     if(i > 1 & i == length(dates))
-      multimodel <- multimodx(phasedat$xn, multimodel, optimpars, len=forecastlen)
+      multimodel <- multimodx(phasedat$xn, multimodel, optimpars, oldp = phasepars[[i-1]], len=forecastlen)
     if(length(dates) > 2 & i %in% 2:(length(dates)-1))
-      multimodel <- multimodx(phasedat$xn, multimodel, optimpars)
+      multimodel <- multimodx(phasedat$xn, multimodel, optimpars, oldp = phasepars[[i-1]])
 
-  
-    aseqper <- seq(from = optimpars[2]*0.7, to = optimpars[2]*1.3, length.out = 30)
-    bseqper <- seq(from = optimpars[3]*0.7, to = optimpars[2]*1.3, length.out = 30)
+    aseqper <- optimpars[2]*seq(from = 0.7, to = 1.3, length.out = 10)
+    bseqper <- optimpars[3]*seq(from = 0.7, to = 1.3, length.out = 10)
     c_1seq  <- c_2seq <- seq(0.04, 0.2, length.out = 10)
     n_1seq  <- n_2seq <- 1#1:8
     p_1seq  <- p_2seq <- 6:7
-    normdatp <- expand.grid(a  = aseqper,   b  = bseqper,
-                            c1 = c_1seq, c2 = c_2seq,
-                            p1 = p_1seq, p2 = p_2seq,
-                            n1 = n_1seq, n2 = n_2seq)
+    normdatp <- expand.grid(a  = aseqper, b  = bseqper,
+                            c1 = c_1seq,  c2 = c_2seq,
+                            p1 = p_1seq,  p2 = p_2seq,
+                            n1 = n_1seq,  n2 = n_2seq)
     
-    multimodxper <- function(par, q, x, multix, start=FALSE, len=0){
-      #a,b,c1,c2,p1,p2,n1,n2
-      #first day of this phase
-      fitstd <- length(multix)+1
-      an  <- par[1]*(1+par[3]*sin(2*pi*(1:(fitstd+length(x)+len-1) - par[7])/par[5]))
-      bn  <- par[2]*(1+par[4]*sin(2*pi*(1:(fitstd+length(x)+len-1) - par[8])/par[6]))
-      
-      if(start){
-        multix[fitstd:(fitstd+q-1)] <- x[1:q]
-        for(i in (fitstd+q):(fitstd+length(x)+len-1)){
-          multix[i] <- (bn[i]*(1-bn[i-1]))*multix[i-1]/bn[i-1] +
-            (an[i-q]*bn[i])*multix[i-q]/bn[i-q]
-        }
-      } else {
-        for(i in fitstd:(fitstd+length(x)+len-1)){
-          multix[i] <- (bn[i]*(1-bn[i-1]))*multix[i-1]/bn[i-1] +
-            (an[i-q]*bn[i])*multix[i-q]/bn[i-q]
-        }
-      }
-      return(multix)
-    }
-    
+
     if(i == 1)
       pernorm <- apply(normdatp, 1, function(par) modnorm(multimodxper(par, q = 7, phasedat$xn, multimodelp, start=TRUE), phasedat$xn))
     else
@@ -797,11 +805,18 @@ multiphasePlots <- function(country, dates, data){
     newnormdatp <- normdatp %>% 
       top_n(pernorm,n = -0.05*nrow(.))
     
-    peroptim <- normdatp[which.min(normdatp$pernorm),1:8]
+    if(i == 1)
+      pernormy <- apply(newnormdatp, 1, function(par) modnorm(beforecumcases+xntoyn(multimodxper(par, q = 7, phasedat$xn, multimodelp, start=TRUE)), phasedat$yn))
+    else
+      pernormy <- apply(newnormdatp, 1, function(par) modnorm(beforecumcases+xntoyn(multimodxper(par, q = 7, phasedat$xn, multimodelp))[length(multimodelp)+1:nrow(phasedat)], phasedat$yn))
     
-    dates[[i]] <- c(dates[[i]],round(peroptim[1:2],3))
+    newnormdatp$pernormy <- normalize(pernormy)
+    newnormdatp$combnorm <- newnormdatp$pernorm + newnormdatp$pernormy
+
+    peroptim <- as.numeric(newnormdatp[which.min(newnormdatp$combnorm),1:8])
     
-    peroptim <- as.numeric(peroptim)
+    phasepars[[i]] <- c(phasepars[[i]],round(peroptim,3))
+    
     if(i == 1 & i != length(dates))
       multimodelp <- multimodxper(peroptim, q = 7, phasedat$xn, multimodelp, start=TRUE)
     if(i == 1 & i == length(dates))
@@ -837,17 +852,17 @@ multiphasePlots <- function(country, dates, data){
   
   multilabp <- c()
   for(i in 1:length(dates)){
-    multilabp <- c(multilabp, paste0(b.roman(i), " a=", dates[[i]][4], ", b=", dates[[i]][5]))
+    multilabp <- c(multilabp, paste0(b.roman(i), " a=", phasepars[[i]][[2]], ", b=", phasepars[[i]][[3]]))
   }
-  multilabp <- paste0(multilabp, paste0("; q=", optimpars[1]), collapse = "; ")
+  multilabp <- paste0(multilabp, paste0("; q=", phasepars[[i]][[1]]), collapse = "; ")
   
   labs$multixn <- list(bquote("base"~.(length(dates))*"-phase model"~x[n]*"=new cases/day: "*
                                .(multilabd)*
-                               "; ||x*-x||="*.(multimodnormval)*
+                               "; ||x*-x||="*.(multimodnormval)*"  "*
                                .(multilabp)))
   labs$multiyn <- list(bquote("base"~.(length(dates))*"-phase model"~y[n]*"=cumulative cases: "*
                                .(multilabd)*
-                               "; ||y*-y||="*.(multimodnormyval)*
+                               "; ||y*-y||="*.(multimodnormyval)*"  "*
                                .(multilabp)))
   
   modeldat <- data.frame(date     = c(countrydat$date,as.Date(latest_date) + 1:forecastlen),
@@ -862,17 +877,17 @@ multiphasePlots <- function(country, dates, data){
   
   multilabp <- c()
   for(i in 1:length(dates)){
-    multilabp <- c(multilabp,  paste0(b.roman(i),  " a=", dates[[i]]$a, ", b=", dates[[i]]$b))
+    multilabp <- c(multilabp,  paste0(b.roman(i),  " a=", phasepars[[i]][[2]], ", b=", phasepars[[i]][[3]]))
   }
-  multilabp <- paste0(multilabp, paste0("; q=", optimpars[1]), collapse = "; ")
+  multilabp <- paste0(multilabp, paste0("; q=", phasepars[[i]][[1]]), collapse = "; ")
   
   labs$multipxn <- list(bquote("periodic"~.(length(dates))*"-phase model"~x[n]*"=new cases/day: "*
                                 .(multilabd)*
-                                "; ||x*-x||="*.(multimodnormval)~
+                                "; ||x*-x||="*.(multimodnormval)*"  "*
                                 .(multilabp)))
   labs$multipyn <- list(bquote("periodic"~.(length(dates))*"-phase model"~y[n]*"=cumulative cases: "*
                                 .(multilabd)*
-                                "; ||y*-y||="*.(multimodnormyval)*
+                                "; ||y*-y||="*.(multimodnormyval)*"  "*
                                 .(multilabp)))
   
   plots[["perxn"]] <- plot_multiperxn(countrydat, modeldat, cols, labs)
