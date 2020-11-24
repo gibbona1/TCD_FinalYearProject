@@ -1,0 +1,23 @@
+---
+title: "Ireland County Plot"
+author: "Anthony Gibbons"
+date: "11/24/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source("countymap.r")
+```
+
+```{r IreByCounty, echo=FALSE, fig.cap="\\label{fig:IreByCounty} Cases per 100,000 of county population", fig.height=6}
+countyplotlist$blank
+```
+
+```{r repIreByCounty, echo=FALSE, fig.cap="\\label{fig:repIreByCounty} Cases per 100,000 of county population", fig.height=6}
+countyplotlist$rep
+```
+
+```{r nmIreByCounty, echo=FALSE, fig.cap="\\label{fig:nmIreByCounty} Cases per 100,000 of county population", fig.height=6}
+countyplotlist$names
+```

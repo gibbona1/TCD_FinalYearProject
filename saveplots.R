@@ -1,4 +1,5 @@
 source("covidplots-group.r")
+source("countymap.r")
 
 for(country in names(plotslist)){
   for(p in names(plotslist[[country]])){
@@ -30,6 +31,16 @@ for(pair in names(comparelist)){
          path     = "Plots",
          height   = 10,
          width    = 16,
+         units    = "cm"
+  )
+}
+
+for(p in names(countyplotlist)){
+  ggsave(filename = paste0("county-", p, ".png"),
+         plot     = countyplotlist[[p]],
+         path     = "Plots",
+         height   = 14,
+         width    = 14,
          units    = "cm"
   )
 }
