@@ -288,7 +288,9 @@ plot_multiperyn <- function(countrydat, modeldat, cols, labs){
 plot_worldtotal <- function(dat){
   p <- ggplot(dat, binwidth=0) + 
     geom_bar(aes(x = Date, y = Cases),  fill = wes_palettes$Zissou1[1], stat="identity") + 
-    gg_scale_xy + ggtitle(wt_title) + xntheme()
+    scale_x_date(date_breaks = "2 weeks", date_labels = "%d-%b", expand = c(0,0))+
+    scale_y_continuous(expand = c(0,0)) +
+    ggtitle(wt_title) + xntheme()
   return(p)
 }
 
@@ -661,11 +663,11 @@ for(country in names(datebounds)){
 
 multidates <- list(
   "Italy"   = list(c("2020-10-06", "2020-10-27"),
-                   c("2020-10-28", "2020-11-17")),
+                   c("2020-10-28", "2020-11-27")),
   "Ireland" = list(c("2020-10-01", "2020-10-18"),
-                   c("2020-10-19", "2020-11-17")),
+                   c("2020-10-19", "2020-11-27")),
   "USA"     = list(c("2020-10-01", "2020-11-02"),
-                   c("2020-11-03", "2020-11-17"))
+                   c("2020-11-03", "2020-11-27"))
 )
 
 multiphasePlots <- function(country, dates, data){
