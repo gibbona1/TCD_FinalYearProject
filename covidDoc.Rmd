@@ -64,6 +64,10 @@ plotslist$Ireland$arima
 plotslist$Ireland$arimay
 ```
 
+```{r IreHwArima, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:IreHwArima} Comparison of HoltWinters and ARIMA models, Ireland", fig.height=4}
+plotslist$Ireland$hwarima
+```
+
 ```{r fig12, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig12} Comparison of basic and periodic models with Neural Network model, Ireland", fig.height=4}
 plotslist$Ireland$nn
 ```
@@ -95,6 +99,11 @@ plotslist$Italy$hw
 plotslist$Italy$arima
 ```
 
+```{r ItaHwArima, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:ItaHwArima} Comparison of HoltWinters and ARIMA models, Italy", fig.height=4}
+plotslist$Italy$hwarima
+```
+
+
 ```{r fig12Italy, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig12Italy} Comparison of basic and periodic models with Neural Network model, Italy", fig.height=4}
 plotslist$Italy$nn
 ```
@@ -118,6 +127,10 @@ plotslist$USA$hw
 
 ```{r fig10USA, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig10USA} Comparison of basic and periodic models with ARIMA model, USA", fig.height=4}
 plotslist$USA$arima
+```
+
+```{r UsaHwArima, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:UsaHwArima} Comparison of HoltWinters and ARIMA models, USA", fig.height=4}
+plotslist$USA$hwarima
 ```
 
 ```{r fig12USA, echo=FALSE, warning = FALSE, fig.cap="\\label{fig:fig12USA} Comparison of basic and periodic models with Neural Network model, USA", fig.height=4}
