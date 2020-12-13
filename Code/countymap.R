@@ -51,10 +51,13 @@ countyplotlist[["rep"]] <- ggplot(countycase_map) +
   geom_text(data = latest_dat, aes(x = Long, y = Lat, label = floor(PopulationProportionCovidCases)), inherit.aes = FALSE) +
   ggtitle("Cumulative cases per 100,000 population by county", 
           subtitle = paste("Up to", format.Date(latest_date, "%B %d, %Y"))) +
-  theme(axis.title       = element_blank(),
-        axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        panel.background = element_blank())
+  theme(axis.title        = element_blank(),
+        axis.text         = element_blank(),
+        axis.ticks        = element_blank(),
+        panel.background  = element_blank(),
+        legend.title      = element_blank(),
+        legend.background = element_blank(),
+        legend.position   = c(0.25,0.87))
 
 countyplotlist[["names"]] <- ggplot(countycase_map) + 
   aes(long, lat, group=group, fill=PopulationProportionCovidCases) +
@@ -66,7 +69,10 @@ countyplotlist[["names"]] <- ggplot(countycase_map) +
   theme(axis.title       = element_blank(),
         axis.text        = element_blank(),
         axis.ticks       = element_blank(),
-        panel.background = element_blank())
+        panel.background  = element_blank(),
+        legend.title      = element_blank(),
+        legend.background = element_blank(),
+        legend.position   = c(0.25,0.87))
 
 countyplotlist[["blank"]] <- ggplot(countycase_map) + 
   aes(long, lat, group=group, fill=PopulationProportionCovidCases) +
@@ -77,7 +83,10 @@ countyplotlist[["blank"]] <- ggplot(countycase_map) +
   theme(axis.title       = element_blank(),
         axis.text        = element_blank(),
         axis.ticks       = element_blank(),
-        panel.background = element_blank())
+        panel.background  = element_blank(),
+        legend.title      = element_blank(),
+        legend.background = element_blank(),
+        legend.position   = c(0.25,0.87))
 
 
 
@@ -94,6 +103,7 @@ worldshp.points  <- fortify(worldshp, region="id")
 countries <- inner_join(worldshp.points, worldshp@data, by="id")
 countries$CNTRY_NAME[countries$CNTRY_NAME == "United Kingdom"] <- "United_Kingdom"
 countries$CNTRY_NAME[countries$CNTRY_NAME == "United States"]  <- "United_States_of_America"
+countries$CNTRY_NAME <- gsub(" ", "_", countries$CNTRY_NAME)
 
 # join case numbers for latest date to country data, in order to colour nicely
 world_map <- left_join(countries, latest_dat, by=c("CNTRY_NAME" = "countriesAndTerritories"))
@@ -110,7 +120,10 @@ worldplot[["blank"]] <- ggplot(world_map) +
         axis.text        = element_blank(),
         axis.ticks       = element_blank(),
         panel.background = element_blank(),
-        plot.margin = margin(0, 0, 0, 0, "cm"))
+        plot.margin      = margin(0, 0, 0, 0, "cm"),
+        legend.title      = element_blank(),
+        legend.background = element_blank(),
+        legend.position   = c(0.1,0.4))
 
 europe_map <- world_map[world_map$long >= -20 & world_map$long <= 40,]
 europe_map <- europe_map[europe_map$lat >= 35 & europe_map$lat <= 75,]
@@ -126,4 +139,4 @@ worldplot[["europe"]] <- ggplot(europe_map) +
         axis.text        = element_blank(),
         axis.ticks       = element_blank(),
         panel.background = element_blank(),
-        plot.margin = margin(0, 0, 0, 0, "cm"))
+        plot.margin      = margin(0, 0, 0, 0, "cm"))

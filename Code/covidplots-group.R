@@ -660,9 +660,9 @@ covidPlots <- function(country, dateBounds, data){
 
 grigorDates <- c("2020-04-26", "2020-06-09")
 datebounds <- list(
-  "Italy"       = c("2020-10-19", "2020-11-30"),
-  "USA"         = c("2020-10-19", "2020-11-30"), 
-  "Ireland"     = c("2020-10-19", "2020-11-30")
+  "Italy"       = c("2020-11-14", "2020-12-30"),
+  "USA"         = c("2020-11-14", "2020-12-30"), 
+  "Ireland"     = c("2020-11-14", "2020-12-30")
   #"Germany"     = c("2020-09-21", "2020-10-30"), 
   #"Netherlands" = c("2020-09-21", "2020-10-27"), 
   #"Spain"       = c("2020-09-21", "2020-10-27"), 
@@ -684,12 +684,12 @@ for(country in names(datebounds)){
 }
 
 multidates <- list(
-  "Italy"   = list(c("2020-10-06", "2020-10-27"),
-                   c("2020-10-28", "2020-11-27")),
+  "Italy"   = list(c("2020-10-01", "2020-11-08"),
+                   c("2020-11-09", "2020-12-26")),
   "Ireland" = list(c("2020-10-01", "2020-10-21"),
-                   c("2020-10-22", "2020-11-27")),
-  "USA"     = list(c("2020-03-05", "2020-04-05"),
-                   c("2020-04-06", "2020-06-09"))
+                   c("2020-10-22", "2020-12-26")),
+  "USA"     = list(c("2020-10-01", "2020-11-13"),
+                   c("2020-11-14", "2020-12-26"))
 )
 
 multiphasePlots <- function(country, dates, data){
@@ -943,7 +943,7 @@ comparepairs <- list("IreUK"  = c("Ireland", "UK"),
                      "IreNl"  = c("Ireland", "Netherlands"),
                      "IreIce" = c("Ireland", "Iceland"))
 
-compDates <- c("2020-09-15", "2020-11-26")
+compDates <- c("2020-10-15", "2020-12-26")
 
 compareplots <- function(dat, countries, dates){
   getcountrydat <- function(dat, country, dates){

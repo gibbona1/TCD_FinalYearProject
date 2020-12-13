@@ -1,0 +1,287 @@
+\section{Theorems}
+\label{ch:theorems}
+
+\subsection{Model Assumptions}
+\begin{itemize}
+    \item[(I)] Any infected person becomes ill and infectious on the $q$-th day after infection.\footnote{The number of days before an infected person becomes infectious is called the latent period, and before he/she becomes symptomatically ill – the incubation period. Here we assume for simplicity that these two periods are equal.}
+    \item[(A)] During each day, each ill person unconfined infects on average $a$ other persons.
+    \item[(B)] During each day, a fraction $b$ of ill people loose gets isolated (hospitalized or otherwise) and withdrawn from a further spread of the epidemic.
+\end{itemize}
+
+Many models use a set of differential equations for to describe the movement of people between \textit{groups} or \textit{compartments}\cite{Parshani_2010, diffeqmodels14, NBERw27128}. The SIR (Susceptible–Infectious–Recovered) model, the most frequently used model in epidemiology, uses a set of 3 such differential equations \cite{Anderson1991, sir-intro-2020}. 
+
+Our main mathematical model (and even some of the statistical models) make use recurrence equations, which have some correspondence to differential equations \cite{AGARWAL20021}.
+
+\subsection{Notation}
+\begin{itemize}
+    \item $x_n$ - the number of infected people that are detected and isolated during the day $n$;
+    \item $y_n$ – the cumulative number of detected cases from the beginning of epidemic by the beginning of the day $n$;
+    \item $z_n$ – the number of ill people at large by the beginning of the day $n$ (that is, those who were infected at least $q$ days ago and stay unisolated);
+    \item $u_n$ – the number of people newly infected during the day $n$.
+\end{itemize}
+
+We will obtain the following relation between the leading root $r$ and the basic reproductive rate $R_0$ that is a main characteristic of an epidemic in epidemiology:
+
+\begin{equation}\label{eq:R0}
+    r \approx R_0^{\frac1{2q}}.
+\end{equation}
+
+Recurrence relation for $z_n$:
+\begin{equation} \label{eq:znrecurr}
+    z_{n+1} = z_n - x_n + u_{n-q}.
+\end{equation}
+
+Using $x_n = bz_n$ we obtain the following equation for $x_n$:
+\begin{equation} \label{eq:xnrecurr}
+    x_{n+1} = (1 - b) x_n + ax_{n-q}.
+\end{equation}
+
+We let the model equal the actual data for the first $q+1$ days
+\begin{equation} \label{eq:xn0q}
+x_n = x^*_n \ \text{for} \ n = 0, 1, \dots , q,
+\end{equation}
+
+ To fit our model we optimize against the normalized 1-norm:
+\begin{equation}\label{eq:xnnorm}
+    \norm{x-x^*}:= \frac{1}{N+1} \sum\limits_{n=0}^N |x_n-x_n^*|,
+\end{equation}
+
+Similarly we define $\norm{y-y^*}$
+
+In order to determine values $a,b,q$, we want to minimize both 
+
+\begin{equation} \label{eq:norms}
+    \norm{x-x^*} \ \text{and} \ \norm{y-y^*}
+\end{equation}
+
+\subsubsection{Why minimize both  $\norm{x-x^*}$ \textbf{and} $\norm{y-y^*}$?}
+
+Do 3 pairs of plots: 
+- xn/yn for just x-norm
+- xn/yn for just y-norm
+- xn/yn for both x-norm and y-norm
+
+
+\subsubsection{Recurrence equation}
+
+This is our general linear recurrence equation with constant coefficients:
+\begin{equation}\label{eq:an}
+    x_{n+1} = a_0x_n + a_1x_{n-1} + a_2x_{n-2} + \dots + a_{q}x_{n-q}
+\end{equation}
+
+The characteristic polynomial of \ref{eq:an}
+\begin{equation}\label{eq:fchar}
+    f(\lambda) = \lambda^{q+1} - a_0\lambda^q - a_1\lambda^{q-1} - a_2\lambda^{q-2} - \dots - a_{q-1}\lambda - a_q.
+\end{equation}
+
+\begin{definition}
+A root $\lambda$ of $f$ with the maximal absolute value $|\lambda|$ will be referred to as a leading root of the general linear recurrence relation \ref{eq:an}.
+\end{definition}
+
+\subsection{Theorems}
+\begin{theorem}
+Let $a_k \geq 0$ for all $k \in \{0,\dots,q\}$ and $a_{k_0} > 0$ for some $k_0\in \{0,\dots,q\}$.
+\begin{enumerate}[(a)]
+    \item (Cauchy, 1829) The polynomial $f(\lambda)$ from \ref{eq:fchar} has exactly one positive real root $r$. Besides, the root $r$ is simple and, for any other root $\lambda \in \bC$, we have $|\lambda| < r$. Consequently, $r$ is the leading root of \ref{eq:an}.
+    \item For any positive solution $x_n$ of \ref{eq:an}, there exists $C > 0$ such that
+    \begin{equation}\label{eq:crn}
+        x_n \sim Cr^n \text{ as } n\to\infty.
+    \end{equation}
+    It follows from \ref{eq:crn} that if $r < 1$ then the epidemic fades away, whereas if $r > 1$ then it spreads unlimited.
+\end{enumerate}
+\begin{pf}
+\begin{enumerate}[(a)]
+\item Although this statement is not new, we give here the proof as it is quite simple and a part of the argument will be used below. The equation $f(\lambda) = 0$ is equivalent to
+
+$\begin{aligned}
+0 &= \lambda^{q+1} - a_0\lambda^q - a_1\lambda^{q-1} - a_2\lambda^{q-2} - \dots - a_{q-1}\lambda - a_q \\
+\text{dividing across by } \lambda^{q+1} \\
+  &= 1 - \frac{a_0}{\lambda} - \frac{a_1}{\lambda^2} - \frac{a_2}{\lambda^3}-\dots - \frac{a_{q-1}}{\lambda^q} -\frac{a_q}{\lambda^{q+1}}
+\end{aligned}$
+    
+And so
+\begin{equation} \label{eq:glambda}
+1 =\underbrace{\frac{a_0}{\lambda} + \frac{a_1}{\lambda^2} + \frac{a_2}{\lambda^3}+\dots + \frac{a_{q-1}}{\lambda^q} +\frac{a_q}{\lambda^{q+1}}}_{g(\lambda)}    
+\end{equation}
+
+Since $a_{k_0} > 0$ for some $k_0$, and the remaining $a_k$ are non-negative, $g(\lambda)$ is strictly monotone decreasing in $\lambda > 0$ (if $c\lambda$ is increasing,then $\frac{c}\lambda$ is decreasing),  and we have the limits
+\begin{itemize}
+    \item $\lim\limits_{\lambda\to0^+}g(\lambda)=+\infty$
+    \item $\lim\limits_{\lambda\to+\infty}g(\lambda)=0^+$
+\end{itemize}
+
+Hence, there is exactly one positive value $\lambda = r$ that satisfies this $g(r) = 1$, that is,
+
+$$1 =\frac{a_0}{r} + \frac{a_1}{r^2} + \frac{a_2}{r^3}+\dots + \frac{a_{q-1}}{r^q} +\frac{a_q}{r^{q+1}}.$$
+
+Now, let $\lambda\in \bC \bs \{0\}$ be another root of $f$. We obtain from \ref{eq:glambda} (using the triangle inequality) that
+
+$$1\leq \frac{a_0}{|\lambda|} + \frac{a_1}{|\lambda|^2} + \frac{a_2}{|\lambda|^3}+\dots + \frac{a_{q-1}}{|\lambda|^q} +\frac{a_q}{|\lambda|^{q+1}}$$
+
+And so $g(r)\leq g(|\lambda|)$ which implies $|\lambda|\leq r$ by the definition of decreasing functions.
+
+We next need to show that the root $r$ is simple. Denote by $r'$ the largest non-negative root of the
+derivative $f'(\lambda)$ that exists for the following reason. If $a_k > 0$ for some $k < q$ then the
+polynomial $\frac{1}{q+1} f'(\lambda)$ satisfies the hypotheses of the present theorem and, by the above
+argument, $f'(\lambda)$ has exactly one positive root, that is $r'$. If $a_k = 0$ for all $k < q$ then
+$f'(\lambda) = (q + 1) \lambda^q$ has the only root $0$, and, hence, $r' = 0$. 
+
+Let us verify that $r' < r$, which will also imply that $r$ is simple. If $r' = 0$ then it is clear. If $r' > 0$ then it follows
+from $f'(r') = 0$ that
+
+$\begin{aligned}
+f'(\lambda) &=(q+1)\lambda^q -qa_0\lambda^{q-1} -(q-1)a_1\lambda^{q-2} -(q-2)a_2\lambda^{q-3} -\cdots - a_{q-1}-0\\
+\frac{1}{q+1}f'(\lambda) &=\lambda^q -\frac{q}{q+1}a_0\lambda^{q-1} -\frac{q-1}{q+1}a_1\lambda^{q-2} -\frac{q-2}{q+1}a_2\lambda^{q-3} -\cdots - \frac{1}{q+1}a_{q-1}\\
+\frac{1}{q+1}f'(r') &=(r')^q -\frac{q}{q+1}a_0(r')^{q-1} -\frac{q-1}{q+1}a_1(r')^{q-2} -\frac{q-2}{q+1}a_2(r')^{q-3} -\cdots - \frac{1}{q+1}a_{q-1}\\
+0 &=(r')^q -\frac{q}{q+1}a_0(r')^{q-1} -\frac{q-1}{q+1}a_1(r')^{q-2} -\frac{q-2}{q+1}a_2(r')^{q-3} -\cdots - \frac{1}{q+1}a_{q-1}\\
+(r')^q &=\frac{q}{q+1}a_0(r')^{q-1} +\frac{q-1}{q+1}a_1(r')^{q-2} +\frac{q-2}{q+1}a_2(r')^{q-3} +\cdots + \frac{1}{q+1}a_{q-1}\\
+& \text{dividing both sides by } (r')^q>0 \\
+1 &= \frac{qa_0}{(q+1)r'} +\frac{(q-1)a_1}{(q+1)(r')^2} +\dots+\frac{a_{q-1}}{(q+1)(r')^q} \\
+  &= \rbr{\frac{q+1-1}{q+1}}\frac{a_0}{r'} +
+     \rbr{\frac{q+1-2}{q+1}}\frac{a_1}{(r')^2} +\dots+
+     \rbr{\frac{q+1-q}{q+1}}\frac{a_{q-1}}{(r')^q}\\
+  &= \rbr{1-\frac{1}{q+1}}\frac{a_0}{r'} +
+     \rbr{1-\frac{2}{q+1}}\frac{a_1}{(r')^2} +\dots+
+     \rbr{1-\frac{q}{q+1}}\frac{a_{q-1}}{(r')^q}\\
+  &< \frac{a_0}{r'} +\frac{a_1}{(r')^2} +\dots+\frac{a_{q-1}}{(r')^q}
+\end{aligned}$
+
+So $g(r')>1$, but $g(r)=1$
+
+\imp $g(r')>g(r)\imp r'<r$ by the definition of decreasing functions.
+
+\item Let $\lambda_1, \lambda_2, \dots$ be all other distinct roots of $f$ apart from $r$ (so that $\lambda_k$ are negative or imaginary). Any solution $x_n$ of \ref{eq:an} has the form
+
+\begin{equation} \label{eq:Crnxn}
+x_n + Cr^n +\tilde{x}_n    
+\end{equation}
+
+where $\tilde{x}_n$ is a linear combination of the functions $n^j\lambda^n_k$ . Since by (a) we have $|\lambda_k| < r$, it follows that
+
+\begin{equation} \label{eq:xnorn}
+|\tilde{x}_n| = o(r^n) \ \text{as} \ n\to\infty    
+\end{equation}
+
+Since $x_n > 0$, it follows from \ref{eq:Crnxn} and \ref{eq:xnorn} that $C \geq 0$. Let us verify that $C > 0$, which will finish the proof. It is tempting to say that if $C = 0$ then $x_n = \tilde{x}_n$ is a linear combination of terms of the form $n^j\rho^n \sin(\phi n)$ and $n^j\rho^n \cos(\phi n)$ and, therefore, cannot stay positive. However, it is not easy to make this argument rigorous because different roots of $f$ may have the same absolute value $\rho$ and an uncontrollable cancellation of the terms can occur. We employ here a different, simpler approach that takes advantage of nonnegative coefficients $a_k$. To that end, consider a new sequence
+
+$$ X_n = \frac{x_n}{r^n}.$$
+
+This satisfies the equation
+
+\begin{equation} \label{eq:AkXk}
+X_{n+1}=A_0X_0+A_1X_{n-1}+\dots+A_qX_{n-q}
+\end{equation}
+
+with $A_k = \frac{a_k}{r^{k+1}}$. Since $r$ is a root of $f$, we have
+
+\begin{align}
+  A_0+A_1+\dots+A_q &= \frac{a_0}{r^{1}}+\frac{a_1}{r^{2}}+\dots+\frac{a_q}{r^{q+1}} \nonumber \\ 
+                     &= g(r) \nonumber 
+\end{align}
+
+This implies, by \ref{eq:glambda}, and $g(r)=1$ that 
+
+\begin{equation}
+     A_0+A_1+\dots+A_q = 1 \label{eq:A0Aq}
+\end{equation}
+
+Set $c := \min(X_1, \dots , X_{q+1}) > 0$ since $x_n$ have positive initial values. Then we obtain from \ref{eq:AkXk} and \ref{eq:A0Aq} by induction that
+$X_n \geq c$ for all $n \in \bN$, which implies
+
+$x_n\geq cr^n$
+
+as required.
+\end{enumerate}
+\end{pf}
+\end{theorem}
+
+\begin{theorem}
+Let $a_k \geq 0$ for all $k = 0, \dots , q$. Denote $a = a_1 + \dots + a_q, b = 1 - a_0$
+and assume that $a > 0, b > 0$.
+\begin{enumerate}[(a)]
+    \item We have the equivalences: $r < 1 \iff a < b$ and $r > 1 \iff a > b$.
+    \item Let $m \geq 1$ be such that $a_1 = \dots = a_{m-1} = 0$ and $a_m > 0$. Then
+    \begin{equation} \label{eq:maxminr}
+        \min\rbr{1,\rbr{\frac{a}{b}}^{1/m}}\leq r \leq \max\rbr{1,\rbr{\frac{a}{b}}^{1/m}}
+    \end{equation}
+\end{enumerate}
+\begin{remark}
+Although there are in the literature plenty of estimates of the leading roots of polynomial (see, for example, [2]), none of them seems to imply \ref{eq:maxminr}. The latter is very useful for a basic model as we will see below in an example.
+\end{remark}
+\begin{pf}
+\begin{enumerate}[(a)]
+    \item We have 
+    
+    $\begin{aligned}
+    f(1) &= 1 - a_0 - a1 - \dots - a_q \\
+         &= \underbrace{(1-a_0)}_{b}-\underbrace{(a_1+\dots+a_q)}_{a}\\
+         &= b - a
+    \end{aligned}$
+    
+    We know $f$ is increasing.
+    
+    So if $r<1$, we have $f(1)>0$ and then $b - a>0 \imp a<b$.
+    
+    And if $r>1$, we have $f(1)<0$ and then $b - a<0 \imp a>b$
+    
+    \item $f(r)=0$ is equivalent to 
+    
+    $r^{q+1} - a_0r^q - a_1r^{q-1} - a_2r^{q-2} - \dots - a_{q-1}r - a_q=0$
+    
+    But any $a_1,\dots,a_{m-1}$ are all zero
+    
+    \imp $r^{q+1} - a_0r^q - a_mr^{q-m} - a_{m+1}r^{q-m-1} - \dots - a_{q-1}r - a_q=0$ 
+     
+    \imp $r^{q+1} - (1-b)r^q - a_mr^{q-m} - \dots -  a_q=0$
+    
+    \imp $r^{q+1} - r^q + br^q - a_1r^{q-m} - \dots -  a_q=0$
+    
+    \imp $r^{q+1} - r^q =-br^q + a_mr^{q-m} + \dots  + a_q$
+    
+    If $r>1$ then $r^{q+1}>r^q$ and so $r^{q+1}-r^q>0$
+    
+    and so 
+    
+    $0<-br^q + a_mr^{q-m} +  \dots + a_q$
+    
+    \imp $\begin{aligned}[t]
+    br^q 
+    &<    a_mr^{q-m} +  \dots + a_q\\
+    &\leq a_mr^{q-m} +  \dots + a_qr^{q-m} \\
+    &= (a_m + \dots + a_q)r^{q-m} \\
+    &= ar^{q-m} 
+    \end{aligned}$
+    
+    So $br^q < ar^{q-m} \iff r^m=\frac{a}{b} \iff r<\rbr{\frac{a}{b}}^{1/m}$
+    
+    And if $r<1$ we get $r<\rbr{\frac{a}{b}}^{1/m}$.
+    
+    We can combine both cases with $a\leq \max\rbr(1,a)$ and $a\geq \min\rbr{1,a}$ to get \ref{eq:maxminr}, as required.
+\end{enumerate}
+\end{pf}
+\end{theorem}
+
+\begin{lemma}
+For the model described by equation \ref{eq:an} we have
+
+$$R_0=\frac{a}{b}$$
+
+\begin{pf}
+Let $u$ be the number of people infected on some day, say $0$. On the day $k = 1, \dots , q$ the number $c_ku$ of them become ill and can infect other people. On the day $k + 1$ they infect $ac_ku$ people while $bc_ku$ of them get isolated. On the day $k + 1$, the remaining $(1 - b) c_ku$ people infect further $a (1 - b) c_ku$ people. Continuing this way, we obtain that this group of $c_ku$ people infects in total
+
+$$ac_ku+a(1-b)c_ku+a(1-b)^2c_ku+\dots=ac_ku\sum\limits_{n=0}^\infty (1-b)^n = \frac{ac_ku}{1-(1-b)}=\frac{a}{b}c_ku$$ since $0<1-b<1$.
+
+other people.
+
+Hence, the initial group of $u$ people infects in total 
+
+$$\sum\limits_{k=0}^q \frac{a}{b}c_ku 
+= \frac{a}{b}u\sum\limits_{k=0}^q c_k
+= \frac{a}{b}u$$
+
+So we know $R_0$ is the unit reprodiction number per infected person ($u=1$).
+
+And so we get the result $R_0=\frac{a}{b}$ as required.
+\end{pf}
+\end{lemma}
+

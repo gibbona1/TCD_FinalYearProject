@@ -1,0 +1,29 @@
+\documentclass[a4paper]{article}
+\usepackage{myPreamble}
+\usepackage{import}
+\usepackage[backend=bibtex]{biblatex}
+\addbibresource{mybib.bib}
+\graphicspath{{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Plots/}{./Plots/}}
+% Title
+\title{Final Year Project}
+\author{Anthony Gibbons \qquad 17322353 \\ Project Supervisor: Athanasios Georgiadis}
+\author{Anthony Gibbons}
+\date{\today}
+\begin{document}
+\maketitle      
+
+\begin{abstract}
+    We construct a various models of the Covid-19 pandemic over various periods of 2020. We first construct simple model of a the epidemic by using a recurrence equation. We also add a periodic complexity to these simpler models. We then use more statistical methods, modelling using time series forecasting methods such as HoltWinters and ARIMA methods. All of this is with the aim of predicting the course of the epidemic.
+\end{abstract}
+\hypersetup{
+    linkcolor=blue,
+}
+\import{./}{Chapters/intro.tex}
+\import{./}{Chapters/theorems.tex}
+\import{./}{Chapters/codesource.tex}
+%todo: hw and arima theory
+%multiphase
+% apply ireland first wave drop to second wave (peaked around 20th october
+
+\printbibliography
+\end{document}

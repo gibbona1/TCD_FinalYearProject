@@ -1,0 +1,74 @@
+\ProvidesPackage{myPreamble}
+
+\usepackage{amssymb,amsmath, amsthm}
+\usepackage{fullpage}
+\usepackage{mathtools}
+%\usepackage{tikz}
+%\usepackage{tikz-3dplot}
+%\usepackage[citecolor=blue]{hyperref}
+\usepackage{graphicx}
+\usepackage{enumerate}
+%\usepackage{tkz-euclide}
+%\usepackage{thmtools}
+%\usepackage{caption}
+\usepackage{imakeidx}
+\usepackage[linktoc=section, hyperindex = true]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+
+%\makeindex[intoc, options= -s example_style.ist]
+% Problem and solution environments
+\theoremstyle{definition}
+\renewcommand\rmdefault{bch}
+\newtheorem{definition}{Definition}
+\newtheorem*{ndefinition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{prob}{Problem}
+\newtheorem{example}[theorem]{Example}
+%\numberwithin{equation}{section}
+\renewcommand{\theprob}{\arabic{prob}}
+\newcommand{\mymatrix}[1]{\ensuremath{\left.\vphantom{#1}\right.\overset{\xleftrightarrow[\hphantom{#1}]{\text{k}}}{#1}}}
+\newenvironment{sol}{\noindent{\bf Proof:}}{\hfill\ensuremath{\square}}
+\newenvironment{pf}{\noindent{\bf Proof:}}{\hfill\ensuremath{\square}}
+\newcommand{\ihat}{\boldsymbol{\hat{\textbf{\i}}}}
+\newcommand{\jhat}{\boldsymbol{\hat{\textbf{\j}}}}
+\newcommand{\khat}{\boldsymbol{\hat{\textbf{\k}}}}
+% Some abbreviations
+\def\bR{\mathbb R}
+\def\bQ{\mathbb Q}
+\def\bN{\mathbb N}
+\def\bZ{\mathbb Z}
+\def\bC{\mathbb C}
+\def\bH{\mathbb H}
+\def\bL{\mathbb L}
+\def\rflec{\mathfrak r}
+\def\DMO{\DeclareMathOperator}
+\DMO{\GL}{GL}
+\DMO{\SL}{SL}
+\DMO{\gl}{\mathfrak{gl}}
+\DMO{\ssl}{\mathfrak{sl}}
+\def\rbr#1{\left(#1\right)} %round bracket
+\def\cbr#1{\left\{#1\right\}} %curly bracket
+\def\norm#1{\left|\left|#1\right|\right|} 
+%\def\nref#1{\rbr{\ref{#1}}} %round bracket
+\def\imp{\ensuremath{\implies}}
+\def\eps{\varepsilon}
+\def\ns{\varnothing}
+\def\bs{\backslash}
+\def\ppd{\mathcal{P}}
+\def\tens{\mathcal{L}}
+\def\altt{\mathcal{A}}
+\def\ts{\mathcal{T}}
+\def\dform{\tilde\phi}
+\def\Dform{\tilde\psi}
+
+\RequirePackage{silence}
+\WarningFilter{remreset}{The remreset package}
