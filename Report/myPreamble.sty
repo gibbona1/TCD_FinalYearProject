@@ -12,13 +12,13 @@
 %\usepackage{thmtools}
 %\usepackage{caption}
 \usepackage{imakeidx}
-\usepackage[linktoc=section, hyperindex = true]{hyperref}
+\usepackage[colorlinks, linktoc=section]{hyperref}
+\AtBeginDocument{
 \hypersetup{
-    colorlinks=true,
     linkcolor=black,
-    filecolor=magenta,      
+    citecolor=red,      
     urlcolor=blue,
-}
+}}
 
 %\makeindex[intoc, options= -s example_style.ist]
 % Problem and solution environments

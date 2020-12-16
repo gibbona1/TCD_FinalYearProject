@@ -30,3 +30,7 @@ countyplotlist$rep
 ```{r nmIreByCounty, echo=FALSE, fig.cap="\\label{fig:nmIreByCounty} Cases per 100,000 of county population", fig.height=6}
 countyplotlist$names
 ```
+
+```{r fourteenIreByCounty, echo=FALSE, fig.cap="\\label{fig:fourteenIreByCounty} Total Cases in Ireland by county over the last 14 days", fig.height=6}
+countyplotlist$fourteendaycases
+```
