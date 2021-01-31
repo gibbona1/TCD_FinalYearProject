@@ -10,8 +10,8 @@ owiddat$date <- as.Date(owiddat$date, tryFormats = c("%Y-%m-%d"))
 plotslist <- list()
 
 plot_xn <- function(countrydat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
     scale_x_date(date_breaks = "2 weeks", date_labels = "%d-%b", expand = c(0,0))+
     scale_y_continuous(expand = c(0,0)) +
     scale_fill_manual(values = cols$xn, name = "", labels = labs$xn) +
@@ -31,13 +31,13 @@ plot_yn <- function(countrydat, cols, labs){
 }
 
 plot_basexn <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = cols$basexn)) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = cols$basexn)) +
     gg_scale_xy + 
-    scale_fill_manual(  name = "leg",values = cols$xn, labels = labs$xn) +
-    scale_colour_manual(name = "leg",values = cols$basexn, labels = labs$basexn) +
+    scale_fill_manual(  name = "leg", values = cols$xn,     labels = labs$xn) +
+    scale_colour_manual(name = "leg", values = cols$basexn, labels = labs$basexn) +
     xntheme()
   return(p)
 }
@@ -57,8 +57,8 @@ plot_baseyn <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_crn <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) +
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) +
+    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = "basexn")) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = "basexn")) +
     geom_line(data = modeldat, aes(x = date, y = Crn, colour = "Crn")) +
@@ -74,8 +74,8 @@ plot_crn <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_mavgx3 <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = "basexn")) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = "basexn")) +
     geom_line(data = countrydat, aes(x = date, y = mavgx3, colour = "x3")) +
@@ -89,8 +89,8 @@ plot_mavgx3 <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_periodic <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
     geom_line(data = countrydat, aes(x = date, y = mavgx3, colour = "x3")) +
@@ -109,7 +109,7 @@ plot_periodic <- function(countrydat, modeldat, cols, labs){
 
 plot_resid <- function(countrydat, cols){
   x <- countrydat$resid[-1]
-  p <- ggplot(countrydat, binwidth=0) + 
+  p <- ggplot(countrydat, binwidth = 0) + 
     geom_point(data = countrydat[-1,], aes(x = date, y = resid)) + 
     geom_line(data = countrydat[-1,], aes(x = date, y = resid)) +
     geom_hline(yintercept = 1.96*sd(x), linetype = "dashed", colour = "blue") +
@@ -120,8 +120,8 @@ plot_resid <- function(countrydat, cols){
 }
 
 plot_hw <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = "actual"), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
     geom_ribbon(data = modeldat, aes(x = date, ymin = hwlo, ymax = hwhi, fill = "hw"), alpha = 0.5) +
     geom_point(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) + 
     geom_line(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) +
@@ -164,8 +164,8 @@ plot_hwy <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_arima <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = "actual"), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
     geom_ribbon(data = modeldat, aes(x = date, ymin = arimalo, ymax = arimahi, fill = "pi"), alpha = 0.5) +
     geom_point(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) + 
     geom_line(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) +
@@ -205,8 +205,8 @@ plot_arimay <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_hwarima <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = "actual"), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
     geom_point(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) + 
     geom_line(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) +
     geom_point(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) + 
@@ -223,8 +223,8 @@ plot_hwarima <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_nn <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = "actual"), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
     geom_point(data = modeldat,aes(x = date, y = modxPeriodic, colour = "periodic")) +
@@ -260,8 +260,8 @@ plot_nny <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_multixn <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
     geom_point(data = modeldat, aes(x = date, y = multixn, colour = cols$multixn)) + 
     geom_line(data = modeldat, aes(x = date, y = multixn, colour = cols$multixn)) +
     gg_scale_xy + 
@@ -287,8 +287,8 @@ plot_multiyn <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_multiperxn <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth=0) + 
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
     geom_point(data = modeldat, aes(x = date, y = multipxn, colour = "multi")) + 
     geom_line(data = modeldat, aes(x = date, y = multipxn, colour = "multi")) +
     geom_line(data = countrydat, aes(x = date, y = mavgx3, colour = "x3")) +
@@ -319,8 +319,8 @@ plot_multiperyn <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_worldtotal <- function(dat){
-  p <- ggplot(dat, binwidth=0) + 
-    geom_bar(aes(x = Date, y = Cases),  fill = wes_palettes$Zissou1[1], stat="identity") + 
+  p <- ggplot(dat, binwidth = 0) + 
+    geom_bar(aes(x = Date, y = Cases),  fill = wes_palettes$Zissou1[1], stat = "identity") + 
     scale_x_date(date_breaks = "2 weeks", date_labels = "%d-%b", expand = c(0,0))+
     scale_y_continuous(expand = c(0,0)) +
     ggtitle(wt_title) + xntheme()
@@ -332,7 +332,7 @@ modnorm <- function(x,modx){
 }
 
 xntheme <- function(){
-  p <- theme(axis.text.x        = element_text(angle = 90, vjust=0.5),
+  p <- theme(axis.text.x        = element_text(angle = 90, vjust = 0.5),
              axis.title         = element_blank(),
              axis.line          = element_line(),
              panel.background   = element_rect(fill  = "grey"),
@@ -351,12 +351,12 @@ xntheme <- function(){
              legend.direction   = "vertical",
              legend.box         = "vertical",
              legend.box.just    ='left',
-             legend.position    = "top") #c(0.7, 0.8))
+             legend.position    = "top") 
   return(p)
 }
 
 yntheme <- function(){
-  p <- theme(axis.text.x        = element_text(angle = 90, vjust=0.5),
+  p <- theme(axis.text.x        = element_text(angle = 90, vjust = 0.5),
              axis.title         = element_blank(),
              panel.background   = element_rect(fill  = "grey"),
              panel.grid         = element_line(colour = "darkgrey"),
@@ -373,7 +373,7 @@ yntheme <- function(){
              legend.direction   = "vertical",
              legend.box         = "vertical",
              legend.box.just    ='left',
-             legend.position    = "top")#c(0.7, 0.2))
+             legend.position    = "top")
   return(p)
 }
 
@@ -385,7 +385,7 @@ gg_scale_xy <- list(
   scale_x_date(date_breaks = "5 day", date_labels = "%d-%b", expand = c(0,0)),
   scale_y_continuous(expand = c(0,0)))
 
-basicmodx <- function(x, pars, len=0){
+basicmodx <- function(x, pars, len = 0){
   q <- floor(pars[1])
   a <- pars[2]
   b <- pars[3]
@@ -433,7 +433,7 @@ normper <- function(par, q, x){
   return(modnorm(x,modxper(par,q,x)))
 }
 
-modxper <- function(par, q, x, len=0){
+modxper <- function(par, q, x, len = 0){
   #a,b,c1,c2,p1,p2,n1,n2
   an   <- par[1]*(1+par[3]*sin(2*pi*(1:(length(x)+len) - par[7])/par[5]))
   bn   <- par[2]*(1+par[4]*sin(2*pi*(1:(length(x)+len) - par[8])/par[6]))
@@ -453,7 +453,7 @@ covidPlots <- function(country, dateBounds, data){
                            yn   = data$total_cases[countryrows])
   countrydatfull <- countrydat[countrydat$date <= dateBounds[2],]
   
-  if(nrow(countrydat[countrydat$date < dateBounds[1],])==0)
+  if(nrow(countrydat[countrydat$date < dateBounds[1],]) == 0)
     prevcases <- 0
   else
     prevcases <- sum(countrydat$xn[countrydat$date < dateBounds[1]])
@@ -496,20 +496,21 @@ covidPlots <- function(country, dateBounds, data){
   
   aseq    <- seq(from = 0.1, to = 2.5, length.out = 80)
   bseq    <- seq(from = 0.1, to = 0.9, length.out = 80)
-  normdat <- expand.grid(a = aseq, b = bseq)
-  abnorm  <- apply(normdat, 1, function(x) norm(c(7,x[1],x[2]), countrydat$xn))
+  qseq    <- 6:8
+  normdat <- expand.grid(q = qseq, a = aseq, b = bseq)
+  abnorm  <- apply(normdat, 1, function(x) norm(x, countrydat$xn))
 
   normdat$abnorm  <- normalize(abnorm)
   
   newnormdat <- normdat %>% 
     top_n(abnorm ,n = -0.05*nrow(.))
   
-  abnormy <- apply(newnormdat, 1, function(x) normy(c(7,x[1],x[2]), countrydat$xn, countrydat$yn))
+  abnormy <- apply(newnormdat, 1, function(x) normy(x[1:3], countrydat$xn, countrydat$yn))
   
   newnormdat$abnormy  <- normalize(abnormy)
   newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
-  tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:2]
-  optimpars <- c(7,tileoptim$a, tileoptim$b)
+  tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:3]
+  optimpars <- c(tileoptim$q,tileoptim$a, tileoptim$b)
   plots[["combnorm"]] <- ggplot(newnormdat, aes(x = a, y = b, fill = combnorm)) + 
     geom_tile() 
 
@@ -554,10 +555,10 @@ covidPlots <- function(country, dateBounds, data){
   
   #parameters of the form (ci,pi,ni)
   ##an = a1 + c1 sin(2??/p1 (n ??? n1))
-  aseqper <- seq(from = optimpars[2]*0.8, to = optimpars[2]*1.2, length.out = 5)
-  bseqper <- seq(from = optimpars[3]*0.8, to = optimpars[2]*1.2, length.out = 5)
+  aseqper <- optimpars[2]*seq(from = 0.8, to = 1.2, length.out = 5)
+  bseqper <- optimpars[3]*seq(from = 0.8, to = 1.2, length.out = 5)
   c_1seq  <- c_2seq <- seq(0.04, 0.2, length.out = 10)
-  n_1seq  <- n_2seq <- 1#1:8
+  n_1seq  <- n_2seq <- c(1,7)
   p_1seq  <- p_2seq <- 6:7
   normdatp <- expand.grid(a  = aseqper, b  = bseqper,
                           c1 = c_1seq,  c2 = c_2seq,
@@ -565,7 +566,7 @@ covidPlots <- function(country, dateBounds, data){
                           n1 = n_1seq,  n2 = n_2seq)
   
   
-  pernorm <- apply(normdatp, 1, function(x) normper(x, q = 7, countrydat$xn))
+  pernorm <- apply(normdatp, 1, function(x) normper(x, q = optimpars[1], countrydat$xn))
   normdatp$pernorm <- pernorm
   
   peroptim   <- normdatp[which.min(pernorm),1:8]
@@ -590,12 +591,12 @@ covidPlots <- function(country, dateBounds, data){
   plots[["rediduals"]] <- plot_resid(countrydat, cols)
   
   if(any(countrydat$xn <= 0)){
-    plots[["hw"]] <- ggplot(data.frame(x=0,y=0)) + 
-      geom_label(x=0, y=0, label="Error: Country data has nonpositive values",
-                 color="red", size=5 , fontface="bold" ) +
+    plots[["hw"]] <- ggplot(data.frame(x = 0,y = 0)) + 
+      geom_label(x = 0, y = 0, label = "Error: Country data has nonpositive values",
+                 color = "red", size = 5 , fontface = "bold" ) +
       xlim(-1,1) + ylim(-1,1) + 
-      theme(axis.line = element_blank(),
-            axis.text = element_blank(),
+      theme(axis.line  = element_blank(),
+            axis.text  = element_blank(),
             axis.ticks = element_blank(),
             panel.grid = element_blank())
   } else{
@@ -657,7 +658,7 @@ covidPlots <- function(country, dateBounds, data){
   
   plots[["hwarima"]] <- plot_hwarima(countrydat, modeldat, cols, labs)
   
-  nnfit   <- nnetar(dat_ts) #, lambda=0) #ensures values stay positive
+  nnfit   <- nnetar(dat_ts) #, lambda = 0) #ensures values stay positive
   nn.fcst <- forecast(nnfit, h=forecastlen)
 
   nn.fcst$mean[nn.fcst$mean < 0] <- 0
@@ -716,7 +717,7 @@ multiphasePlots <- function(country, dates, data){
   crows <- grep(country, data$location)
   countrydat <- data.frame(date = data$date[crows], 
                            xn = data$new_cases[crows], yn = data$total_cases[crows])
-  if(nrow(countrydat[countrydat$date < dates[[1]][1],])==0)
+  if(nrow(countrydat[countrydat$date < dates[[1]][1],]) == 0)
     beforecumcases <- 0
   else
     beforecumcases <- sum(countrydat$xn[countrydat$date < dates[[1]][1]])
@@ -727,7 +728,7 @@ multiphasePlots <- function(country, dates, data){
   
   forecastlen <- 5
   
-  multimodx <- function(x, multix, pars, oldp = rep(1,10), start=FALSE, len=0){
+  multimodx <- function(x, multix, pars, oldp = rep(1,10), start=FALSE, len = 0){
     q <- floor(pars[1])
     a <- pars[2]
     b <- pars[3]
@@ -753,7 +754,7 @@ multiphasePlots <- function(country, dates, data){
     return(multix)
   }
   
-  multimodxper <- function(par, q=7, x, multix, oldp = rep(1,10), start=FALSE, len=0){
+  multimodxper <- function(par, q=7, x, multix, oldp = rep(1,10), start=FALSE, len = 0){
     #a,b,c1,c2,p1,p2,n1,n2
     #first day of this phase
     fitstd <- length(multix)+1
@@ -788,12 +789,13 @@ multiphasePlots <- function(country, dates, data){
     
     aseq    <- seq(from = 0.1, to = 2.5, length.out = 50)
     bseq    <- seq(from = 0.1, to = 0.9, length.out = 50)
-    normdat <- expand.grid(a = aseq, b = bseq)   
+    qseq    <- 6:8
+    normdat <- expand.grid(q = qseq, a = aseq, b = bseq)   
     
     if(i == 1)
-      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), start=TRUE), phasedat$xn))
+      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, x, start=TRUE), phasedat$xn))
     else
-      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), oldp = phasepars[[i-1]])[length(multimodel)+1:nrow(phasedat)], phasedat$xn))
+      abnorm <- apply(normdat, 1, function(x) modnorm(multimodx(phasedat$xn, multimodel, x, oldp = phasepars[[i-1]])[length(multimodel) + 1:nrow(phasedat)], phasedat$xn))
     
     normalize <- function(x){
       return((x-min(x))/(max(x)-min(x)))
@@ -802,14 +804,14 @@ multiphasePlots <- function(country, dates, data){
     newnormdat      <- normdat %>% top_n(abnorm,n = -0.1*nrow(.))
     
     if(i == 1)
-      abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases+xntoyn(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), start=TRUE)), phasedat$yn))
+      abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases + xntoyn(multimodx(phasedat$xn, multimodel, x[1:3], start=TRUE)), phasedat$yn))
     else
-      abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases+xntoyn(multimodx(phasedat$xn, multimodel, c(7,x[1],x[2]), oldp = phasepars[[i-1]]))[length(multimodel)+1:nrow(phasedat)], phasedat$yn))
+      abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases + xntoyn(multimodx(phasedat$xn, multimodel, x[1:3], oldp = phasepars[[i-1]]))[length(multimodel)+1:nrow(phasedat)], phasedat$yn))
     
     newnormdat$abnormy  <- normalize(abnormy)
     newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
-    tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:2]
-    optimpars <- c(7,tileoptim$a, tileoptim$b)
+    tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:3]
+    optimpars <- c(tileoptim$q,tileoptim$a, tileoptim$b)
     
     phasepars[[i]] <- round(optimpars,3)
     
@@ -825,7 +827,7 @@ multiphasePlots <- function(country, dates, data){
     aseqper <- optimpars[2]*seq(from = 0.7, to = 1.3, length.out = 10)
     bseqper <- optimpars[3]*seq(from = 0.7, to = 1.3, length.out = 10)
     c_1seq  <- c_2seq <- seq(0.04, 0.2, length.out = 10)
-    n_1seq  <- n_2seq <- 1#1:8
+    n_1seq  <- n_2seq <- c(1,7)
     p_1seq  <- p_2seq <- 6:7
     normdatp <- expand.grid(a  = aseqper, b  = bseqper,
                             c1 = c_1seq,  c2 = c_2seq,
@@ -834,18 +836,18 @@ multiphasePlots <- function(country, dates, data){
     
 
     if(i == 1)
-      pernorm <- apply(normdatp, 1, function(par) modnorm(multimodxper(par, q = 7, phasedat$xn, multimodelp, start=TRUE), phasedat$xn))
+      pernorm <- apply(normdatp, 1, function(par) modnorm(multimodxper(par, q = optimpars[1], phasedat$xn, multimodelp, start=TRUE), phasedat$xn))
     else
-      pernorm <- apply(normdatp, 1, function(par) modnorm(multimodxper(par, q = 7, phasedat$xn, multimodelp)[length(multimodelp)+1:nrow(phasedat)], phasedat$xn))
+      pernorm <- apply(normdatp, 1, function(par) modnorm(multimodxper(par, q = optimpars[1], phasedat$xn, multimodelp)[length(multimodelp)+1:nrow(phasedat)], phasedat$xn))
     
     normdatp$pernorm <- normalize(pernorm)
     
     newnormdatp <- normdatp %>% top_n(pernorm,n = -0.05*nrow(.))
     
     if(i == 1)
-      pernormy <- apply(newnormdatp, 1, function(par) modnorm(beforecumcases+xntoyn(multimodxper(par, q = 7, phasedat$xn, multimodelp, start=TRUE)), phasedat$yn))
+      pernormy <- apply(newnormdatp, 1, function(par) modnorm(beforecumcases+xntoyn(multimodxper(par, q = optimpars[1], phasedat$xn, multimodelp, start=TRUE)), phasedat$yn))
     else
-      pernormy <- apply(newnormdatp, 1, function(par) modnorm(beforecumcases+xntoyn(multimodxper(par, q = 7, phasedat$xn, multimodelp))[length(multimodelp)+1:nrow(phasedat)], phasedat$yn))
+      pernormy <- apply(newnormdatp, 1, function(par) modnorm(beforecumcases+xntoyn(multimodxper(par, q = optimpars[1], phasedat$xn, multimodelp))[length(multimodelp)+1:nrow(phasedat)], phasedat$yn))
     
     newnormdatp$pernormy <- normalize(pernormy)
     newnormdatp$combnorm <- newnormdatp$pernorm + newnormdatp$pernormy
@@ -855,13 +857,13 @@ multiphasePlots <- function(country, dates, data){
     phasepars[[i]] <- c(phasepars[[i]],round(peroptim,3))
     
     if(i == 1 & i != length(dates))
-      multimodelp <- multimodxper(peroptim, q = 7, phasedat$xn, multimodelp, start=TRUE)
+      multimodelp <- multimodxper(peroptim, q = optimpars[1], phasedat$xn, multimodelp, start=TRUE)
     if(i == 1 & i == length(dates))
-      multimodelp <- multimodxper(peroptim, q = 7, phasedat$xn, multimodelp, start=TRUE, len=forecastlen)
+      multimodelp <- multimodxper(peroptim, q = optimpars[1], phasedat$xn, multimodelp, start=TRUE, len=forecastlen)
     if(i > 1 & i == length(dates))
-      multimodelp <- multimodxper(peroptim, q = 7, phasedat$xn, multimodelp, len=forecastlen)
+      multimodelp <- multimodxper(peroptim, q = optimpars[1], phasedat$xn, multimodelp, len=forecastlen)
     if(length(dates) > 2 & i %in% 2:(length(dates)-1))
-      multimodelp <- multimodxper(peroptim, q = 7, phasedat$xn, multimodelp)
+      multimodelp <- multimodxper(peroptim, q = optimpars[1], phasedat$xn, multimodelp)
   }
   
   cols <- list(
@@ -913,9 +915,9 @@ multiphasePlots <- function(country, dates, data){
   
   modeldat <- data.frame(date     = c(countrydat$date,as.Date(latest_date) + 1:forecastlen),
                          multixn  = multimodel,
-                         multiyn  = beforecumcases+xntoyn(multimodel),
+                         multiyn  = beforecumcases + xntoyn(multimodel),
                          multipxn = multimodelp,
-                         multipyn = beforecumcases+xntoyn(multimodelp))
+                         multipyn = beforecumcases + xntoyn(multimodelp))
   
   plots[["xn"]] <- plot_multixn(countrydat, modeldat, cols, labs)
   

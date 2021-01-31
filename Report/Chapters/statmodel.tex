@@ -53,7 +53,20 @@ $F_{N+k}=(L_N+k\cdot b_N) S_{N+k-s}$
 
 \subsection{ARIMA models}
 
-\begin{figure}[!htb]
+ARIMA$(p,d,q)(P,D,Q)_s$  is defined as 
+
+\begin{align}
+\underbrace{\left(1-\phi_1 B-\phi_2B^2-\dots-\phi_p B^p\right)}_{AR(p)}
+\underbrace{\left(1-\beta_1 B^s-\beta_2B^{2s}-\dots-\beta_P B^{Ps}\right)}_{AR_s(P)} 
+\underbrace{\left(1-B\right)^d}_{I(d)}\underbrace{\left(1-B^s\right)^D}_{I_s(D)}   y_t = \nonumber \\
+ c+
+\underbrace{\left(1-\psi_1 B-\psi_2B^2-\dots-\psi_q B^q\right)}_{MA(q)}
+\underbrace{\left(1-\theta_1 B^s-\theta_2B^{2s}-\dots-\theta_Q B^{Qs}\right)}_{MA_s(Q)} \epsilon_t
+\end{align}
+
+
+
+\begin{figure}[h]
 \minipage{0.48\textwidth}
   \includegraphics[width=\linewidth]{Ireland-arima.png} \label{fig:ireland-arima}
 \endminipage\hfill
@@ -68,7 +81,7 @@ $F_{N+k}=(L_N+k\cdot b_N) S_{N+k-s}$
 
 \subsection{Neural network models}
 
-\begin{figure}[!htb]
+\begin{figure}[h]
 \minipage{0.48\textwidth}
   \includegraphics[width=\linewidth]{Ireland-nn.png} \label{fig:ireland-nn}
 \endminipage\hfill
