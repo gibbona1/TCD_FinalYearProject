@@ -110,6 +110,18 @@ plot_periodic <- function(countrydat, modeldat, cols, labs){
   return(p)
 }
 
+plot_resid <- function(countrydat, cols){
+  x <- countrydat$resid[-1]
+  p <- ggplot(countrydat, binwidth=0) + 
+    geom_point(data = countrydat[-1,], aes(x = date, y = resid)) + 
+    geom_line(data = countrydat[-1,], aes(x = date, y = resid)) +
+    geom_hline(yintercept = 1.96*sd(x), linetype = "dashed", colour = "blue") +
+    geom_hline(yintercept = -1.96*sd(x), linetype = "dashed", colour = "blue") +
+    gg_scale_xy +
+    xntheme() + theme(axis.line = element_blank())
+  return(p)
+}
+
 plot_hw <- function(countrydat, modeldat, cols, labs){
   p <- ggplot(countrydat, binwidth=0) + 
     geom_bar(aes(x = date, y = xn, fill = "actual"), stat="identity") + 
@@ -575,6 +587,10 @@ covidPlots <- function(country, dateBounds, data){
   plots[["periodic"]] <- plot_periodic(countrydat, modeldat, cols, labs)
   
   dat_ts <- ts(data = countrydat$xn, frequency = optimpars[1])
+  
+  countrydat$resid <- residuals(naive(dat_ts))
+  
+  plots[["rediduals"]] <- plot_resid(countrydat, cols)
   
   if(any(countrydat$xn <= 0)){
     plots[["hw"]] <- ggplot(data.frame(x=0,y=0)) + 
