@@ -7,9 +7,6 @@ owiddat <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
 
 owiddat$date <- as.Date(owiddat$date, tryFormats = c("%Y-%m-%d"))
 
-ggplot(owiddat[owiddat$location == "Ireland",]) + geom_line(aes(x = date, y = new_cases))
-ggplot(owiddat[owiddat$location == "Ireland",]) + geom_line(aes(x = date, y = new_cases_smoothed))
-
 plotslist <- list()
 
 plot_xn <- function(countrydat, cols, labs){

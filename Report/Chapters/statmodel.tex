@@ -6,7 +6,7 @@ Primary source for this was Hyndman-et-al-2018 %\cite{Hyndman-et-al-2018}.
 \subsection{Holt-Winters’ seasonal method}
 
 \begin{figure}
-\begin{tcolorbox}[width=.5\textwidth]%
+\begin{tcolorbox}[width=.6\textwidth]%
 
 Suppose there are $N$ observations.
 
@@ -22,11 +22,11 @@ and choose parameters $0\leq\alpha\leq1,\ 0\leq\beta\leq1$ and $0\leq\gamma\leq1
 
 Then compute for $s<t\leq N$:
 
-$\left|\begin{array}{ll}
-Level &       L_t = \alpha \frac{y_t}{S_{t-s}}+(1-\alpha)(L_{t-1}+b_{t-1})\\
-Trend &      b_t = \beta(L_t-L_{t-1})+(1-\beta)b_{t-1}\\
-Seasonal & S_t = \gamma \frac{y_t}{L_t} + (1-\gamma)S_{t-s}\\
-Forecast & F_{t+1} = (T_t+b_t)S_{t+1-s}
+$\left|\begin{array}{lll}
+\text{Level} &       L_t & = \alpha \frac{y_t}{S_{t-s}}+(1-\alpha)(L_{t-1}+b_{t-1})\\
+\text{Trend} &      b_t & = \beta(L_t-L_{t-1})+(1-\beta)b_{t-1}\\
+\text{Seasonal} & S_t & = \gamma \frac{y_t}{L_t} + (1-\gamma)S_{t-s}\\
+\text{Forecast} & F_{t+1} & = (T_t+b_t)S_{t+1-s}
 \end{array}\right.$
 
 For subsequent observations, 
@@ -35,25 +35,45 @@ $F_{N+k}=(L_N+k\cdot b_N) S_{N+k-s}$
 
 \label{SHWx}
 \end{tcolorbox}
-\caption{Seasonal Holt Winter’s Multiplicative Model Algorithm (noted SHW$times$)}
+\caption{Seasonal Holt Winter’s Multiplicative Model Algorithm (denoted SHW$_\times$)}
 \end{figure}
 
 \includegraphics[width=0.9\textwidth]{Ireland-hw.png}
 
-\includegraphics[width=0.9\textwidth]{Ireland-hwy.png}
+\begin{figure}[!htb]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Ireland-hw.png} \label{fig:ireland-hw}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Ireland-hwy.png} \label{fig:ireland-hwy}
+\endminipage
+\caption{HoldWinters model, Ireland}
+\end{figure}
 
 
 \subsection{ARIMA models}
 
-\includegraphics[width=0.9\textwidth]{Ireland-arima.png}
-
-\includegraphics[width=0.9\textwidth]{Ireland-arimay.png}
+\begin{figure}[!htb]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Ireland-arima.png} \label{fig:ireland-arima}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Ireland-arimay.png} \label{fig:ireland-arimay}
+\endminipage
+\caption{ARIMA model, Ireland}
+\end{figure}
 
 \includegraphics[width=0.9\textwidth]{Ireland-hwarima.png}
 
 
 \subsection{Neural network models}
 
-\includegraphics[width=0.9\textwidth]{Ireland-nn.png}
-
-\includegraphics[width=0.9\textwidth]{Ireland-nny.png}
+\begin{figure}[!htb]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Ireland-nn.png} \label{fig:ireland-nn}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Ireland-nny.png} \label{fig:ireland-nny}
+\endminipage
+\caption{Neural Network model, Ireland}
+\end{figure}
