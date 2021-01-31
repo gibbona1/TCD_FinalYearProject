@@ -2,18 +2,21 @@ require(ggplot2)
 require(forecast)
 require(dplyr)
 require(wesanderson)
-webdat <- read.csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
-# Change some country names to acronyms
-webdat$countriesAndTerritories[webdat$countriesAndTerritories=="United_States_of_America"] <- "USA"
-webdat$countriesAndTerritories[webdat$countriesAndTerritories=="United_Kingdom"] <- "UK"
-webdat$countriesAndTerritories[webdat$countriesAndTerritories=="New_Zealand"] <- "NZ"
+#webdat <- read.csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
+owiddat <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+
+owiddat$date <- as.Date(owiddat$date, tryFormats = c("%Y-%m-%d"))
+
+ggplot(owiddat[owiddat$location == "Ireland",]) + geom_line(aes(x = date, y = new_cases))
+ggplot(owiddat[owiddat$location == "Ireland",]) + geom_line(aes(x = date, y = new_cases_smoothed))
 
 plotslist <- list()
 
 plot_xn <- function(countrydat, cols, labs){
   p <- ggplot(countrydat, binwidth=0) + 
     geom_bar(aes(x = date, y = xn, fill = cols$xn), stat="identity") + 
-    gg_scale_xy + 
+    scale_x_date(date_breaks = "2 weeks", date_labels = "%d-%b", expand = c(0,0))+
+    scale_y_continuous(expand = c(0,0)) +
     scale_fill_manual(values = cols$xn, name = "", labels = labs$xn) +
     xntheme()
   return(p)
@@ -23,7 +26,8 @@ plot_yn <- function(countrydat, cols, labs){
   p <- ggplot(countrydat) + 
     geom_line(aes(x = date, y = yn, colour = "blue")) + 
     geom_point(aes(x = date, y = yn, colour = "blue"))+
-    gg_scale_xy + 
+    scale_x_date(date_breaks = "2 weeks", date_labels = "%d-%b", expand = c(0,0))+
+    scale_y_continuous(expand = c(0,0)) +
     scale_colour_manual(values = cols$yn, name = "", labels = labs$yn) +
     yntheme()
   return(p)
@@ -434,17 +438,21 @@ modxper <- function(par, q, x, len=0){
 
 covidPlots <- function(country, dateBounds, data){
   plots <- list()
-  countryrows <- grep(country, data$countriesAndTerritories)
-  countrydat <- data.frame(date = as.Date(data$dateRep[countryrows], tryFormats = c("%d/%m/%Y")), 
-                           xn   = data$cases[countryrows])
-  countrydat <- countrydat[nrow(countrydat):1,]
-  #countrydat <- countrydat[which(countrydat$xn != 0)[1]:nrow(countrydat),]
-  countrydat <- countrydat[countrydat$xn >= 0,]
+  countryrows <- grep(country, data$location)
+  countrydat <- data.frame(date = data$date[countryrows], 
+                           xn   = data$new_cases[countryrows],
+                           yn   = data$total_cases[countryrows])
   countrydatfull <- countrydat[countrydat$date <= dateBounds[2],]
+  
+  if(nrow(countrydat[countrydat$date < dateBounds[1],])==0)
+    prevcases <- 0
+  else
+    prevcases <- sum(countrydat$xn[countrydat$date < dateBounds[1]])
+  
   #Specific dates
   countrydat <- countrydat[countrydat$date >= dateBounds[1] & countrydat$date <= dateBounds[2],]
   #countrydat$xn[countrydat$xn < 0] <- 0
-  latest_date <- as.Date(countrydat$date[nrow(countrydat)], tryFormats = c("%d/%m/%Y"))
+  latest_date <- countrydat$date[nrow(countrydat)]
   
   cols <- list(
     xn       = wes_palettes$Zissou1[1],
@@ -462,12 +470,9 @@ covidPlots <- function(country, dateBounds, data){
   )
   
   labs <- list(
-    xn = list(bquote(.(country)*","~x[n]*"*=new cases/day, actual till"~.(format(latest_date,"%d.%m.%Y")))),
-    yn = list(bquote(.(country)*","~y[n]*"*=cumulative cases, actual till"~.(format(latest_date,"%d.%m.%Y"))))
+    xn = list(bquote(.(country)*","~x[n]*"*=new cases/day, actual till"~.(format.Date(latest_date,"%d.%m.%Y")))),
+    yn = list(bquote(.(country)*","~y[n]*"*=cumulative cases, actual till"~.(format.Date(latest_date,"%d.%m.%Y"))))
   )
-  
-  countrydat$yn     <- xntoyn(countrydat$xn)
-  countrydatfull$yn <- xntoyn(countrydatfull$xn)
   
   plots[["xn"]] <- plot_xn(countrydatfull, cols, labs)
   
@@ -501,8 +506,8 @@ covidPlots <- function(country, dateBounds, data){
 
   basexn   <- basicmodx(countrydat$xn, optimpars, len = forecastlen)
   
-  modeldat <- data.frame(date = c(countrydat$date,as.Date(latest_date) + 1:forecastlen),
-                         basexn = basexn, baseyn = xntoyn(basexn))
+  modeldat <- data.frame(date = c(countrydat$date,latest_date + 1:forecastlen),
+                         basexn = basexn, baseyn = xntoyn(basexn)+prevcases)
   
   #Newtons method, r_1 = r_0 - f(r_0)/f'(r_0)
   base_r_zero <- (optimpars[2]/optimpars[3])^(1/(2*optimpars[1]))
@@ -592,9 +597,9 @@ covidPlots <- function(country, dateBounds, data){
     modeldat$hwlo <- c(hwfcst$fitted, hwfcst$lower[,2])
     modeldat$hwhi <- c(hwfcst$fitted, hwfcst$upper[,2])
     
-    modeldat$hwyn  <- xntoyn(modeldat$hwxn)
-    modeldat$hwylo <- xntoyn(modeldat$hwlo)
-    modeldat$hwyhi <- xntoyn(modeldat$hwhi)
+    modeldat$hwyn  <- xntoyn(modeldat$hwxn)+prevcases
+    modeldat$hwylo <- xntoyn(modeldat$hwlo)+prevcases
+    modeldat$hwyhi <- xntoyn(modeldat$hwhi)+prevcases
     
     hwnorm <- modnorm(countrydat$xn,hwfcst$fitted)
 
@@ -627,9 +632,9 @@ covidPlots <- function(country, dateBounds, data){
   modeldat$arimalo <- c(auto.fit$fitted,arima.fcst$lower[,2])
   modeldat$arimahi <- c(auto.fit$fitted,arima.fcst$upper[,2])
   
-  modeldat$arimayn  <- xntoyn(modeldat$arimaxn)
-  modeldat$arimaylo <- xntoyn(modeldat$arimalo)
-  modeldat$arimayhi <- xntoyn(modeldat$arimahi)
+  modeldat$arimayn  <- xntoyn(modeldat$arimaxn) + prevcases
+  modeldat$arimaylo <- xntoyn(modeldat$arimalo) + prevcases
+  modeldat$arimayhi <- xntoyn(modeldat$arimahi) + prevcases
 
   labs$arimay  <- paste0(arimalabs, ", ||y*-y||=", modnorm(countrydat$yn,modeldat$arimayn[1:nrow(countrydat)]))
   
@@ -639,14 +644,14 @@ covidPlots <- function(country, dateBounds, data){
   
   plots[["hwarima"]] <- plot_hwarima(countrydat, modeldat, cols, labs)
   
-  nnfit   <- nnetar(dat_ts, lambda=0)
+  nnfit   <- nnetar(dat_ts) #, lambda=0) #ensures values stay positive
   nn.fcst <- forecast(nnfit, h=forecastlen)
 
   nn.fcst$mean[nn.fcst$mean < 0] <- 0
   nn.fcst$fitted[1:7] <- countrydat$xn[1:7]
  
   modeldat$nnxn <- c(nn.fcst$fitted, nn.fcst$mean)
-  modeldat$nnyn <- xntoyn(modeldat$nnxn)
+  modeldat$nnyn <- xntoyn(modeldat$nnxn) + prevcases
   
   labs$nn  <- paste0(nnfit$method, ", ||x*-x||=", modnorm(countrydat$xn,nn.fcst$fitted))
   labs$nny <- paste0(nnfit$method, ", ||y*-y||=", modnorm(countrydat$yn,modeldat$nnyn[1:nrow(countrydat)]))
@@ -660,19 +665,20 @@ covidPlots <- function(country, dateBounds, data){
 
 grigorDates <- c("2020-04-26", "2020-06-09")
 datebounds <- list(
-  "Italy"       = c("2020-11-14", "2020-12-30"),
-  "USA"         = c("2020-11-14", "2020-12-30"), 
-  "Ireland"     = c("2020-11-14", "2020-12-30")
-  #"Germany"     = c("2020-09-21", "2020-10-30"), 
-  #"Netherlands" = c("2020-09-21", "2020-10-27"), 
-  #"Spain"       = c("2020-09-21", "2020-10-27"), 
-  #"UK"          = c("2020-09-21", "2020-10-27")
+  "Italy"         = c("2021-01-02", "2021-01-30"),
+  "United States" = c("2021-01-06", "2021-01-30"), 
+  "Ireland"       = c("2021-01-08", "2021-01-30")
+  #"Germany"       = c("2020-01-06", "2021-01-26"), 
+  #"Netherlands"   = c("2020-01-06", "2021-01-26"), 
+  #"Spain"         = c("2020-01-06", "2021-01-26"), 
+  #"UK"            = c("2020-01-06", "2021-01-26")
 )
 
-totaldates <- as.Date(webdat$dateRep, tryFormats = c("%d/%m/%Y"))
-totaldat   <- aggregate(webdat$cases, by=list(totaldates), sum)
+owiddat <- owiddat[!is.na(owiddat$new_cases),]
+totaldates <- owiddat$date
+totaldat   <- aggregate(owiddat$new_cases, by=list(totaldates), sum)
 colnames(totaldat) <- c("Date", "Cases")
-latest_date <- as.Date(totaldat$Date[nrow(totaldat)], tryFormats = c("%d/%m/%Y"))
+latest_date <- totaldat$Date[nrow(totaldat)]
 wt_title <- sprintf('Global Total =%s as at %s', 
                     format(sum(totaldat$Cases), big.mark=",", scientific=FALSE), 
                     format.Date(latest_date, "%B %d, %Y"))
@@ -680,36 +686,31 @@ wt_title <- sprintf('Global Total =%s as at %s',
 plotslist[["WorldTotal"]][["xn"]] <- plot_worldtotal(totaldat)
 
 for(country in names(datebounds)){
-  plotslist[[country]] <- covidPlots(country, datebounds[[country]], webdat)
+  plotslist[[country]] <- covidPlots(country, datebounds[[country]], owiddat)
 }
 
 multidates <- list(
-  "Italy"   = list(c("2020-10-01", "2020-11-08"),
-                   c("2020-11-09", "2020-12-26")),
-  "Ireland" = list(c("2020-10-01", "2020-10-21"),
-                   c("2020-10-22", "2020-12-26")),
-  "USA"     = list(c("2020-10-01", "2020-11-13"),
-                   c("2020-11-14", "2020-12-26"))
+  "Italy"         = list(c("2020-12-16", "2021-01-01"),
+                   c("2021-01-02", "2021-01-30")),
+  "United States" = list(c("2020-12-16", "2021-01-08"),
+                   c("2021-01-09", "2021-01-30")),
+  "Ireland"       = list(c("2020-12-16", "2021-01-07"),
+                   c("2021-01-08", "2021-01-30"))
 )
 
 multiphasePlots <- function(country, dates, data){
   plots <- list()
-  countryrows <- grep(country, data$countriesAndTerritories)
-  countrydat <- data.frame(date = as.Date(data$dateRep[countryrows], tryFormats = c("%d/%m/%Y")), 
-                           xn   = data$cases[countryrows])
-  countrydat <- countrydat[nrow(countrydat):1,]
-  #countrydat <- countrydat[which(countrydat$xn != 0)[1]:nrow(countrydat),]
-  countrydat <- countrydat[countrydat$xn >= 0,]
+  crows <- grep(country, data$location)
+  countrydat <- data.frame(date = data$date[crows], 
+                           xn = data$new_cases[crows], yn = data$total_cases[crows])
   if(nrow(countrydat[countrydat$date < dates[[1]][1],])==0)
     beforecumcases <- 0
   else
     beforecumcases <- sum(countrydat$xn[countrydat$date < dates[[1]][1]])
 
-  countrydat$yn <- xntoyn(countrydat$xn)
-  
   countrydat  <- countrydat[countrydat$date >= dates[[1]][1],]
   countrydat  <- countrydat[countrydat$date <= dates[[length(dates)]][2],]
-  latest_date <- as.Date(countrydat$date[nrow(countrydat)], tryFormats = c("%d/%m/%Y"))
+  latest_date <- countrydat$date[nrow(countrydat)]
   
   forecastlen <- 5
   
@@ -860,9 +861,10 @@ multiphasePlots <- function(country, dates, data){
   )
   
   labs <- list(
-    xn = list(bquote(.(country)*","~x[n]*"*=new cases/day, actual till"~.(format(latest_date,"%d.%m.%Y")))),
-    yn = list(bquote(.(country)*","~y[n]*"*=cumulative cases, actual till"~.(format(latest_date,"%d.%m.%Y"))))
+    xn = list(bquote(.(country)*","~x[n]*"*=new cases/day, actual till"~.(format.Date(latest_date,"%d.%m.%Y")))),
+    yn = list(bquote(.(country)*","~y[n]*"*=cumulative cases, actual till"~.(format.Date(latest_date,"%d.%m.%Y"))))
   )
+  
   multimodnormval  <- modnorm(multimodel[1:length(countrydat$xn)], countrydat$xn)
   multimodnormyval <- modnorm(beforecumcases+xntoyn(multimodel[1:length(countrydat$xn)]), countrydat$yn)
   
@@ -870,7 +872,7 @@ multiphasePlots <- function(country, dates, data){
 
   multilabd <- c()
   for(i in 1:length(dates)){
-    multilabd <- c(multilabd, paste(b.roman(i), "from", format(as.Date(as.character(dates[[i]][1])),"%d.%m")))
+    multilabd <- c(multilabd, paste(b.roman(i), "from", format.Date(as.Date(as.character(dates[[i]][1])),"%d.%m")))
   }
   multilabd <- paste0(multilabd, collapse = "; ")
   
@@ -895,8 +897,6 @@ multiphasePlots <- function(country, dates, data){
   
   x3norm  <- modnorm(countrydat$xn,countrydat$mavgx3)
   labs$x3 <- list(bquote("moving average x*(3); ||x*(3)-x*||="*.(x3norm)))
-  
-  
   
   modeldat <- data.frame(date     = c(countrydat$date,as.Date(latest_date) + 1:forecastlen),
                          multixn  = multimodel,
@@ -933,54 +933,5 @@ multiphasePlots <- function(country, dates, data){
 multilist <- list()
 
 for(country in names(multidates)){
-  multilist[[country]] <- multiphasePlots(country, multidates[[country]], webdat)
-}
-
-comparelist  <- list()
-comparepairs <- list("IreUK"  = c("Ireland", "UK"),
-                     "IreUS"  = c("Ireland", "USA"),
-                     "IreIta" = c("Ireland", "Italy"),
-                     "IreNl"  = c("Ireland", "Netherlands"),
-                     "IreIce" = c("Ireland", "Iceland"))
-
-compDates <- c("2020-10-15", "2020-12-26")
-
-compareplots <- function(dat, countries, dates){
-  getcountrydat <- function(dat, country, dates){
-    countryrows <- grep(country, dat$countriesAndTerritories)
-    countrydat <- data.frame(date = as.Date(dat$dateRep[countryrows], tryFormats = c("%d/%m/%Y")), 
-                             cumnumperpop   = dat$Cumulative_number_for_14_days_of_COVID.19_cases_per_100000[countryrows])
-    countrydat <- countrydat[nrow(countrydat):1,]
-    #Specific dates
-    countrydat <- countrydat[countrydat$date >= dates[1] & countrydat$date <= dates[2],]
-    return(countrydat)
-  }
-  
-  countryA    <- countries[1]
-  countryB    <- countries[2]
-  countryAdat <- getcountrydat(webdat, countryA, compDates)
-  countryBdat <- getcountrydat(webdat, countryB, compDates)
-  
-  compcols <- wes_palettes$Darjeeling1[1:2]
-  p <- ggplot(countryAdat) + 
-    geom_point(data = countryAdat, aes(x = date, y = cumnumperpop, colour = countryA)) + 
-    geom_line(data = countryAdat, aes(x = date, y = cumnumperpop, colour = countryA)) +
-    geom_point(data = countryBdat, aes(x = date, y = cumnumperpop, colour = countryB)) + 
-    geom_line(data = countryBdat, aes(x = date, y = cumnumperpop, colour = countryB)) +
-    gg_scale_xy +  ylab(" ") + xlab(" ") + labs(colour = "Country")+
-    scale_colour_manual(values = compcols) +
-    theme(axis.text.x        = element_text(angle = 90, vjust=0.5),
-          axis.line          = element_line(),
-          panel.background   = element_rect(fill  = "grey"),
-          panel.grid         = element_line(colour = "darkgrey"),
-          panel.grid.major.x = element_blank(),
-          panel.grid.minor.x = element_blank(),
-          legend.key         = element_blank(),
-          legend.key.size    = unit(0.8,"line"),
-          legend.text        = element_text(size = 8))
-  return(p)
-}
-
-for(pair in names(comparepairs)){
-  comparelist[[pair]] <- compareplots(webdat, comparepairs[[pair]], compDates)
+  multilist[[country]] <- multiphasePlots(country, multidates[[country]], owiddat)
 }

@@ -13,7 +13,6 @@ countyshp <- readOGR("counties/counties.shp")
 worldshp  <- readOGR("world/world.shp")
 
 # read the county case data
-#countycases <- read.csv("https://opendata-geohive.hub.arcgis.com/datasets/4779c505c43c40da9101ce53f34bb923_0.csv?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D")
 countycases <- read.csv("https://opendata.arcgis.com/datasets/d9be85b30d7748b5b7c09450b8aede63_0.csv?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D")
 countycases$TimeStamp <- as.Date(countycases$TimeStamp)
 
@@ -97,32 +96,36 @@ countyplotlist[["blank"]] <- ggplot(countycase_map) +
 
 
 
-webdat <- read.csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
+#webdat <- read.csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
+owiddat <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+
 
 # just latest date
-latest_date <- as.Date(webdat$dateRep[1], tryFormats = c("%d/%m/%Y"))
-latest_dat  <- webdat[webdat$dateRep == "26/11/2020",]
+latest_date <- as.Date(owiddat$date[nrow(owiddat)-1], tryFormats = c("%Y-%m-%d"))
+latest_dat  <- owiddat[owiddat$date == latest_date,]
+fortnightRows <- owiddat$date >= latest_date-13 & owiddat$date <= latest_date
+fortnightCases <- aggregate(owiddat$new_cases_per_million[fortnightRows], 
+                              by=list(owiddat$location[fortnightRows]), function(x) sum(x[!is.na(x)]))
+colnames(fortnightCases) <- c("location", "fortnight_cases_per_million")
+latest_dat <- left_join(latest_dat, fortnightCases, by=c("location" = "location"))
 
 
 # make shape data ggplot-friendly
 worldshp@data$id <- rownames(worldshp@data)
 worldshp.points  <- fortify(worldshp, region="id")
 countries <- inner_join(worldshp.points, worldshp@data, by="id")
-countries$CNTRY_NAME[countries$CNTRY_NAME == "United Kingdom"] <- "United_Kingdom"
-countries$CNTRY_NAME[countries$CNTRY_NAME == "United States"]  <- "United_States_of_America"
-countries$CNTRY_NAME <- gsub(" ", "_", countries$CNTRY_NAME)
 
 # join case numbers for latest date to country data, in order to colour nicely
-world_map <- left_join(countries, latest_dat, by=c("CNTRY_NAME" = "countriesAndTerritories"))
+world_map <- left_join(countries, latest_dat, by=c("CNTRY_NAME" = "location"))
 
 worldplot <- list()
 
 worldplot[["blank"]] <- ggplot(world_map) + 
-  aes(long, lat, group=group, fill=Cumulative_number_for_14_days_of_COVID.19_cases_per_100000) +
-  geom_polygon(colour="grey40") + labs(fill = "Cases per 100k") +
+  aes(long, lat, group=group, fill=fortnight_cases_per_million) +
+  geom_polygon(colour="grey40") + labs(fill = "Cases per million") +
   scale_fill_gradientn(colours = col_grad) +
-  ggtitle("Cumulative cases per 100,000 population by county", 
-          subtitle = paste("From", format.Date(latest_date-13, "%B %d, %Y"), "to", format.Date(latest_date, "%B %d, %Y"))) +
+  ggtitle("Total cases per 1 million population by country", 
+          subtitle =  paste("From", format.Date(latest_date-13, "%B %d, %Y"), "to", format.Date(latest_date, "%B %d, %Y"))) +
   theme(axis.title       = element_blank(),
         axis.text        = element_blank(),
         axis.ticks       = element_blank(),
@@ -137,11 +140,11 @@ europe_map <- europe_map[europe_map$lat >= 35 & europe_map$lat <= 75,]
 
 
 worldplot[["europe"]] <- ggplot(europe_map) + 
-  aes(long, lat, group=group, fill=Cumulative_number_for_14_days_of_COVID.19_cases_per_100000) +
-  geom_polygon(colour="grey40") + labs(fill = "Cases per 100k") +
+  aes(long, lat, group=group, fill=fortnight_cases_per_million) +
+  geom_polygon(colour="grey40") + labs(fill = "Cases per million") +
   scale_fill_gradientn(colours = col_grad) +
-  ggtitle("Cumulative cases per 100,000 population by county", 
-          subtitle = paste("From", format.Date(latest_date-13, "%B %d, %Y"), "to", format.Date(latest_date, "%B %d, %Y"))) +
+  ggtitle("Total cases per 1 million population by country", 
+          subtitle =  paste("From", format.Date(latest_date-13, "%B %d, %Y"), "to", format.Date(latest_date, "%B %d, %Y"))) +
   theme(axis.title       = element_blank(),
         axis.text        = element_blank(),
         axis.ticks       = element_blank(),
