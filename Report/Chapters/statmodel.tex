@@ -5,6 +5,8 @@ Primary source for this was Hyndman-et-al-2018 %\cite{Hyndman-et-al-2018}.
 
 \subsection{Holt-Winters’ seasonal method}
 
+\subsubsection{Definitions and Theory}
+
 \begin{figure}
 \begin{tcolorbox}[width=.6\textwidth]%
 
@@ -28,15 +30,22 @@ $\left|\begin{array}{lll}
 \text{Seasonal} & S_t & = \gamma \frac{y_t}{L_t} + (1-\gamma)S_{t-s}\\
 \text{Forecast} & F_{t+1} & = (T_t+b_t)S_{t+1-s}
 \end{array}\right.$
-
-For subsequent observations, 
+For subsequent observations,
 
 $F_{N+k}=(L_N+k\cdot b_N) S_{N+k-s}$
-
 \label{SHWx}
 \end{tcolorbox}
 \caption{Seasonal Holt Winter’s Multiplicative Model Algorithm (denoted SHW$_\times$)}
 \end{figure}
+
+
+\subsubsection{How to select the best model}
+
+\subsubsection{Forecasting}
+
+\subsubsection{implementation in R}
+
+
 
 \includegraphics[width=0.9\textwidth]{Ireland-hw.png}
 
@@ -53,7 +62,114 @@ $F_{N+k}=(L_N+k\cdot b_N) S_{N+k-s}$
 
 \subsection{ARIMA models}
 
-ARIMA$(p,d,q)(P,D,Q)_s$  is defined as 
+\begin{definition}
+The \textit{backshift operator} $B$ is a function on a time series $\left(x_n\right)_{n\geq1}$ such that $Bx_n=x_{n-1}$ and more genrerally:
+
+$$B^k x_n= x_{n-k},\quad n>k$$
+
+And similarly for the independent errors $\epsilon_n$:
+
+$$B^k \epsilon_n= \epsilon_{n-k},\quad n>k$$
+\end{definition}
+
+We must first define the each component of a non-seasonal ARIMA model (suitable for time series with a trend).
+
+\begin{itemize}
+\item An $AR(p)$ model, or an autoregressive model of order $p$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of $x_{n-p},x_{n-p+1},\dots,x_{n-1}$ and an error term, i.e. 
+$$x_n= \phi_0+\phi_1 x_{n-1}+\phi_2 x_{n-2} +\dots + \phi_p x_{n-p}+\epsilon_n,\quad n>p,\quad \epsilon_n\sim N(0,\sigma^2)$$
+
+We can simplify using the backshift operator $B$:
+
+\begin{align}
+x_n
+&= \phi_0+\phi_1 Bx_n+\phi_2 B^2x_n +\dots + \phi_p B^px_n \nonumber \\
+&= \phi_0+\left(\phi_1 B+\phi_2 B^2 +\dots + \phi_p B^p\right)x_n
+\end{align}
+
+\item An $MA(q)$ model, or a moving average model of order $q$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of the $q$ previous errors $\epsilon_{n-q},\epsilon_{n-q+1},\dots,\epsilon_{n-1}$, plus the current error $\epsilon_n$, i.e. 
+$$x_n= \psi_0-\psi_1 \epsilon_{n-1}-\psi_2 \epsilon_{n-2} -\dots - \psi_q \epsilon_{n-p}+\epsilon_n,\quad n>p$$
+
+By convention we use minus signs in the coefficients $\psi_1,\dots,\psi_q$
+We can simplify using the backshift operator $B$:
+
+\begin{align}
+x_n
+&= \psi_0-\psi_1 B\epsilon_n-\psi_2 B^2\epsilon_n -\dots - \psi_q B^q\epsilon_n + \epsilon_n \nonumber \\
+&= \psi_0+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_q B^q\right)\epsilon_n 
+\end{align}
+
+\item The first order differencing of the time series, $I(1)$, is evalueated as 
+
+\begin{align}
+x_n'
+&=x_n-x_{n-1}\nonumber \\
+&=x_n-Bx_n \nonumber \\
+&=\left(1-B\right)x_n
+\end{align}
+
+More generally, the differencing of order $d$, denoted $I(d)$ is 
+$$(1-B)^d x_n$$
+
+This only affects the $y_n$ (although constants are differenced to zero) and the errors $\epsilon_n$ are unchanged.
+\end{itemize}
+
+Therefore, an ARIMA$(p,d,q)$ model can be evaluated by combining the $AR(p),\ I(d)$ and $MA(q)$
+
+\begin{align}
+(1-B)^d x_n
+&= \phi_0+(1-B)^d\left(\phi_1 B+\phi_2 B^2 +\dots + \phi_p B^p\right)x_n +
+\psi_0+\left(\psi_1 B+\psi_2 B^2 +\dots + \psi_q B^q\right)\epsilon_n \nonumber 
+\end{align}
+
+\begin{align}
+(1-B)^d x_n + (1-B)^d\left(-\phi_1 B-\phi_2 B^2 -\dots - \phi_p B^p\right)x_n
+&= \phi_0 + \psi_0+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_q B^q\right)\epsilon_n  \nonumber \\
+(1-B)^d\left(1-\phi_1 B-\phi_2 B^2 -\dots - \phi_p B^p\right)x_n
+&=c+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_q B^q\right)\epsilon_n  \nonumber \\
+\end{align}
+
+where $c= \phi_0 + \psi_0$ (it is zero if $d\geq1$.
+
+We also need the seasonal components for an ARIMA$(p,d,q)(P,D,Q)_s$ 
+
+Suppose a time series $x_n$ has period $s$ (seasonal pattern every $s$ values)
+\begin{itemize}
+
+\item An $AR(P)_s$ model, or a seasonal autoregressive model of order $P$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of $x_{n-Ps},x_{n-(P-1)s},\dots,x_{n-s}$ and an error term, i.e. 
+$$x_n= \beta_0+\beta_1 x_{n-s}+\beta_2 x_{n-2s} +\dots + \beta_P x_{n-Ps}+\epsilon_n$$
+
+We can simplify using the backshift operator $B$:
+
+\begin{align}
+x_n &= \beta_0+\left(\beta_1 B^s+\beta_2 B^{2s} +\dots + \beta_P B^{Ps}\right)x_n
+\end{align}
+
+\item An $MA(Q)_s$ model, or a seasonal moving average model of order $Q$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of the $Q$ errors $\epsilon_{n-Ws},\epsilon_{n-(Q-1)s},\dots,\epsilon_{n-s}$, plus the current error $\epsilon_n$, i.e. 
+$$x_n= \gamma_0-\gamma_1 \gamma_{n-s}-\gamma_2 \epsilon_{n-2s} -\dots - \gamma_Q \epsilon_{n-Qs}+\epsilon_n$$
+
+Again, by convention we use minus signs in the coefficients $\gamma_1,\dots,\gamma_Q$
+
+We can simplify using the backshift operator $B$:
+
+\begin{align}
+x_n
+&= \gamma_0-\gamma_1 \gamma_{n-s}-\gamma_2 \epsilon_{n-2s} -\dots - \gamma_Q \epsilon_{n-Qs}+\epsilon_n \nonumber \\
+&= \gamma_0+\left(1-\gamma_1 B^s-\gamma_2 B^{2s} +\dots - \gamma_Q B^{Qs}\right)\epsilon_n 
+\end{align}
+
+\item The first order seasonal differencing of the time series, $I_s(1)$, is evalueated as 
+
+$$x_n-x_{n-s}=\left(1-B^s\right)x_n$$
+
+More generally, the seasonal differencing of order $D$, denoted $I_s(D)$ is 
+
+$$(1-B^s)^D x_n$$
+
+The purpose of this is to make the time series  stationary in mean
+\end{itemize}
+
+
+Then we can similarly compose our seasonal components with the previous ARIMA$(pd,q)$ to get the definition of an ARIMA$(p,d,q)(P,D,Q)_s$ model
 
 \begin{align}
 \underbrace{\left(1-\phi_1 B-\phi_2B^2-\dots-\phi_p B^p\right)}_{AR(p)}
@@ -61,9 +177,16 @@ ARIMA$(p,d,q)(P,D,Q)_s$  is defined as
 \underbrace{\left(1-B\right)^d}_{I(d)}\underbrace{\left(1-B^s\right)^D}_{I_s(D)}   y_t = \nonumber \\
  c+
 \underbrace{\left(1-\psi_1 B-\psi_2B^2-\dots-\psi_q B^q\right)}_{MA(q)}
-\underbrace{\left(1-\theta_1 B^s-\theta_2B^{2s}-\dots-\theta_Q B^{Qs}\right)}_{MA_s(Q)} \epsilon_t
+\underbrace{\left(1-\gamma_1 B^s-\gamma_2B^{2s}-\dots-\gamma_Q B^{Qs}\right)}_{MA_s(Q)} \epsilon_t
 \end{align}
 
+where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$ and $\gamma_0$ 
+
+\subsubsection{How to select the best model}
+
+\subsection{Forecasting}
+
+\subsubsection{implementation in R}
 
 
 \begin{figure}[h]
@@ -80,6 +203,14 @@ ARIMA$(p,d,q)(P,D,Q)_s$  is defined as
 
 
 \subsection{Neural network models}
+
+\subsubsection{Definitions and Theory}
+
+\subsubsection{How to select the best model}
+
+\subsubsection{Forecasting}
+
+\subsubsection{implementation in R}
 
 \begin{figure}[h]
 \minipage{0.48\textwidth}

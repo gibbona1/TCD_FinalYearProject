@@ -108,13 +108,16 @@ plot_periodic <- function(countrydat, modeldat, cols, labs){
 }
 
 plot_resid <- function(countrydat, cols){
-  x <- countrydat$resid[-1]
-  p <- ggplot(countrydat, binwidth = 0) + 
-    geom_point(data = countrydat[-1,], aes(x = date, y = resid)) + 
-    geom_line(data = countrydat[-1,], aes(x = date, y = resid)) +
-    geom_hline(yintercept = 1.96*sd(x), linetype = "dashed", colour = "blue") +
-    geom_hline(yintercept = -1.96*sd(x), linetype = "dashed", colour = "blue") +
-    gg_scale_xy +
+  countrydat <- na.exclude(countrydat)
+  countrydat$y <- (countrydat$resid - mean(countrydat$resid))/sd(countrydat$resid)
+  ylims <- max(abs(countrydat$y),2.1)
+  p <- ggplot(na.exclude(countrydat), binwidth = 0) + 
+    geom_point(data = countrydat, aes(x = date, y = y)) + 
+    geom_line(data = countrydat, aes(x = date, y = y)) +
+    geom_hline(yintercept = 1.96, linetype = "dashed", colour = "blue") +
+    geom_hline(yintercept = -1.96, linetype = "dashed", colour = "blue") +
+    scale_x_date(date_breaks = "5 day", date_labels = "%d-%b", expand = c(0,0))+
+    scale_y_continuous(expand = c(0,0), limits = c(-1*ylims,ylims))+
     xntheme() + theme(axis.line = element_blank())
   return(p)
 }
@@ -600,13 +603,14 @@ covidPlots <- function(country, dateBounds, data){
             axis.ticks = element_blank(),
             panel.grid = element_blank())
   } else{
-    hw.add     <- HoltWinters(dat_ts, seasonal = "additive")
-    hwmethod   <- "multiplicative"
+    hwmethod   <- "additive"
     xnonlylast <- c(rep(NA, nrow(countrydat)-1), countrydat$xn[length(countrydat$xn)])
-    hwfcst     <- forecast::hw(dat_ts, h = forecastlen, seasonal = hwmethod)
+    #lambda=0 ensures values stay positive
+    hwfcst     <- forecast::hw(dat_ts, h = forecastlen, seasonal = hwmethod, lambda = 0)
     hwfcst$lower[hwfcst$lower[,2] < 0,2] <- 0
-    hwfcst$upper[hwfcst$upper[,2] < 0,2] <- 0
-    hwfcst$mean[hwfcst$mean < 0] <- 0
+    #hwfcst$upper[hwfcst$upper[,2] < 0,2] <- 0
+    #hwfcst$mean[hwfcst$mean < 0] <- 0
+    hwfcst$fitted[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
     modeldat$hwxn <- c(hwfcst$fitted, hwfcst$mean)
     modeldat$hwlo <- c(hwfcst$fitted, hwfcst$lower[,2])
     modeldat$hwhi <- c(hwfcst$fitted, hwfcst$upper[,2])
@@ -625,7 +629,7 @@ covidPlots <- function(country, dateBounds, data){
     plots[["hwy"]] <- plot_hwy(countrydat, modeldat, cols, labs)
   }
     
-  auto.fit <- auto.arima(dat_ts)
+  auto.fit <- auto.arima(dat_ts, lambda = 0) #keep values positive
   getArmaModel <- function(arma){
     return(paste0("ARIMA(", paste0(arma[c(1,3,2)],collapse = ","), ")(",
                   paste0(arma[c(6,4,7)], collapse = ","), ")[", arma[5], "]"))
@@ -633,8 +637,10 @@ covidPlots <- function(country, dateBounds, data){
   
   arima.fcst <- forecast(auto.fit, level = c(80, 95), h = forecastlen)
   arima.fcst$lower[arima.fcst$lower[,2] < 0,2] <- 0
-  arima.fcst$upper[arima.fcst$upper[,2] < 0,2] <- 0
-  arima.fcst$mean[arima.fcst$mean < 0] <- 0
+  #arima.fcst$upper[arima.fcst$upper[,2] < 0,2] <- 0
+  arima.fcst$fitted[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
+  
+  #arima.fcst$mean[arima.fcst$mean < 0] <- 0
   
   arimanorm <- modnorm(countrydat$xn,arima.fcst$fitted)
   
@@ -658,11 +664,12 @@ covidPlots <- function(country, dateBounds, data){
   
   plots[["hwarima"]] <- plot_hwarima(countrydat, modeldat, cols, labs)
   
-  nnfit   <- nnetar(dat_ts) #, lambda = 0) #ensures values stay positive
-  nn.fcst <- forecast(nnfit, h=forecastlen)
+  #Box-Cox transformation with lambda=0 to ensure the forecasts stay positive.
+  nnfit   <- nnetar(dat_ts, p = optimpars[1], lambda = 0, repeats = 30, maxit = 150) 
+  nn.fcst <- forecast(nnfit, h = forecastlen)
 
   nn.fcst$mean[nn.fcst$mean < 0] <- 0
-  nn.fcst$fitted[1:7] <- countrydat$xn[1:7]
+  nn.fcst$fitted[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
  
   modeldat$nnxn <- c(nn.fcst$fitted, nn.fcst$mean)
   modeldat$nnyn <- xntoyn(modeldat$nnxn) + prevcases
