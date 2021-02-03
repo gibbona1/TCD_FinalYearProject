@@ -7,7 +7,7 @@ Some of our statistical models require \textit{homoscedasticity}, i.e., that the
 
 We can check this by plotting standardized residuals and checking that they are distributed around zero, with 95 percent of the values within the interval $[1.96,1.96]$
 
-\begin{figure}[h]
+\begin{figure}[H]
 \minipage{0.33\textwidth}
   \includegraphics[width=\linewidth]{Ireland-residuals.png} \label{fig:ireland-residuals}
 \endminipage\hfill
@@ -65,12 +65,12 @@ $F_{N+k}=L_N+k\cdot b_N+S_{N+k-s}$
 
 We see that the additive seasonal method is a better choice for both model fit and confidence interval size.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \includegraphics[width=0.9\textwidth]{hwaddmultcompare.png}
 \caption{Comparison between HoltWinters multiplicative (left, red outline) and additive (right, green outline)algorithms, at some point during the research}
 \end{figure}
 
-\begin{figure}[!htb]
+\begin{figure}[H]
 \minipage{0.48\textwidth}
   \includegraphics[width=\linewidth]{Ireland-hw.png} \label{fig:ireland-hw}
 \endminipage\hfill
@@ -78,6 +78,26 @@ We see that the additive seasonal method is a better choice for both model fit a
   \includegraphics[width=\linewidth]{Ireland-hwy.png} \label{fig:ireland-hwy}
 \endminipage
 \caption{HoldWinters model, Ireland}
+\end{figure}
+
+\begin{figure}[H]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Italy-hw.png} \label{fig:italy-hw}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Italy-hwy.png} \label{fig:italy-hwy}
+\endminipage
+\caption{HoldWinters model, Italy}
+\end{figure}
+
+\begin{figure}[H]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{United States-hw.png} \label{fig:usa-hw}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{United States-hwy.png} \label{fig:usa-hwy}
+\endminipage
+\caption{HoldWinters model, United States}
 \end{figure}
 
 
@@ -210,7 +230,7 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 \subsubsection{implementation in R}
 
 
-\begin{figure}[h]
+\begin{figure}[H]
 \minipage{0.48\textwidth}
   \includegraphics[width=\linewidth]{Ireland-arima.png} \label{fig:ireland-arima}
 \endminipage\hfill
@@ -220,8 +240,25 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 \caption{ARIMA model, Ireland}
 \end{figure}
 
-\includegraphics[width=0.9\textwidth]{Ireland-hwarima.png}
+\begin{figure}[H]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Italy-arima.png} \label{fig:italy-arima}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Italy-arimay.png} \label{fig:italy-arimay}
+\endminipage
+\caption{ARIMA model, Italy}
+\end{figure}
 
+\begin{figure}[H]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{United States-arima.png} \label{fig:usa-arima}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{United States-arimay.png} \label{fig:usa-arimay}
+\endminipage
+\caption{ARIMA model, United States}
+\end{figure}
 
 \subsection{Neural network models}
 
@@ -233,7 +270,7 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 
 \subsubsection{implementation in R}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \minipage{0.48\textwidth}
   \includegraphics[width=\linewidth]{Ireland-nn.png} \label{fig:ireland-nn}
 \endminipage\hfill
@@ -241,4 +278,24 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
   \includegraphics[width=\linewidth]{Ireland-nny.png} \label{fig:ireland-nny}
 \endminipage
 \caption{Neural Network model, Ireland}
+\end{figure}
+
+\begin{figure}[H]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Italy-nn.png} \label{fig:italy-nn}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{Italy-nny.png} \label{fig:italy-nny}
+\endminipage
+\caption{Neural Network model, Italy}
+\end{figure}
+
+\begin{figure}[H]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{United States-nn.png} \label{fig:usa-nn}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{United States-nny.png} \label{fig:usa-nny}
+\endminipage
+\caption{Neural Network model, United States}
 \end{figure}

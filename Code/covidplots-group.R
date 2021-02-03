@@ -500,7 +500,8 @@ covidPlots <- function(country, dateBounds, data){
   
   newnormdat$abnormy  <- normalize(abnormy)
   newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
-  tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:3]
+  tileoptim <- normdat[which.min(normdat$abnorm),1:3]
+  #tileoptim <- newnormdat[which.min(newnormdat$abnormy),1:3]
   optimpars <- c(tileoptim$q,tileoptim$a, tileoptim$b)
   plots[["combnorm"]] <- ggplot(newnormdat, aes(x = a, y = b, fill = combnorm)) + 
     geom_tile() 
@@ -805,7 +806,8 @@ multiphasePlots <- function(country, dates, data){
     
     newnormdat$abnormy  <- normalize(abnormy)
     newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
-    tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:3]
+    tileoptim <- newnormdat[which.min(newnormdat$abnorm),1:3]
+    #tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:3]
     optimpars <- c(tileoptim$q,tileoptim$a, tileoptim$b)
     
     phasepars[[i]] <- round(optimpars,3)
