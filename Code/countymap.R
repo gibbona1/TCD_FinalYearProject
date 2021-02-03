@@ -117,6 +117,7 @@ countries <- inner_join(worldshp.points, worldshp@data, by="id")
 
 # join case numbers for latest date to country data, in order to colour nicely
 world_map <- left_join(countries, latest_dat, by=c("CNTRY_NAME" = "location"))
+world_map <- world_map[world_map$lat >= -75,]
 
 worldplot <- list()
 
@@ -124,8 +125,23 @@ worldplot[["blank"]] <- ggplot(world_map) +
   aes(long, lat, group=group, fill=fortnight_cases_per_million) +
   geom_polygon(colour="grey40") + labs(fill = "Cases per million") +
   scale_fill_gradientn(colours = col_grad) +
-  ggtitle("Total cases per 1 million population by country", 
+  ggtitle("Cases per 1 million population by country", 
           subtitle =  paste("From", format.Date(latest_date-13, "%B %d, %Y"), "to", format.Date(latest_date, "%B %d, %Y"))) +
+  theme(axis.title       = element_blank(),
+        axis.text        = element_blank(),
+        axis.ticks       = element_blank(),
+        panel.background = element_blank(),
+        plot.margin      = margin(0, 0, 0, 0, "cm"),
+        legend.title      = element_blank(),
+        legend.background = element_blank(),
+        legend.position   = c(0.1,0.4))
+
+worldplot[["cumulative"]] <- ggplot(world_map) + 
+  aes(long, lat, group=group, fill=total_cases_per_million) +
+  geom_polygon(colour="grey40") + labs(fill = "Cases per million") +
+  scale_fill_gradientn(colours = col_grad) +
+  ggtitle("Total cases per 1 million population by country", 
+          subtitle =  paste("Up to", format.Date(latest_date, "%B %d, %Y"))) +
   theme(axis.title       = element_blank(),
         axis.text        = element_blank(),
         axis.ticks       = element_blank(),

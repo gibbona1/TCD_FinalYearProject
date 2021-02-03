@@ -330,9 +330,7 @@ plot_worldtotal <- function(dat){
   return(p)
 }
 
-modnorm <- function(x,modx){
-  return(floor(sum(abs(x-modx))/length(x)))
-}
+modnorm <- function(x,modx) return(floor(sum(abs(x-modx))/length(x)))
 
 xntheme <- function(){
   p <- theme(axis.text.x        = element_text(angle = 90, vjust = 0.5),
@@ -380,9 +378,7 @@ yntheme <- function(){
   return(p)
 }
 
-xntoyn <- function(xn){
-  return(cumsum(xn))
-}
+xntoyn <- function(xn) return(cumsum(xn))
 
 gg_scale_xy <- list(
   scale_x_date(date_breaks = "5 day", date_labels = "%d-%b", expand = c(0,0)),
@@ -399,17 +395,11 @@ basicmodx <- function(x, pars, len = 0){
   return(modx)
 }
 
-norm <- function(par, x) {
-  return(modnorm(x,basicmodx(x, par)))
-}
+norm <- function(par, x) return(modnorm(x,basicmodx(x, par)))
 
-normy <- function(par, x, y) {
-  return(modnorm(y,xntoyn(basicmodx(x, par))))
-}
+normy <- function(par, x, y) return(modnorm(y,xntoyn(basicmodx(x, par))))
 
-normalize <- function(x){
-  return((x-min(x))/(max(x)-min(x)))
-}
+normalize <- function(x) return((x-min(x))/(max(x)-min(x)))
 
 basef <- function(lambda,par) {
   return(lambda^(par[1]+1)-(1-par[3])*lambda^(par[1])-par[2])
@@ -432,9 +422,7 @@ movingavg <- function(x){
   return(mavgx)
 }
 
-normper <- function(par, q, x){
-  return(modnorm(x,modxper(par,q,x)))
-}
+normper <- function(par, q, x) return(modnorm(x,modxper(par,q,x)))
 
 modxper <- function(par, q, x, len = 0){
   #a,b,c1,c2,p1,p2,n1,n2
@@ -591,7 +579,7 @@ covidPlots <- function(country, dateBounds, data){
   
   countrydat$resid <- residuals(naive(dat_ts))
   
-  plots[["rediduals"]] <- plot_resid(countrydat, cols)
+  plots[["residuals"]] <- plot_resid(countrydat, cols)
   
   if(any(countrydat$xn <= 0)){
     plots[["hw"]] <- ggplot(data.frame(x = 0,y = 0)) + 
