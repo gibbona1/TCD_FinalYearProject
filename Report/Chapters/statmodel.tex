@@ -24,7 +24,7 @@ We can check this by plotting standardized residuals and checking that they are 
 
 \subsubsection{Definitions and Theory}
 
-\begin{figure}
+\begin{figure}[H]
 \begin{tcolorbox}[width=.6\textwidth]%
 
 Suppose there are $N$ observations.
@@ -52,7 +52,7 @@ For subsequent observations,
 $F_{N+k}=L_N+k\cdot b_N+S_{N+k-s}$
 \label{SHWx}
 \end{tcolorbox}
-\caption{Seasonal Holt Winter’s Multiplicative Model Algorithm (denoted SHW$_{+}$)}
+\caption{Seasonal Holt Winter’s Additive Model Algorithm (denoted SHW$_{+}$)}
 \end{figure}
 
 
@@ -66,7 +66,9 @@ $F_{N+k}=L_N+k\cdot b_N+S_{N+k-s}$
 We see that the additive seasonal method is a better choice for both model fit and confidence interval size.
 
 \begin{figure}[H]
+\minipage{0.98\textwidth}
 \includegraphics[width=0.9\textwidth]{hwaddmultcompare.png}
+\endminipage
 \caption{Comparison between HoltWinters multiplicative (left, red outline) and additive (right, green outline)algorithms, at some point during the research}
 \end{figure}
 
@@ -102,6 +104,8 @@ We see that the additive seasonal method is a better choice for both model fit a
 
 
 \subsection{ARIMA models}
+
+\subsubsection{Definitions and Theory}
 
 \begin{definition}
 The \textit{backshift operator} $B$ is a function on a time series $\left(x_n\right)_{n\geq1}$ such that $Bx_n=x_{n-1}$ and more genrerally:
@@ -169,7 +173,7 @@ Therefore, an ARIMA$(p,d,q)$ model can be evaluated by combining the $AR(p),\ I(
 &=c+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_q B^q\right)\eps_n  \nonumber \\
 \end{align}
 
-where $c= \phi_0 + \psi_0$ (it is zero if $d\geq1$.
+where $c= \phi_0 + \psi_0$ (it is zero if $d\geq1$).
 
 We also need the seasonal components for an ARIMA$(p,d,q)(P,D,Q)_s$ 
 
@@ -225,7 +229,7 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 
 \subsubsection{How to select the best model}
 
-\subsection{Forecasting}
+\subsubsection{Forecasting}
 
 \subsubsection{implementation in R}
 
