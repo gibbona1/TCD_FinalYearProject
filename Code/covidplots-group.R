@@ -12,7 +12,7 @@ plotslist <- list()
 plot_xn <- function(countrydat, cols, labs){
   p <- ggplot(countrydat, binwidth = 0) + 
     geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
-    scale_x_date(date_breaks = "2 weeks", date_labels = "%d-%b", expand = c(0,0))+
+    scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0))+
     scale_y_continuous(expand = c(0,0)) +
     scale_fill_manual(values = cols$xn, name = "", labels = labs$xn) +
     xntheme()
@@ -23,7 +23,7 @@ plot_yn <- function(countrydat, cols, labs){
   p <- ggplot(countrydat) + 
     geom_line(aes(x = date, y = yn, colour = "blue")) + 
     geom_point(aes(x = date, y = yn, colour = "blue"))+
-    scale_x_date(date_breaks = "2 weeks", date_labels = "%d-%b", expand = c(0,0))+
+    scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0))+
     scale_y_continuous(expand = c(0,0)) +
     scale_colour_manual(values = cols$yn, name = "", labels = labs$yn) +
     yntheme()
@@ -324,7 +324,7 @@ plot_multiperyn <- function(countrydat, modeldat, cols, labs){
 plot_worldtotal <- function(dat){
   p <- ggplot(dat, binwidth = 0) + 
     geom_bar(aes(x = Date, y = Cases),  fill = wes_palettes$Zissou1[1], stat = "identity") + 
-    scale_x_date(date_breaks = "2 weeks", date_labels = "%d-%b", expand = c(0,0))+
+    scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0))+
     scale_y_continuous(expand = c(0,0)) +
     ggtitle(wt_title) + xntheme()
   return(p)
@@ -333,7 +333,7 @@ plot_worldtotal <- function(dat){
 modnorm <- function(x,modx) return(floor(sum(abs(x-modx))/length(x)))
 
 xntheme <- function(){
-  p <- theme(axis.text.x        = element_text(angle = 90, vjust = 0.5),
+  p <- theme(axis.text.x        = element_text(vjust = 0.5),
              axis.title         = element_blank(),
              axis.line          = element_line(),
              panel.background   = element_rect(fill  = "grey"),
@@ -357,7 +357,7 @@ xntheme <- function(){
 }
 
 yntheme <- function(){
-  p <- theme(axis.text.x        = element_text(angle = 90, vjust = 0.5),
+  p <- theme(axis.text.x        = element_text(vjust = 0.5),
              axis.title         = element_blank(),
              panel.background   = element_rect(fill  = "grey"),
              panel.grid         = element_line(colour = "darkgrey"),
@@ -494,17 +494,19 @@ covidPlots <- function(country, dateBounds, data){
   normdat$abnorm  <- normalize(abnorm)
   
   newnormdat <- normdat %>% 
-    top_n(abnorm ,n = -0.05*nrow(.))
+    top_n(abnorm ,n = -0.07*nrow(.))
   
   abnormy <- apply(newnormdat, 1, function(x) normy(x[1:3], countrydat$xn, countrydat$yn))
   
-  newnormdat$abnormy  <- normalize(abnormy)
-  newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
+  col_grad <- wes_palette("Zissou1", 20, type = "continuous")
+  
+  newnormdat$abnormy  <- abnormy
   tileoptim <- normdat[which.min(normdat$abnorm),1:3]
   #tileoptim <- newnormdat[which.min(newnormdat$abnormy),1:3]
-  optimpars <- c(tileoptim$q,tileoptim$a, tileoptim$b)
-  plots[["combnorm"]] <- ggplot(newnormdat, aes(x = a, y = b, fill = combnorm)) + 
-    geom_tile() 
+  optimpars <- c(tileoptim$q, tileoptim$a, tileoptim$b)
+  plots[["combnorm"]] <- ggplot(newnormdat, aes(x = a, y = b, z = abnorm)) +
+    geom_contour_filled() +
+    scale_fill_brewer(palette = "Spectral")
 
   basexn   <- basicmodx(countrydat$xn, optimpars, len = forecastlen)
   
@@ -641,6 +643,10 @@ covidPlots <- function(country, dateBounds, data){
   modeldat$arimalo <- c(auto.fit$fitted,arima.fcst$lower[,2])
   modeldat$arimahi <- c(auto.fit$fitted,arima.fcst$upper[,2])
   
+  modeldat$arimaxn[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
+  modeldat$arimalo[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
+  modeldat$arimahi[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
+  
   modeldat$arimayn  <- xntoyn(modeldat$arimaxn) + prevcases
   modeldat$arimaylo <- xntoyn(modeldat$arimalo) + prevcases
   modeldat$arimayhi <- xntoyn(modeldat$arimahi) + prevcases
@@ -654,7 +660,7 @@ covidPlots <- function(country, dateBounds, data){
   plots[["hwarima"]] <- plot_hwarima(countrydat, modeldat, cols, labs)
   
   #Box-Cox transformation with lambda=0 to ensure the forecasts stay positive.
-  nnfit   <- nnetar(dat_ts, p = optimpars[1], lambda = 0, repeats = 30, maxit = 150) 
+  nnfit   <- nnetar(dat_ts, p = auto.fit$arma[1], P = auto.fit$arma[6], lambda = 0, repeats = 20, maxit = 50) 
   nn.fcst <- forecast(nnfit, h = forecastlen)
 
   nn.fcst$mean[nn.fcst$mean < 0] <- 0
