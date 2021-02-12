@@ -108,21 +108,6 @@ plot_periodic <- function(countrydat, modeldat, cols, labs){
   return(p)
 }
 
-plot_resid <- function(countrydat, cols){
-  countrydat <- na.exclude(countrydat)
-  countrydat$y <- (countrydat$resid - mean(countrydat$resid))/sd(countrydat$resid)
-  ylims <- max(abs(countrydat$y),2.1)
-  p <- ggplot(na.exclude(countrydat), binwidth = 0) + 
-    geom_point(data = countrydat, aes(x = date, y = y)) + 
-    geom_line(data = countrydat, aes(x = date, y = y)) +
-    geom_hline(yintercept = 1.96, linetype = "dashed", colour = "blue") +
-    geom_hline(yintercept = -1.96, linetype = "dashed", colour = "blue") +
-    scale_x_date(date_breaks = "5 day", date_labels = "%d-%b", expand = c(0,0))+
-    scale_y_continuous(expand = c(0,0), limits = c(-1*ylims,ylims))+
-    xntheme() + theme(axis.line = element_blank())
-  return(p)
-}
-
 plot_hw <- function(countrydat, modeldat, cols, labs){
   p <- ggplot(countrydat, binwidth = 0) + 
     geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
@@ -608,7 +593,7 @@ covidPlots <- function(country, dateBounds, data){
   plots[["tsdisplay"]] <- grid.arrange(grobs = list(g1,g2,g3),
     layout_matrix = rbind(c(1, 1), c(2, 3)))
   
-  plots[["residuals"]] <- plot_resid(countrydat, cols)
+  plots[["residuals"]] <- gghistogram(dat_ts, add.normal = TRUE)
   
   plots[["tsdecompose"]] <- autoplot(decompose(dat_ts))
   
