@@ -5,7 +5,7 @@ setwd("~/GitHub/TCD_FinalYearProject")
 
 for(country in names(plotslist)){
   for(p in names(plotslist[[country]])){
-    ggsave(filename = paste0(country, "-", p, ".png"),
+    ggsave(filename = paste0(country, "-", p, ".pdf"),
            plot     = plotslist[[country]][[p]],
            path     = "./Plots",
            height   = 10,
@@ -38,7 +38,7 @@ for(pair in names(comparelist)){
 }
 
 for(p in names(countyplotlist)){
-  ggsave(filename = paste0("county-", p, ".png"),
+  ggsave(filename = paste0("county-", p, ".pdf"),
          plot     = countyplotlist[[p]],
          path     = "Plots",
          height   = 14,

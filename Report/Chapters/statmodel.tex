@@ -17,7 +17,7 @@ We can check this by plotting histograms and checking that they are centred arou
 \minipage{0.33\textwidth}
   \includegraphics[width=\linewidth]{United States-residuals.png} \label{fig:usa-residuals}
 \endminipage\hfill
-\caption{Residual checks, Ireland, Italy and United States}
+\caption{Normality checks, Ireland, Italy and United States}
 \end{figure}
 
 \subsection{Holt-Winters’ seasonal method}
@@ -32,9 +32,9 @@ Suppose there are $N$ observations.
 Initial step:
 
 $\left|\begin{array}{l}
-L_s = \frac1s \sum_{i=1}^s y_i \\
-b_s = \frac1s \left[\frac{y_{s+1}-y_1}{s}+\frac{y_{s+2}-y_2}{s}+\dots+\frac{y_{2s}-y_s}{s}\right]\\
-S_n  = y_n-L_s, \ n=1,\dots,s
+L_s = \frac1s \sum_{i=1}^s x_i \\
+b_s = \frac1s \left[\frac{x_{s+1}-x_1}{s}+\frac{x_{s+2}-x_2}{s}+\dots+\frac{x_{2s}-x_s}{s}\right]\\
+S_n  = x_n-L_s, \ n=1,\dots,s
 \end{array}\right.$
 
 and choose parameters $0\leq\alpha\leq1,\ 0\leq\beta\leq1$ and $0\leq\gamma\leq1$
@@ -42,9 +42,9 @@ and choose parameters $0\leq\alpha\leq1,\ 0\leq\beta\leq1$ and $0\leq\gamma\leq1
 Then compute for $s<n\leq N$:
 
 $\left|\begin{array}{lll}
-\text{Level} &       L_n & = \alpha (y_n-S_{n-s})+(1-\alpha)(L_{n-1}+b_{n-1})\\
+\text{Level} &       L_n & = \alpha (x_n-S_{n-s})+(1-\alpha)(L_{n-1}+b_{n-1})\\
 \text{Trend} &      b_n & = \beta(L_n-L_{n-1})+(1-\beta)b_{n-1}\\
-\text{Seasonal} & S_n & = \gamma (y_n-L_n) + (1-\gamma)S_{n-s}\\
+\text{Seasonal} & S_n & = \gamma (x_n-L_n) + (1-\gamma)S_{n-s}\\
 \text{Forecast} & F_{n+1} & = L_n+b_n+S_{n+1-s}
 \end{array}\right.$
 For subsequent observations,
@@ -155,7 +155,7 @@ x_n'
 More generally, the differencing of order $d$, denoted $I(d)$ is 
 $$(1-B)^d x_n$$
 
-This only affects the $y_n$ (although constants are differenced to zero) and the errors $\eps_n$ are unchanged.
+This only affects the $x_n$ (although constants are differenced to zero) and the errors $\eps_n$ are unchanged.
 \end{itemize}
 
 Therefore, an ARIMA$(p,d,q)$ model can be evaluated by combining the $AR(p),\ I(d)$ and $MA(q)$
@@ -219,7 +219,7 @@ Then we can similarly compose our seasonal components with the previous ARIMA$(p
 \begin{align}
 \underbrace{\left(1-\phi_1 B-\phi_2B^2-\dots-\phi_p B^p\right)}_{AR(p)}
 \underbrace{\left(1-\beta_1 B^s-\beta_2B^{2s}-\dots-\beta_P B^{Ps}\right)}_{AR_s(P)} 
-\underbrace{\left(1-B\right)^d}_{I(d)}\underbrace{\left(1-B^s\right)^D}_{I_s(D)}   y_n = \nonumber \\
+\underbrace{\left(1-B\right)^d}_{I(d)}\underbrace{\left(1-B^s\right)^D}_{I_s(D)}   x_n = \nonumber \\
  c+
 \underbrace{\left(1-\psi_1 B-\psi_2B^2-\dots-\psi_q B^q\right)}_{MA(q)}
 \underbrace{\left(1-\gamma_1 B^s-\gamma_2B^{2s}-\dots-\gamma_Q B^{Qs}\right)}_{MA_s(Q)} \eps_n
@@ -266,12 +266,12 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 
 \subsection{Neural network models}
 
-\begin{figure}
+\begin{figure}[H]
 \includegraphics[width=0.9\textwidth]{NeuralNetNoHidden.png}
 \caption{A linear regression model, or ARIMA$(p,0,0)$ model.}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 \includegraphics[width=0.9\textwidth]{NeuralNet.png}
 \caption{A neural network with $p$ inputs and one hidden layer with $k$ hidden neurons.}
 \end{figure}
