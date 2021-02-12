@@ -2,6 +2,7 @@ require(ggplot2)
 require(forecast)
 require(dplyr)
 require(wesanderson)
+require(gridExtra)
 #webdat <- read.csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
 owiddat <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
 
@@ -568,6 +569,24 @@ covidPlots <- function(country, dateBounds, data){
   modeldat$modxPeriodic <- modxper(as.numeric(peroptim),countrydat$xn, q = optimpars[1], forecastlen)
   
   peroptim <- round(as.numeric(peroptim),3)
+  
+  perparamdat <- data.frame(
+    x  = modeldat$date,
+    an = peroptim[1]*(1+peroptim[3]*sin(2*pi*(1:(nrow(modeldat)) - peroptim[7])/peroptim[5])),
+    bn = peroptim[2]*(1+peroptim[4]*sin(2*pi*(1:(nrow(modeldat)) - peroptim[8])/peroptim[6]))
+  )
+  
+  plots[["perparam"]] <- ggplot(perparamdat) +
+    geom_line(aes(x=x,y=an,col="a_n")) +
+    geom_line(aes(x=x,y=bn,col="b_n")) +
+    geom_hline(aes(yintercept = peroptim[1], col = "a"), linetype="dashed") +
+    geom_hline(aes(yintercept = peroptim[2], col = "b"), linetype="dashed") +
+    xlab("date") + ylab("") +
+    scale_color_manual(values = wes_palettes$Rushmore1[c(3,3,5,5)]) +
+    guides(colour = guide_legend(override.aes = list(linetype = 
+         c("a_n"="solid", "a"="dashed", "b_n"="solid", "b"="dashed")))) +
+    xntheme() + theme(legend.position = "right")
+  
   #a,b,c1,c2,p1,p2,n1,n2
   labs$periodic <- list(bquote("periodic model,"~x[n]*"=new cases/day;"
                               ~a*"="*.(peroptim[1])*","~ b*"="*.(peroptim[2])*","
@@ -582,7 +601,16 @@ covidPlots <- function(country, dateBounds, data){
   
   countrydat$resid <- residuals(naive(dat_ts))
   
+  g1 <- autoplot(dat_ts) + theme(axis.title = element_blank())
+  g2 <- ggAcf(dat_ts) + ggtitle("")
+  g3 <- ggPacf(dat_ts) + ggtitle("")
+  
+  plots[["tsdisplay"]] <- grid.arrange(grobs = list(g1,g2,g3),
+    layout_matrix = rbind(c(1, 1), c(2, 3)))
+  
   plots[["residuals"]] <- plot_resid(countrydat, cols)
+  
+  plots[["tsdecompose"]] <- autoplot(decompose(dat_ts))
   
   if(any(countrydat$xn <= 0)){
     plots[["hw"]] <- ggplot(data.frame(x = 0,y = 0)) + 
@@ -690,7 +718,7 @@ datebounds <- list(
   #"UK"            = c("2020-01-06", "2021-01-26")
 )
 
-owiddat <- owiddat[!is.na(owiddat$new_cases),]
+owiddat    <- owiddat[!is.na(owiddat$new_cases),]
 totaldates <- owiddat$date
 totaldat   <- aggregate(owiddat$new_cases, by=list(totaldates), sum)
 colnames(totaldat) <- c("Date", "Cases")
