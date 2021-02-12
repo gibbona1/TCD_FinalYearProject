@@ -5,7 +5,7 @@ Primary source for this was Hyndman-et-al-2018 \cite{Hyndman-et-al-2018}.
 
 Some of our statistical models require \textit{homoscedasticity}, i.e., that the model errors are identically distributed with the same variance $\sigma^2$.
 
-We can check this by plotting standardized residuals and checking that they are distributed around zero, with 95 percent of the values within the interval $[1.96,1.96]$
+We can check this by plotting histograms and checking that they are centred around zero and approximately fit the overlaying normal curve.
 
 \begin{figure}[H]
 \minipage{0.33\textwidth}
@@ -34,18 +34,18 @@ Initial step:
 $\left|\begin{array}{l}
 L_s = \frac1s \sum_{i=1}^s y_i \\
 b_s = \frac1s \left[\frac{y_{s+1}-y_1}{s}+\frac{y_{s+2}-y_2}{s}+\dots+\frac{y_{2s}-y_s}{s}\right]\\
-S_i  = y_i-L_s, \ i=1,\dots,s
+S_n  = y_n-L_s, \ n=1,\dots,s
 \end{array}\right.$
 
 and choose parameters $0\leq\alpha\leq1,\ 0\leq\beta\leq1$ and $0\leq\gamma\leq1$
 
-Then compute for $s<t\leq N$:
+Then compute for $s<n\leq N$:
 
 $\left|\begin{array}{lll}
-\text{Level} &       L_t & = \alpha (y_t-S_{t-s})+(1-\alpha)(L_{t-1}+b_{t-1})\\
-\text{Trend} &      b_t & = \beta(L_t-L_{t-1})+(1-\beta)b_{t-1}\\
-\text{Seasonal} & S_t & = \gamma (y_t-L_t) + (1-\gamma)S_{t-s}\\
-\text{Forecast} & F_{t+1} & = T_t+b_t+S_{t+1-s}
+\text{Level} &       L_n & = \alpha (y_n-S_{n-s})+(1-\alpha)(L_{n-1}+b_{n-1})\\
+\text{Trend} &      b_n & = \beta(L_n-L_{n-1})+(1-\beta)b_{n-1}\\
+\text{Seasonal} & S_n & = \gamma (y_n-L_n) + (1-\gamma)S_{n-s}\\
+\text{Forecast} & F_{n+1} & = L_n+b_n+S_{n+1-s}
 \end{array}\right.$
 For subsequent observations,
 
@@ -265,6 +265,16 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 \end{figure}
 
 \subsection{Neural network models}
+
+\begin{figure}
+\includegraphics[width=0.9\textwidth]{NeuralNetNoHidden.png}
+\caption{A linear regression model, or ARIMA$(p,0,0)$ model.}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.9\textwidth]{NeuralNet.png}
+\caption{A neural network with $p$ inputs and one hidden layer with $k$ hidden neurons.}
+\end{figure}
 
 \subsubsection{Definitions and Theory}
 

@@ -635,8 +635,8 @@ covidPlots <- function(country, dateBounds, data){
     
   auto.fit <- auto.arima(dat_ts, lambda = 0) #keep values positive
   getArmaModel <- function(arma){
-    return(paste0("ARIMA(", paste0(arma[c(1,3,2)],collapse = ","), ")(",
-                  paste0(arma[c(6,4,7)], collapse = ","), ")[", arma[5], "]"))
+    return(paste0("ARIMA(", paste0(arma[c(1,6,2)],collapse = ","), ")(",
+                  paste0(arma[c(3,7,4)], collapse = ","), ")[", arma[5], "]"))
   }
   
   arima.fcst <- forecast(auto.fit, level = c(80, 95), h = forecastlen)
@@ -673,7 +673,7 @@ covidPlots <- function(country, dateBounds, data){
   plots[["hwarima"]] <- plot_hwarima(countrydat, modeldat, cols, labs)
   
   #Box-Cox transformation with lambda=0 to ensure the forecasts stay positive.
-  nnfit   <- nnetar(dat_ts, p = auto.fit$arma[1], P = auto.fit$arma[6], lambda = 0, repeats = 20, maxit = 50) 
+  nnfit   <- nnetar(dat_ts, p = auto.fit$arma[1], lambda = 0, repeats = 20, maxit = 50) 
   nn.fcst <- forecast(nnfit, h = forecastlen)
 
   nn.fcst$mean[nn.fcst$mean < 0] <- 0
