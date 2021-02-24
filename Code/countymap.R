@@ -13,7 +13,9 @@ countyshp <- readOGR("counties/counties.shp")
 worldshp  <- readOGR("world/world.shp")
 
 # read the county case data
-countycases <- read.csv("https://opendata.arcgis.com/datasets/d9be85b30d7748b5b7c09450b8aede63_0.csv?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D")
+countycases <- read.csv("Data/Covid19CountyStatisticsHPSCIreland.csv")
+owiddat     <- read.csv("Data/owid-covid-data.csv")
+owiddat$date          <- as.Date(owiddat$date)
 countycases$TimeStamp <- as.Date(countycases$TimeStamp)
 
 # just latest date
@@ -93,12 +95,6 @@ countyplotlist[["blank"]] <- ggplot(countycase_map) +
         legend.title      = element_blank(),
         legend.background = element_blank(),
         legend.position   = c(0.25,0.87))
-
-
-
-#webdat <- read.csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
-owiddat <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
-
 
 # just latest date
 latest_date <- as.Date(owiddat$date[nrow(owiddat)-1], tryFormats = c("%Y-%m-%d"))

@@ -4,8 +4,8 @@ require(dplyr)
 require(wesanderson)
 require(gridExtra)
 #webdat <- read.csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
-owiddat <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
-
+#owiddat <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv")
+owiddat <- read.csv("Data/owid-covid-data.csv")
 owiddat$date <- as.Date(owiddat$date, tryFormats = c("%Y-%m-%d"))
 
 plotslist <- list()
@@ -309,7 +309,7 @@ plot_multiperyn <- function(countrydat, modeldat, cols, labs){
 
 plot_worldtotal <- function(dat){
   p <- ggplot(dat, binwidth = 0) + 
-    geom_bar(aes(x = Date, y = Cases),  fill = wes_palettes$Zissou1[1], stat = "identity") + 
+    geom_bar(aes(x = date, y = new_cases),  fill = wes_palettes$Zissou1[1], stat = "identity") + 
     scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0))+
     scale_y_continuous(expand = c(0,0)) +
     ggtitle(wt_title) + xntheme()
@@ -701,13 +701,11 @@ datebounds <- list(
   #"UK"            = c("2021-01-06", "2021-02-16")
 )
 
-owiddat    <- owiddat[!is.na(owiddat$new_cases),]
-totaldates <- owiddat$date
-totaldat   <- aggregate(owiddat$new_cases, by=list(totaldates), sum)
-colnames(totaldat) <- c("Date", "Cases")
-latest_date <- totaldat$Date[nrow(totaldat)]
+owiddat     <- owiddat[!is.na(owiddat$new_cases),]
+totaldat    <- owiddat[owiddat$location == "World",]
+latest_date <- totaldat$date[nrow(totaldat)]
 wt_title <- sprintf('Global Total =%s as at %s', 
-                    format(sum(totaldat$Cases), big.mark=",", scientific=FALSE), 
+                    format(sum(totaldat$new_cases), big.mark=",", scientific=FALSE), 
                     format.Date(latest_date, "%B %d, %Y"))
 
 plotslist[["WorldTotal"]][["xn"]] <- plot_worldtotal(totaldat)

@@ -17,7 +17,7 @@ for(country in names(plotslist)){
 
 for(country in names(multilist)){
   for(p in names(multilist[[country]])){
-    ggsave(filename = paste0(country, "-", p, "mult.png"),
+    ggsave(filename = paste0(country, "-", p, "mult.pdf"),
            plot     = multilist[[country]][[p]],
            path     = "Plots",
            height   = 10,
@@ -28,7 +28,7 @@ for(country in names(multilist)){
 }
 
 for(pair in names(comparelist)){
-  ggsave(filename = paste0("compare-", pair, ".png"),
+  ggsave(filename = paste0("compare-", pair, ".pdf"),
          plot     = comparelist[[pair]],
          path     = "Plots",
          height   = 10,
@@ -48,7 +48,7 @@ for(p in names(countyplotlist)){
 }
 
 for(p in names(worldplot)){
-  ggsave(filename = paste0("world-", p, ".png"),
+  ggsave(filename = paste0("world-", p, ".pdf"),
          plot     = worldplot[[p]],
          path     = "Plots",
          height   = 14,
