@@ -9,13 +9,13 @@ We can check this by plotting histograms and checking that they are centred arou
 
 \begin{figure}[H]
 \minipage{0.33\textwidth}
-  \includegraphics[width=\linewidth]{Ireland-residuals.png} \label{fig:ireland-residuals}
+  \includegraphics[width=\linewidth]{Ireland-residuals.pdf} \label{fig:ireland-residuals}
 \endminipage\hfill
 \minipage{0.33\textwidth}
-  \includegraphics[width=\linewidth]{Italy-residuals.png} \label{fig:italy-residuals}
+  \includegraphics[width=\linewidth]{Italy-residuals.pdf} \label{fig:italy-residuals}
 \endminipage\hfill
 \minipage{0.33\textwidth}
-  \includegraphics[width=\linewidth]{United States-residuals.png} \label{fig:usa-residuals}
+  \includegraphics[width=\linewidth]{United States-residuals.pdf} \label{fig:usa-residuals}
 \endminipage\hfill
 \caption{Normality checks, Ireland, Italy and United States}
 \end{figure}
@@ -74,32 +74,32 @@ We see that the additive seasonal method is a better choice for both model fit a
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Ireland-hw.png} \label{fig:ireland-hw}
+  \includegraphics[width=\linewidth]{Ireland-hw.pdf} \label{fig:ireland-hw}
 \endminipage\hfill
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Ireland-hwy.png} \label{fig:ireland-hwy}
+  \includegraphics[width=\linewidth]{Ireland-hwy.pdf} \label{fig:ireland-hwy}
 \endminipage
-\caption{HoldWinters model, Ireland}
+\caption{HoltWinters model, Ireland}
 \end{figure}
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Italy-hw.png} \label{fig:italy-hw}
+  \includegraphics[width=\linewidth]{Italy-hw.pdf} \label{fig:italy-hw}
 \endminipage\hfill
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Italy-hwy.png} \label{fig:italy-hwy}
+  \includegraphics[width=\linewidth]{Italy-hwy.pdf} \label{fig:italy-hwy}
 \endminipage
-\caption{HoldWinters model, Italy}
+\caption{HoltWinters model, Italy}
 \end{figure}
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{United States-hw.png} \label{fig:usa-hw}
+  \includegraphics[width=\linewidth]{United States-hw.pdf} \label{fig:usa-hw}
 \endminipage\hfill
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{United States-hwy.png} \label{fig:usa-hwy}
+  \includegraphics[width=\linewidth]{United States-hwy.pdf} \label{fig:usa-hwy}
 \endminipage
-\caption{HoldWinters model, United States}
+\caption{HoltWinters model, United States}
 \end{figure}
 
 
@@ -236,30 +236,30 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Ireland-arima.png} \label{fig:ireland-arima}
+  \includegraphics[width=\linewidth]{Ireland-arima.pdf} \label{fig:ireland-arima}
 \endminipage\hfill
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Ireland-arimay.png} \label{fig:ireland-arimay}
+  \includegraphics[width=\linewidth]{Ireland-arimay.pdf} \label{fig:ireland-arimay}
 \endminipage
 \caption{ARIMA model, Ireland}
 \end{figure}
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Italy-arima.png} \label{fig:italy-arima}
+  \includegraphics[width=\linewidth]{Italy-arima.pdf} \label{fig:italy-arima}
 \endminipage\hfill
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Italy-arimay.png} \label{fig:italy-arimay}
+  \includegraphics[width=\linewidth]{Italy-arimay.pdf} \label{fig:italy-arimay}
 \endminipage
 \caption{ARIMA model, Italy}
 \end{figure}
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{United States-arima.png} \label{fig:usa-arima}
+  \includegraphics[width=\linewidth]{United States-arima.pdf} \label{fig:usa-arima}
 \endminipage\hfill
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{United States-arimay.png} \label{fig:usa-arimay}
+  \includegraphics[width=\linewidth]{United States-arimay.pdf} \label{fig:usa-arimay}
 \endminipage
 \caption{ARIMA model, United States}
 \end{figure}
@@ -267,12 +267,12 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 \subsection{Neural network models}
 
 \begin{figure}[H]
-\includegraphics[width=0.9\textwidth]{NeuralNetNoHidden.png}
+\includegraphics[width=0.9\textwidth]{NeuralNetNoHidden.pdf}
 \caption{A linear regression model, or ARIMA$(p,0,0)$ model.}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics[width=0.9\textwidth]{NeuralNet.png}
+\includegraphics[width=0.9\textwidth]{NeuralNet.pdf}
 \caption{A neural network with $p$ inputs and one hidden layer with $k$ hidden neurons.}
 \end{figure}
 
@@ -286,30 +286,30 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Ireland-nn.png} \label{fig:ireland-nn}
+  \includegraphics[width=\linewidth]{Ireland-nn.pdf} \label{fig:ireland-nn}
 \endminipage\hfill
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Ireland-nny.png} \label{fig:ireland-nny}
+  \includegraphics[width=\linewidth]{Ireland-nny.pdf} \label{fig:ireland-nny}
 \endminipage
 \caption{Neural Network model, Ireland}
 \end{figure}
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Italy-nn.png} \label{fig:italy-nn}
+  \includegraphics[width=\linewidth]{Italy-nn.pdf} \label{fig:italy-nn}
 \endminipage\hfill
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{Italy-nny.png} \label{fig:italy-nny}
+  \includegraphics[width=\linewidth]{Italy-nny.pdf} \label{fig:italy-nny}
 \endminipage
 \caption{Neural Network model, Italy}
 \end{figure}
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{United States-nn.png} \label{fig:usa-nn}
+  \includegraphics[width=\linewidth]{United States-nn.pdf} \label{fig:usa-nn}
 \endminipage\hfill
 \minipage{0.48\textwidth}
-  \includegraphics[width=\linewidth]{United States-nny.png} \label{fig:usa-nny}
+  \includegraphics[width=\linewidth]{United States-nny.pdf} \label{fig:usa-nny}
 \endminipage
 \caption{Neural Network model, United States}
 \end{figure}
