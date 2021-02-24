@@ -367,7 +367,7 @@ yntheme <- function(){
 xntoyn <- function(xn) return(cumsum(xn))
 
 gg_scale_xy <- list(
-  scale_x_date(date_breaks = "5 day", date_labels = "%d-%b", expand = c(0,0)),
+  scale_x_date(date_breaks = "1 week", date_labels = "%d-%b", expand = c(0,0)),
   scale_y_continuous(expand = c(0,0)))
 
 basicmodx <- function(x, pars, len = 0){
@@ -477,16 +477,13 @@ covidPlots <- function(country, dateBounds, data){
   normdat <- expand.grid(q = qseq, a = aseq, b = bseq)
   abnorm  <- apply(normdat, 1, function(x) norm(x, countrydat$xn))
 
-  normdat$abnorm  <- normalize(abnorm)
+  normdat$abnorm  <- abnorm
   
   newnormdat <- normdat %>% 
     top_n(abnorm ,n = -0.07*nrow(.))
   
-  abnormy <- apply(newnormdat, 1, function(x) normy(x[1:3], countrydat$xn, countrydat$yn))
-  
   col_grad <- wes_palette("Zissou1", 20, type = "continuous")
   
-  newnormdat$abnormy  <- abnormy
   tileoptim <- normdat[which.min(normdat$abnorm),1:3]
   #tileoptim <- newnormdat[which.min(newnormdat$abnormy),1:3]
   optimpars <- c(tileoptim$q, tileoptim$a, tileoptim$b)
@@ -497,7 +494,7 @@ covidPlots <- function(country, dateBounds, data){
   basexn   <- basicmodx(countrydat$xn, optimpars, len = forecastlen)
   
   modeldat <- data.frame(date = c(countrydat$date,latest_date + 1:forecastlen),
-                         basexn = basexn, baseyn = xntoyn(basexn)+prevcases)
+                         basexn = basexn, baseyn = xntoyn(basexn) + prevcases)
   
   #Newtons method, r_1 = r_0 - f(r_0)/f'(r_0)
   base_r_zero <- (optimpars[2]/optimpars[3])^(1/(2*optimpars[1]))
@@ -569,7 +566,7 @@ covidPlots <- function(country, dateBounds, data){
     xlab("date") + ylab("") +
     scale_color_manual(values = wes_palettes$Rushmore1[c(3,3,5,5)]) +
     guides(colour = guide_legend(override.aes = list(linetype = 
-         c("a_n"="solid", "a"="dashed", "b_n"="solid", "b"="dashed")))) +
+         c("a"="dashed", "a_n"="solid", "b"="dashed", "b_n"="solid")))) +
     xntheme() + theme(legend.position = "right")
   
   #a,b,c1,c2,p1,p2,n1,n2
@@ -672,8 +669,9 @@ covidPlots <- function(country, dateBounds, data){
   
   plots[["hwarima"]] <- plot_hwarima(countrydat, modeldat, cols, labs)
   
+  nHidden <- max(1,floor(0.5*(1+auto.fit$arma[1]+auto.fit$arma[3])))
   #Box-Cox transformation with lambda=0 to ensure the forecasts stay positive.
-  nnfit   <- nnetar(dat_ts, p = auto.fit$arma[1], lambda = 0, repeats = 20, maxit = 50) 
+  nnfit   <- nnetar(dat_ts, p = auto.fit$arma[1], P = auto.fit$arma[3], size = nHidden, lambda = 0, repeats = 20, maxit = 50) 
   nn.fcst <- forecast(nnfit, h = forecastlen)
 
   nn.fcst$mean[nn.fcst$mean < 0] <- 0
@@ -694,13 +692,13 @@ covidPlots <- function(country, dateBounds, data){
 
 grigorDates <- c("2020-04-26", "2020-06-09")
 datebounds <- list(
-  "Italy"         = c("2021-01-02", "2021-01-30"),
-  "United States" = c("2021-01-06", "2021-01-30"), 
-  "Ireland"       = c("2021-01-08", "2021-01-30")
-  #"Germany"       = c("2020-01-06", "2021-01-26"), 
-  #"Netherlands"   = c("2020-01-06", "2021-01-26"), 
-  #"Spain"         = c("2020-01-06", "2021-01-26"), 
-  #"UK"            = c("2020-01-06", "2021-01-26")
+  "Italy"         = c("2021-01-02", "2021-02-16"),
+  "United States" = c("2021-01-06", "2021-02-16"), 
+  "Ireland"       = c("2021-01-12", "2021-02-16"),
+  "Germany"       = c("2021-01-06", "2021-02-16") 
+  #"Netherlands"   = c("2021-01-06", "2021-02-16"), 
+  #"Spain"         = c("2021-01-06", "2021-02-16"), 
+  #"UK"            = c("2021-01-06", "2021-02-16")
 )
 
 owiddat    <- owiddat[!is.na(owiddat$new_cases),]
@@ -815,19 +813,19 @@ multiphasePlots <- function(country, dates, data){
     normalize <- function(x){
       return((x-min(x))/(max(x)-min(x)))
     }
-    normdat$abnorm  <- normalize(abnorm)
-    newnormdat      <- normdat %>% top_n(abnorm,n = -0.1*nrow(.))
+    normdat$abnorm  <- abnorm
+    #newnormdat      <- normdat %>% top_n(abnorm,n = -0.1*nrow(.))
     
-    if(i == 1)
-      abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases + xntoyn(multimodx(phasedat$xn, multimodel, x[1:3], start=TRUE)), phasedat$yn))
-    else
-      abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases + xntoyn(multimodx(phasedat$xn, multimodel, x[1:3], oldp = phasepars[[i-1]]))[length(multimodel)+1:nrow(phasedat)], phasedat$yn))
+    #if(i == 1)
+    #  abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases + xntoyn(multimodx(phasedat$xn, multimodel, x[1:3], start=TRUE)), phasedat$yn))
+    #else
+    #  abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases + xntoyn(multimodx(phasedat$xn, multimodel, x[1:3], oldp = phasepars[[i-1]]))[length(multimodel)+1:nrow(phasedat)], phasedat$yn))
     
-    newnormdat$abnormy  <- normalize(abnormy)
-    newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
-    tileoptim <- newnormdat[which.min(newnormdat$abnorm),1:3]
+    #newnormdat$abnormy  <- normalize(abnormy)
+    #newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
+    tileoptim <- normdat[which.min(normdat$abnorm),1:3]
     #tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:3]
-    optimpars <- c(tileoptim$q,tileoptim$a, tileoptim$b)
+    optimpars <- c(tileoptim$q, tileoptim$a, tileoptim$b)
     
     phasepars[[i]] <- round(optimpars,3)
     
@@ -966,3 +964,4 @@ multilist <- list()
 for(country in names(multidates)){
   multilist[[country]] <- multiphasePlots(country, multidates[[country]], owiddat)
 }
+

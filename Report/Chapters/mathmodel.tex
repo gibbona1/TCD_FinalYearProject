@@ -68,6 +68,20 @@ As per the base and periodic models shown in \cite{grigor20}.
 
 \subsection{Moving average}
 
+Define the $2k+1$-day moving average of actual data $x_n^*$ by $x^*(k)$
+
+$\begin{aligned}
+x^*_n(1) &=\frac{x^*_{n-1} + x^*_n + x^*_{n+1}}{3},\quad 1\leq n < N \\
+x^*_0(1) &=\frac{x^*_0 + x^*_1}{2}\\
+x^*_N(1) &=\frac{x^*_{N-1} + x^*_N}{2}
+\end{aligned}$
+
+And then $$x_n^*(3):= x^*_n(x^*_n(1))$$ is the 7-day moving average of cases.
+
+Good baseline for model performance 
+
+(want $\norm{x-x^*}\approx\norm{x^*(3)-x^*}$ or better)
+
 \begin{figure}[H]
 \minipage{0.98\textwidth}
 \includegraphics[width=0.9\textwidth]{Ireland-mavgx3.png}
@@ -90,6 +104,20 @@ As per the base and periodic models shown in \cite{grigor20}.
 \end{figure}
 
 \subsection{Periodic model}
+
+Instead of constant parameters $a,b$, we vary them slightly over time:
+
+$a_n := a\rbr{1+c_1\rbr{\sin\rbr{\frac{2\pi}{p_1}\rbr{n-n_1}}}}$
+
+$b_n := b\rbr{1+c_2\rbr{\sin\rbr{\frac{2\pi}{p_2}\rbr{n-n_2}}}}$
+
+For new parameters $c_i,p_i,n_i, \ i=1,2$ where
+
+$c_i  \in [0.04, 0.2] \quad \text{small}$
+
+$n_i  \in 1,2,\dots,q$
+
+$p_i  \in 1,2,\dots,q$
 
 \subsubsection{Definitions and Theory}
 
