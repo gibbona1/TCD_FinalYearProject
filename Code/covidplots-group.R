@@ -430,11 +430,12 @@ covidPlots <- function(country, dateBounds, data){
                            yn   = data$total_cases[countryrows])
   countrydatfull <- countrydat[countrydat$date <= dateBounds[2],]
   
-  if(nrow(countrydat[countrydat$date < dateBounds[1],]) == 0)
-    prevcases <- 0
-  else
-    prevcases <- sum(countrydat$xn[countrydat$date < dateBounds[1]])
+  #if(nrow(countrydat[countrydat$date < dateBounds[1],]) == 0)
+  #  prevcases <- 0
+  #else
+  #  prevcases <- sum(countrydat$xn[countrydat$date < dateBounds[1]])
   
+  prevcases <- countrydat$yn[countrydat$date == dateBounds[1]-1]
   #Specific dates
   countrydat <- countrydat[countrydat$date >= dateBounds[1] & countrydat$date <= dateBounds[2],]
   #countrydat$xn[countrydat$xn < 0] <- 0
@@ -480,7 +481,7 @@ covidPlots <- function(country, dateBounds, data){
   normdat$abnorm  <- abnorm
   
   newnormdat <- normdat %>% 
-    top_n(abnorm ,n = -0.07*nrow(.))
+    top_n(abnorm, n = -0.07*nrow(.))
   
   col_grad <- wes_palette("Zissou1", 20, type = "continuous")
   
@@ -490,6 +491,8 @@ covidPlots <- function(country, dateBounds, data){
   plots[["combnorm"]] <- ggplot(newnormdat, aes(x = a, y = b, z = abnorm)) +
     geom_contour_filled() +
     scale_fill_brewer(palette = "Spectral")
+  
+  q <- optimpars[1]
 
   basexn   <- basicmodx(countrydat$xn, optimpars, len = forecastlen)
   
@@ -497,7 +500,7 @@ covidPlots <- function(country, dateBounds, data){
                          basexn = basexn, baseyn = xntoyn(basexn) + prevcases)
   
   #Newtons method, r_1 = r_0 - f(r_0)/f'(r_0)
-  base_r_zero <- (optimpars[2]/optimpars[3])^(1/(2*optimpars[1]))
+  base_r_zero <- (optimpars[2]/optimpars[3])^(1/(2*q))
   base_r_one  <- base_r_zero -basef(base_r_zero,optimpars)/basefprime(base_r_zero,optimpars)
   base_r_one  <- round(base_r_one,3)
   
@@ -543,12 +546,12 @@ covidPlots <- function(country, dateBounds, data){
                           n1 = n_1seq,  n2 = n_2seq)
   
   
-  pernorm <- apply(normdatp, 1, function(x) normper(x, q = optimpars[1], countrydat$xn))
+  pernorm <- apply(normdatp, 1, function(x) normper(x, q = q, countrydat$xn))
   normdatp$pernorm <- pernorm
   
   peroptim   <- normdatp[which.min(pernorm),1:8]
   optpernorm <- normdatp[which.min(pernorm),9]
-  modeldat$modxPeriodic <- modxper(as.numeric(peroptim),countrydat$xn, q = optimpars[1], forecastlen)
+  modeldat$modxPeriodic <- modxper(as.numeric(peroptim),countrydat$xn, q = q, forecastlen)
   
   peroptim <- round(as.numeric(peroptim),3)
   
@@ -572,20 +575,18 @@ covidPlots <- function(country, dateBounds, data){
   #a,b,c1,c2,p1,p2,n1,n2
   labs$periodic <- list(bquote("periodic model,"~x[n]*"=new cases/day;"
                               ~a*"="*.(peroptim[1])*","~ b*"="*.(peroptim[2])*","
-                              ~q*"="*.(optimpars[1])*";"~"||x*-x||="*.(optpernorm)*";"
+                              ~q*"="*.(q)*";"~"||x*-x||="*.(optpernorm)*";"
                               ~c[1]*"="*.(peroptim[3])*","~p[1]*"="*.(peroptim[5])*","
                               ~n[1]*"="*.(peroptim[7])*","~c[2]*"="*.(peroptim[4])*","
                               ~p[2]*"="*.(peroptim[6])*","~n[2]*"="*.(peroptim[8])))
   
   plots[["periodic"]] <- plot_periodic(countrydat, modeldat, cols, labs)
   
-  dat_ts <- ts(data = countrydat$xn, frequency = optimpars[1])
-  
-  countrydat$resid <- residuals(naive(dat_ts))
+  dat_ts <- ts(data = countrydat$xn, frequency = q)
   
   g1 <- autoplot(dat_ts) + theme(axis.title = element_blank())
-  g2 <- ggAcf(dat_ts) + ggtitle("")
-  g3 <- ggPacf(dat_ts) + ggtitle("")
+  g2 <- ggAcf(dat_ts)    + ggtitle("")
+  g3 <- ggPacf(dat_ts)   + ggtitle("")
   
   plots[["tsdisplay"]] <- grid.arrange(grobs = list(g1,g2,g3),
     layout_matrix = rbind(c(1, 1), c(2, 3)))
@@ -605,13 +606,10 @@ covidPlots <- function(country, dateBounds, data){
             panel.grid = element_blank())
   } else{
     hwmethod   <- "additive"
-    xnonlylast <- c(rep(NA, nrow(countrydat)-1), countrydat$xn[length(countrydat$xn)])
     #lambda=0 ensures values stay positive
     hwfcst     <- forecast::hw(dat_ts, h = forecastlen, seasonal = hwmethod, lambda = 0)
-    hwfcst$lower[hwfcst$lower[,2] < 0,2] <- 0
-    #hwfcst$upper[hwfcst$upper[,2] < 0,2] <- 0
-    #hwfcst$mean[hwfcst$mean < 0] <- 0
-    hwfcst$fitted[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
+    
+    hwfcst$fitted[1:q] <- countrydat$xn[1:q]
     modeldat$hwxn <- c(hwfcst$fitted, hwfcst$mean)
     modeldat$hwlo <- c(hwfcst$fitted, hwfcst$lower[,2])
     modeldat$hwhi <- c(hwfcst$fitted, hwfcst$upper[,2])
@@ -631,17 +629,14 @@ covidPlots <- function(country, dateBounds, data){
   }
     
   auto.fit <- auto.arima(dat_ts, lambda = 0) #keep values positive
-  getArmaModel <- function(arma){
-    return(paste0("ARIMA(", paste0(arma[c(1,6,2)],collapse = ","), ")(",
-                  paste0(arma[c(3,7,4)], collapse = ","), ")[", arma[5], "]"))
+  
+  getArmaModel <- function(arma, pdq = c(1,6,2), PDQ = c(3,7,4), s=5){
+    return(paste0("ARIMA(", paste0(arma[pdq],collapse = ","), ")(",
+                  paste0(arma[PDQ], collapse = ","), ")[", arma[s], "]"))
   }
   
   arima.fcst <- forecast(auto.fit, level = c(80, 95), h = forecastlen)
-  arima.fcst$lower[arima.fcst$lower[,2] < 0,2] <- 0
-  #arima.fcst$upper[arima.fcst$upper[,2] < 0,2] <- 0
-  arima.fcst$fitted[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
-  
-  #arima.fcst$mean[arima.fcst$mean < 0] <- 0
+  arima.fcst$fitted[1:q] <- countrydat$xn[1:q]
   
   arimanorm <- modnorm(countrydat$xn,arima.fcst$fitted)
   
@@ -653,9 +648,9 @@ covidPlots <- function(country, dateBounds, data){
   modeldat$arimalo <- c(auto.fit$fitted,arima.fcst$lower[,2])
   modeldat$arimahi <- c(auto.fit$fitted,arima.fcst$upper[,2])
   
-  modeldat$arimaxn[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
-  modeldat$arimalo[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
-  modeldat$arimahi[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
+  modeldat$arimaxn[1:q] <- countrydat$xn[1:q]
+  modeldat$arimalo[1:q] <- countrydat$xn[1:q]
+  modeldat$arimahi[1:q] <- countrydat$xn[1:q]
   
   modeldat$arimayn  <- xntoyn(modeldat$arimaxn) + prevcases
   modeldat$arimaylo <- xntoyn(modeldat$arimalo) + prevcases
@@ -675,7 +670,7 @@ covidPlots <- function(country, dateBounds, data){
   nn.fcst <- forecast(nnfit, h = forecastlen)
 
   nn.fcst$mean[nn.fcst$mean < 0] <- 0
-  nn.fcst$fitted[1:optimpars[1]] <- countrydat$xn[1:optimpars[1]]
+  nn.fcst$fitted[1:q] <- countrydat$xn[1:q]
  
   modeldat$nnxn <- c(nn.fcst$fitted, nn.fcst$mean)
   modeldat$nnyn <- xntoyn(modeldat$nnxn) + prevcases

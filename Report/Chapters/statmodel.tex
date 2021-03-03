@@ -62,6 +62,65 @@ $F_{N+k}=L_N+k\cdot b_N+S_{N+k-s}$
 
 \subsubsection{implementation in R}
 
+\begin{lstlisting}[frame=single]
+#' dat_ts A time-series of the ovservations x_n
+#' countrydat A data.frame with the required info to plot case numbers
+#' modeldat A data.frame with model data to plot (has forecastlen more rows than countrydat)
+#' cols A list of colours for plotting
+#' labs A list of labels for plotting
+#' forecastlen The forecast length 
+#' q The parameter for the basic model, in order tohave statistical models comparable with mathematical models
+#' prevcases The cumulative cases prior to the first day in the range of countrydat
+
+    #lambda=0 ensures values stay positive
+    hwfcst     <- forecast::hw(dat_ts, h = forecastlen, seasonal = hwmethod, lambda = 0)
+    #ensure first q values are equal to the actual data
+    hwfcst$fitted[1:q] <- countrydat$xn[1:q]
+    modeldat$hwxn <- c(hwfcst$fitted, hwfcst$mean)
+    modeldat$hwlo <- c(hwfcst$fitted, hwfcst$lower[,2])
+    modeldat$hwhi <- c(hwfcst$fitted, hwfcst$upper[,2])
+    
+    modeldat$hwyn  <- xntoyn(modeldat$hwxn)+prevcases
+    modeldat$hwylo <- xntoyn(modeldat$hwlo)+prevcases
+    modeldat$hwyhi <- xntoyn(modeldat$hwhi)+prevcases
+    
+    hwnorm <- modnorm(countrydat$xn,hwfcst$fitted)
+
+    labs$hw   <- paste0("HoltWinters algorithm,  ||x*-x||=", modnorm(countrydat$xn,hwfcst$fitted))
+    labs$hwy  <- paste0("HoltWinters algorithm,  ||y*-y||=", modnorm(countrydat$yn,modeldat$hwyn[1:nrow(countrydat)]))
+    labs$hwpi <- "HW 95% Prediction Interval"
+    
+    plots[["hw"]]  <- plot_hw(countrydat, modeldat, cols, labs)
+    plots[["hwy"]] <- plot_hwy(countrydat, modeldat, cols, labs)
+\end{lstlisting}
+
+and our plotting functions look like 
+
+\begin{lstlisting}[frame=single]
+plot_hw <- function(countrydat, modeldat, cols, labs){
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
+    geom_ribbon(data = modeldat, aes(x = date, ymin = hwlo, ymax = hwhi, fill = "hw"), alpha = 0.5) +
+    geom_point(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) + 
+    geom_line(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) +
+    geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
+    geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
+    geom_point(data = modeldat,aes(x = date, y = modxPeriodic, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = modxPeriodic, colour = "periodic")) +
+    gg_scale_xy + 
+    guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
+           fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
+    scale_fill_manual(labels = c("actual" = labs$xn, "hw" = labs$hwpi),
+                      values = c("actual" = cols$xn, "hw" = cols$hwpi))+ 
+    scale_colour_manual(labels = c("base" = labs$basexn, "hw" = labs$hw, "periodic" = labs$periodic),
+                        values = c("base" = cols$basexn, "hw" = cols$hw, "periodic" = cols$periodic)
+                        ) +
+    xntheme()
+  return(p)
+}
+
+\end{lstlisting}
+
 
 We see that the additive seasonal method is a better choice for both model fit and confidence interval size.
 

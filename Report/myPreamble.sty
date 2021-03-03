@@ -14,6 +14,18 @@
 %\usepackage{thmtools}
 \usepackage[labelfont=bf]{caption}
 \usepackage{imakeidx}
+\usepackage{color}
+\definecolor{commentgreen}{rgb}{0,0.6,0}
+\usepackage{listings, relsize}
+\lstset{
+language=R,
+literate={<-}{{$\gets$}}1,
+basicstyle=\smaller,
+commentstyle=\rmfamily\smaller\color{commentgreen},
+showstringspaces=false,%
+xleftmargin=4ex
+}
+\lstset{escapeinside={(*}{*)}}
 \usepackage[colorlinks, linktoc=section]{hyperref}
 \AtBeginDocument{
 \hypersetup{
