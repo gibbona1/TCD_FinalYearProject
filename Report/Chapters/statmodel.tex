@@ -60,9 +60,9 @@ $F_{N+k}=L_N+k\cdot b_N+S_{N+k-s}$
 
 \subsubsection{Forecasting}
 
-\subsubsection{implementation in R}
+\subsubsection{Implementation in R}
 
-\begin{lstlisting}[frame=single]
+\begin{lstlisting}[frame=single, caption = {Algorithm for HoltWinters Model}]
 #' dat_ts A time-series of the ovservations x_n
 #' countrydat A data.frame with the required info to plot case numbers
 #' modeldat A data.frame with model data to plot (has forecastlen more rows than countrydat)
@@ -94,9 +94,9 @@ $F_{N+k}=L_N+k\cdot b_N+S_{N+k-s}$
     plots[["hwy"]] <- plot_hwy(countrydat, modeldat, cols, labs)
 \end{lstlisting}
 
-and our plotting functions look like 
+and our plotting function for daily cases looks like the following
 
-\begin{lstlisting}[frame=single]
+\begin{lstlisting}[frame=single, caption = {Plot HoltWinters Model}]
 plot_hw <- function(countrydat, modeldat, cols, labs){
   p <- ggplot(countrydat, binwidth = 0) + 
     geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
@@ -121,14 +121,17 @@ plot_hw <- function(countrydat, modeldat, cols, labs){
 
 \end{lstlisting}
 
+\subsubsection{Plots}
 
 We see that the additive seasonal method is a better choice for both model fit and confidence interval size.
 
 \begin{figure}[H]
+\begin{center}
 \minipage{0.98\textwidth}
 \includegraphics[width=0.9\textwidth]{hwaddmultcompare.png}
 \endminipage
 \caption{Comparison between HoltWinters multiplicative (left, red outline) and additive (right, green outline)algorithms, at some point during the research}
+\end{center}
 \end{figure}
 
 \begin{figure}[H]
@@ -290,8 +293,79 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 
 \subsubsection{Forecasting}
 
-\subsubsection{implementation in R}
+\subsubsection{Implementation in R}
 
+\begin{lstlisting}[frame=single, caption = {Algorithm for ARIMA Model}]
+#' dat_ts A time-series of the ovservations x_n
+#' countrydat A data.frame with the required info to plot case numbers
+#' modeldat A data.frame with model data to plot (has forecastlen more rows than countrydat)
+#' cols A list of colours for plotting
+#' labs A list of labels for plotting
+#' forecastlen The forecast length 
+#' q The parameter for the basic model, in order tohave statistical models comparable with mathematical models
+#' prevcases The cumulative cases prior to the first day in the range of countrydat
+
+    #lambda=0 ensures values stay positive
+    auto.fit <- auto.arima(dat_ts, lambda = 0)
+  
+    getArmaModel <- function(arma, pdq = c(1,6,2), PDQ = c(3,7,4), s=5){
+      return(paste0("ARIMA(", paste0(arma[pdq],collapse = ","), ")(",
+                 paste0(arma[PDQ], collapse = ","), ")[", arma[s], "]"))
+    }
+  
+    arima.fcst <- forecast(auto.fit, level = c(80, 95), h = forecastlen)
+    arima.fcst$fitted[1:q] <- countrydat$xn[1:q]
+  
+    arimanorm <- modnorm(countrydat$xn,arima.fcst$fitted)
+  
+    arimalabs    <- getArmaModel(auto.fit$arma)
+    abs$arima   <- paste0(arimalabs, ", ||x*-x||=", arimanorm)
+    abs$arimapi <- "ARIMA 95% Prediction Interval"
+    
+    modeldat$arimaxn <- c(auto.fit$fitted, arima.fcst$mean)
+    modeldat$arimalo <- c(auto.fit$fitted,arima.fcst$lower[,2])
+    modeldat$arimahi <- c(auto.fit$fitted,arima.fcst$upper[,2])
+  
+    modeldat$arimaxn[1:q] <- countrydat$xn[1:q]
+    modeldat$arimalo[1:q] <- countrydat$xn[1:q]
+    modeldat$arimahi[1:q] <- countrydat$xn[1:q]
+  
+    modeldat$arimayn  <- xntoyn(modeldat$arimaxn) + prevcases
+    modeldat$arimaylo <- xntoyn(modeldat$arimalo) + prevcases
+    modeldat$arimayhi <- xntoyn(modeldat$arimahi) + prevcases
+
+    labs$arimay  <- paste0(arimalabs, ", ||y*-y||=", modnorm(countrydat$yn,modeldat$arimayn[1:nrow(countrydat)]))
+  
+    plots[["arima"]]   <- plot_arima(countrydat, modeldat, cols, labs)
+    plots[["arimay"]] <- plot_arimay(countrydat, modeldat, cols, labs)
+\end{lstlisting}
+
+and our plotting function for daily cases looks like the following
+
+\begin{lstlisting}[frame=single, caption = {Plot ARIMA Model}]
+plot_arima <- function(countrydat, modeldat, cols, labs){
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
+    geom_ribbon(data = modeldat, aes(x = date, ymin = arimalo, ymax = arimahi, fill = "pi"), alpha = 0.5) +
+    geom_point(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) + 
+    geom_line(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) +
+    geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
+    geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
+    geom_point(data = modeldat,aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
+    gg_scale_xy + 
+    guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
+           fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
+    scale_fill_manual(values = c("actual" = cols$xn, "pi" = cols$arimapi), 
+                      labels = c("actual" = labs$xn, "pi" = labs$arimapi)) +
+    scale_colour_manual(values = c("arima" = cols$arima, "base" = cols$basexn, "periodic" = cols$periodic), 
+                        labels = c("arima" = labs$arima, "base" = labs$basexn, "periodic" = labs$periodic)) +
+    xntheme()
+  return(p)
+}
+\end{lstlisting}
+
+\subsubsection{Plots}
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
@@ -341,7 +415,63 @@ where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$
 
 \subsubsection{Forecasting}
 
-\subsubsection{implementation in R}
+\subsubsection{Implementation in R}
+
+\begin{lstlisting}[frame=single, caption = {Algorithm for Neural Network Model}]
+#' dat_ts A time-series of the ovservations x_n
+#' countrydat A data.frame with the required info to plot case numbers
+#' modeldat A data.frame with model data to plot (has forecastlen more rows than countrydat)
+#' cols A list of colours for plotting
+#' labs A list of labels for plotting
+#' forecastlen The forecast length 
+#' q The parameter for the basic model, in order tohave statistical models comparable with mathematical models
+#' prevcases The cumulative cases prior to the first day in the range of countrydat
+
+#requires arima auto.fit object from earlier
+   nHidden <- max(1,floor(0.5*(1+auto.fit$arma[1]+auto.fit$arma[3])))
+  #Box-Cox transformation with lambda=0 to ensure the forecasts stay positive.
+  nnfit   <- nnetar(dat_ts, p = auto.fit$arma[1], P = auto.fit$arma[3], size = nHidden, lambda = 0, repeats = 20, maxit = 50) 
+  nn.fcst <- forecast(nnfit, h = forecastlen)
+
+  nn.fcst$mean[nn.fcst$mean < 0] <- 0
+  nn.fcst$fitted[1:q] <- countrydat$xn[1:q]
+ 
+  modeldat$nnxn <- c(nn.fcst$fitted, nn.fcst$mean)
+  modeldat$nnyn <- xntoyn(modeldat$nnxn) + prevcases
+  
+  labs$nn  <- paste0(nnfit$method, ", ||x*-x||=", modnorm(countrydat$xn,nn.fcst$fitted))
+  labs$nny <- paste0(nnfit$method, ", ||y*-y||=", modnorm(countrydat$yn,modeldat$nnyn[1:nrow(countrydat)]))
+  
+  plots[["nn"]] <- plot_nn(countrydat, modeldat, cols, labs)
+  
+  plots[["nny"]] <- plot_nny(countrydat, modeldat, cols, labs)
+\end{lstlisting}
+
+and our plotting function for daily cases looks like the following
+
+\begin{lstlisting}[frame=single, caption = {Plot Neural Network Model}]
+plot_nn <- function(countrydat, modeldat, cols, labs){
+  p <- ggplot(countrydat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
+    geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
+    geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
+    geom_point(data = modeldat,aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
+    geom_point(data = modeldat, aes(x = date, y = nnxn, colour = "nn")) + 
+    geom_line(data = modeldat, aes(x = date, y = nnxn, colour = "nn")) +
+    gg_scale_xy + 
+    guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
+           fill=guide_legend(ncol=1,nrow=1,byrow=TRUE)) +
+    scale_fill_manual(values = c("actual" = cols$xn), 
+                      labels = c("actual" = labs$xn)) +
+    scale_colour_manual(values = c("base" = cols$basexn, "nn" = cols$nn, "periodic" = cols$periodic), 
+                        labels = c("base" = labs$basexn, "nn" = labs$nn, "periodic" = labs$periodic)) +
+    xntheme()
+  return(p)
+}
+\end{lstlisting}
+
+\subsubsection{Plots}
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}

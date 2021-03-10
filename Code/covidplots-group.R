@@ -95,8 +95,8 @@ plot_periodic <- function(countrydat, modeldat, cols, labs){
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
     geom_line(data = countrydat, aes(x = date, y = mavgx3, colour = "x3")) +
-    geom_point(data = modeldat,aes(x = date, y = modxPeriodic, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = modxPeriodic, colour = "periodic")) +
+    geom_point(data = modeldat,aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=1,byrow=TRUE)) +
@@ -108,16 +108,34 @@ plot_periodic <- function(countrydat, modeldat, cols, labs){
   return(p)
 }
 
+plot_periodicy <- function(countrydat, modeldat, cols, labs){
+  p <- ggplot(countrydat) + 
+    geom_point(aes(x = date, y = yn, colour = "blue")) + 
+    geom_line(aes(x = date, y = yn, colour = "blue")) +
+    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
+    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
+    geom_point(data = modeldat,aes(x = date, y = periodicy, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodicy, colour = "periodic")) +
+    gg_scale_xy + 
+    guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE)) +
+    scale_colour_manual(values = c("base" = cols$baseyn, "blue" = cols$yn, "periodic" = cols$periodic), 
+                        labels = c("base" = labs$baseyn, "blue" = labs$yn, "periodic" = labs$periodicy),
+                        guide = guide_legend(override.aes = list(
+                          shape = c("base" = 1, "blue"=16, "periodic"=16)))) +
+    yntheme()
+  return(p)
+}
+
 plot_hw <- function(countrydat, modeldat, cols, labs){
   p <- ggplot(countrydat, binwidth = 0) + 
-    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
+    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") +
     geom_ribbon(data = modeldat, aes(x = date, ymin = hwlo, ymax = hwhi, fill = "hw"), alpha = 0.5) +
-    geom_point(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) + 
+    geom_point(data = modeldat, aes(x = date, y = hwxn, colour = "hw"), shape = 5) + 
     geom_line(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) +
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
-    geom_point(data = modeldat,aes(x = date, y = modxPeriodic, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = modxPeriodic, colour = "periodic")) +
+    geom_point(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
@@ -139,15 +157,17 @@ plot_hwy <- function(countrydat, modeldat, cols, labs){
     geom_line(data = modeldat, aes(x = date, y = hwyn, colour = "hw")) +
     geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
     geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
+    geom_point(data = modeldat,aes(x = date, y = periodicy, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodicy, colour = "periodic")) +
     gg_scale_xy + 
-    guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
+    guides(colour=guide_legend(ncol=1,nrow=4,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=1,byrow=TRUE)) +
     scale_fill_manual(values = c("pi" = cols$hwpi), 
                       labels = c("pi" = labs$hwpi)) +
-    scale_colour_manual(values = c("actual" = cols$xn, "base" = cols$baseyn, "blue" = cols$yn, "hw" = cols$hw), 
-                        labels = c("actual" = labs$xn, "base" = labs$baseyn, "blue" = labs$yn, "hw" = labs$hwy),
+    scale_colour_manual(values = c("base" = cols$baseyn, "blue" = cols$yn, "hw" = cols$hw, "periodic" = cols$periodic), 
+                        labels = c("base" = labs$baseyn, "blue" = labs$yn, "hw" = labs$hwy, "periodic" = labs$periodicy),
                         guide = guide_legend(override.aes = list(
-                          shape = c("actual" = 16, "base" = 1, "blue"=16, "hw" = 5)))) +
+                          shape = c("base" = 1, "blue"=16, "hw" = 5, "periodic"=16)))) +
     yntheme()
   return(p)
 }
@@ -160,8 +180,8 @@ plot_arima <- function(countrydat, modeldat, cols, labs){
     geom_line(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) +
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
-    geom_point(data = modeldat,aes(x = date, y = modxPeriodic, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = modxPeriodic, colour = "periodic")) +
+    geom_point(data = modeldat,aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
@@ -182,13 +202,15 @@ plot_arimay <- function(countrydat, modeldat, cols, labs){
     geom_line(data = modeldat, aes(x = date, y = arimayn, colour = "arima")) +
     geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
     geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
+    geom_point(data = modeldat,aes(x = date, y = periodicy, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodicy, colour = "periodic")) +
     gg_scale_xy + 
     scale_fill_manual(values = c("pi" = cols$arimapi), 
                       labels = c("pi" = labs$arimapi)) +
-    scale_colour_manual(values = c("arima" = cols$arima, "base" = cols$baseyn, "blue" = cols$yn), 
-                        labels = c("arima" = labs$arimay, "base" = labs$baseyn, "blue" = labs$yn),
+    scale_colour_manual(values = c("arima" = cols$arima, "base" = cols$baseyn, "blue" = cols$yn, "periodic" = cols$periodic), 
+                        labels = c("arima" = labs$arimay, "base" = labs$baseyn, "blue" = labs$yn, "periodic" = labs$periodicy),
                         guide = guide_legend(override.aes = list(
-                          shape = c("arima" = 2, "base" = 1, "blue"=16)))) +
+                          shape = c("arima" = 2, "base" = 1, "blue"=16, "periodic" = 16)))) +
     yntheme()
   return(p)
 }
@@ -216,8 +238,8 @@ plot_nn <- function(countrydat, modeldat, cols, labs){
     geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
     geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
     geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
-    geom_point(data = modeldat,aes(x = date, y = modxPeriodic, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = modxPeriodic, colour = "periodic")) +
+    geom_point(data = modeldat,aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
     geom_point(data = modeldat, aes(x = date, y = nnxn, colour = "nn")) + 
     geom_line(data = modeldat, aes(x = date, y = nnxn, colour = "nn")) +
     gg_scale_xy + 
@@ -239,11 +261,13 @@ plot_nny <- function(countrydat, modeldat, cols, labs){
     geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
     geom_point(data = modeldat, aes(x = date, y = nnyn, colour = "nn"), shape = 0) + 
     geom_line(data = modeldat, aes(x = date, y = nnyn, colour = "nn")) +
+    geom_point(data = modeldat,aes(x = date, y = periodicy, colour = "periodic")) +
+    geom_line(data = modeldat, aes(x = date, y = periodicy, colour = "periodic")) +
     gg_scale_xy + 
-    scale_colour_manual(values = c("base" = cols$baseyn, "blue" = cols$yn, "nn" = cols$nn), 
-                        labels = c("base" = labs$baseyn, "blue" = labs$yn, "nn" = labs$nny),
+    scale_colour_manual(values = c("base" = cols$baseyn, "blue" = cols$yn, "nn" = cols$nn, "periodic" = cols$periodic), 
+                        labels = c("base" = labs$baseyn, "blue" = labs$yn, "nn" = labs$nny, "periodic" = labs$periodicy),
                         guide = guide_legend(override.aes = list(
-                          shape = c("base" = 1, "blue"=16, "nn" = 0)))) +
+                          shape = c("base" = 1, "blue"=16, "nn" = 0, "periodic" = 16)))) +
     yntheme()
   return(p)
 }
@@ -345,6 +369,7 @@ xntheme <- function(){
 yntheme <- function(){
   p <- theme(axis.text.x        = element_text(vjust = 0.5),
              axis.title         = element_blank(),
+             axis.line          = element_line(),
              panel.background   = element_rect(fill  = "grey"),
              panel.grid         = element_line(colour = "darkgrey"),
              panel.grid.major.x = element_blank(),
@@ -435,7 +460,7 @@ covidPlots <- function(country, dateBounds, data){
   #else
   #  prevcases <- sum(countrydat$xn[countrydat$date < dateBounds[1]])
   
-  prevcases <- countrydat$yn[countrydat$date == dateBounds[1]-1]
+  prevcases <- countrydat$yn[countrydat$date == as.Date(dateBounds[1])-1]
   #Specific dates
   countrydat <- countrydat[countrydat$date >= dateBounds[1] & countrydat$date <= dateBounds[2],]
   #countrydat$xn[countrydat$xn < 0] <- 0
@@ -489,10 +514,12 @@ covidPlots <- function(country, dateBounds, data){
   #tileoptim <- newnormdat[which.min(newnormdat$abnormy),1:3]
   optimpars <- c(tileoptim$q, tileoptim$a, tileoptim$b)
   plots[["combnorm"]] <- ggplot(newnormdat, aes(x = a, y = b, z = abnorm)) +
-    geom_contour_filled() +
+    geom_contour_filled() + labs(fill = "||x-x*||") +
     scale_fill_brewer(palette = "Spectral")
   
   q <- optimpars[1]
+  a <- optimpars[2]
+  b <- optimpars[3]
 
   basexn   <- basicmodx(countrydat$xn, optimpars, len = forecastlen)
   
@@ -500,7 +527,7 @@ covidPlots <- function(country, dateBounds, data){
                          basexn = basexn, baseyn = xntoyn(basexn) + prevcases)
   
   #Newtons method, r_1 = r_0 - f(r_0)/f'(r_0)
-  base_r_zero <- (optimpars[2]/optimpars[3])^(1/(2*q))
+  base_r_zero <- (a/b)^(1/(2*q))
   base_r_one  <- base_r_zero -basef(base_r_zero,optimpars)/basefprime(base_r_zero,optimpars)
   base_r_one  <- round(base_r_one,3)
   
@@ -534,9 +561,9 @@ covidPlots <- function(country, dateBounds, data){
   plots[["mavgx3"]] <- plot_mavgx3(countrydat, modeldat, cols, labs)
   
   #parameters of the form (ci,pi,ni)
-  ##an = a1 + c1 sin(2??/p1 (n ??? n1))
-  aseqper <- optimpars[2]*seq(from = 0.8, to = 1.2, length.out = 5)
-  bseqper <- optimpars[3]*seq(from = 0.8, to = 1.2, length.out = 5)
+  ##an = a(1 + c1 sin(2pi/p1 (n - n1)))
+  aseqper <- a*seq(from = 0.8, to = 1.2, length.out = 5)
+  bseqper <- b*seq(from = 0.8, to = 1.2, length.out = 5)
   c_1seq  <- c_2seq <- seq(0.04, 0.2, length.out = 10)
   n_1seq  <- n_2seq <- c(1,7)
   p_1seq  <- p_2seq <- 6:7
@@ -545,13 +572,16 @@ covidPlots <- function(country, dateBounds, data){
                           p1 = p_1seq,  p2 = p_2seq,
                           n1 = n_1seq,  n2 = n_2seq)
   
-  
   pernorm <- apply(normdatp, 1, function(x) normper(x, q = q, countrydat$xn))
   normdatp$pernorm <- pernorm
   
   peroptim   <- normdatp[which.min(pernorm),1:8]
   optpernorm <- normdatp[which.min(pernorm),9]
-  modeldat$modxPeriodic <- modxper(as.numeric(peroptim),countrydat$xn, q = q, forecastlen)
+  
+  modeldat$periodic  <- modxper(as.numeric(peroptim),countrydat$xn, q = q, forecastlen)
+  modeldat$periodicy <- xntoyn(modeldat$periodic) + prevcases
+  
+  optpernormy <- modnorm(countrydat$yn, modeldat$periodicy[1:nrow(countrydat)])
   
   peroptim <- round(as.numeric(peroptim),3)
   
@@ -580,7 +610,18 @@ covidPlots <- function(country, dateBounds, data){
                               ~n[1]*"="*.(peroptim[7])*","~c[2]*"="*.(peroptim[4])*","
                               ~p[2]*"="*.(peroptim[6])*","~n[2]*"="*.(peroptim[8])))
   
+  labs$periodicy <- list(bquote("periodic model,"~y[n]*"=new cases/day;"
+                               ~a*"="*.(peroptim[1])*","~ b*"="*.(peroptim[2])*","
+                               ~q*"="*.(q)*";"~"||x*-x||="*.(optpernormy)*";"
+                               ~c[1]*"="*.(peroptim[3])*","~p[1]*"="*.(peroptim[5])*","
+                               ~n[1]*"="*.(peroptim[7])*","~c[2]*"="*.(peroptim[4])*","
+                               ~p[2]*"="*.(peroptim[6])*","~n[2]*"="*.(peroptim[8])))
+  
   plots[["periodic"]] <- plot_periodic(countrydat, modeldat, cols, labs)
+  
+  plots[["periodicy"]] <- plot_periodicy(countrydat, modeldat, cols, labs)
+  
+  #Statistical methods using timeseries forecasting 
   
   dat_ts <- ts(data = countrydat$xn, frequency = q)
   
@@ -623,7 +664,7 @@ covidPlots <- function(country, dateBounds, data){
     labs$hw   <- paste0("HoltWinters algorithm,  ||x*-x||=", modnorm(countrydat$xn,hwfcst$fitted))
     labs$hwy  <- paste0("HoltWinters algorithm,  ||y*-y||=", modnorm(countrydat$yn,modeldat$hwyn[1:nrow(countrydat)]))
     labs$hwpi <- "HW 95% Prediction Interval"
-    
+   
     plots[["hw"]]  <- plot_hw(countrydat, modeldat, cols, labs)
     plots[["hwy"]] <- plot_hwy(countrydat, modeldat, cols, labs)
   }
@@ -631,7 +672,7 @@ covidPlots <- function(country, dateBounds, data){
   auto.fit <- auto.arima(dat_ts, lambda = 0) #keep values positive
   
   getArmaModel <- function(arma, pdq = c(1,6,2), PDQ = c(3,7,4), s=5){
-    return(paste0("ARIMA(", paste0(arma[pdq],collapse = ","), ")(",
+    return(paste0("ARIMA(", paste0(arma[pdq], collapse = ","), ")(",
                   paste0(arma[PDQ], collapse = ","), ")[", arma[s], "]"))
   }
   
@@ -712,8 +753,8 @@ for(country in names(datebounds)){
 multidates <- list(
   "Italy"         = list(c("2020-12-16", "2021-01-01"),
                    c("2021-01-02", "2021-01-30")),
-  "United States" = list(c("2020-12-16", "2021-01-08"),
-                   c("2021-01-09", "2021-01-30")),
+  "United States" = list(c("2020-11-16", "2021-01-06"),
+                   c("2021-01-07", "2021-01-30")),
   "Ireland"       = list(c("2020-12-16", "2021-01-07"),
                    c("2021-01-08", "2021-01-30"))
 )
@@ -820,6 +861,10 @@ multiphasePlots <- function(country, dates, data){
     #tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:3]
     optimpars <- c(tileoptim$q, tileoptim$a, tileoptim$b)
     
+    q <- optimpars[1]
+    a <- optimpars[2]
+    b <- optimpars[3]
+    
     phasepars[[i]] <- round(optimpars,3)
     
     if(i == 1 & i != length(dates))
@@ -831,8 +876,8 @@ multiphasePlots <- function(country, dates, data){
     if(length(dates) > 2 & i %in% 2:(length(dates)-1))
       multimodel <- multimodx(phasedat$xn, multimodel, optimpars, oldp = phasepars[[i-1]])
 
-    aseqper <- optimpars[2]*seq(from = 0.7, to = 1.3, length.out = 10)
-    bseqper <- optimpars[3]*seq(from = 0.7, to = 1.3, length.out = 10)
+    aseqper <- a*seq(from = 0.7, to = 1.3, length.out = 10)
+    bseqper <- b*seq(from = 0.7, to = 1.3, length.out = 10)
     c_1seq  <- c_2seq <- seq(0.04, 0.2, length.out = 10)
     n_1seq  <- n_2seq <- c(1,7)
     p_1seq  <- p_2seq <- 6:7
@@ -841,7 +886,6 @@ multiphasePlots <- function(country, dates, data){
                             p1 = p_1seq,  p2 = p_2seq,
                             n1 = n_1seq,  n2 = n_2seq)
     
-
     if(i == 1)
       pernorm <- apply(normdatp, 1, function(par) modnorm(multimodxper(par, q = optimpars[1], phasedat$xn, multimodelp, start=TRUE), phasedat$xn))
     else
@@ -864,13 +908,13 @@ multiphasePlots <- function(country, dates, data){
     phasepars[[i]] <- c(phasepars[[i]],round(peroptim,3))
     
     if(i == 1 & i != length(dates))
-      multimodelp <- multimodxper(peroptim, q = optimpars[1], phasedat$xn, multimodelp, start=TRUE)
+      multimodelp <- multimodxper(peroptim, q = q, phasedat$xn, multimodelp, start=TRUE)
     if(i == 1 & i == length(dates))
-      multimodelp <- multimodxper(peroptim, q = optimpars[1], phasedat$xn, multimodelp, start=TRUE, len=forecastlen)
+      multimodelp <- multimodxper(peroptim, q = q, phasedat$xn, multimodelp, start=TRUE, len=forecastlen)
     if(i > 1 & i == length(dates))
-      multimodelp <- multimodxper(peroptim, q = optimpars[1], phasedat$xn, multimodelp, len=forecastlen)
+      multimodelp <- multimodxper(peroptim, q = q, phasedat$xn, multimodelp, len=forecastlen)
     if(length(dates) > 2 & i %in% 2:(length(dates)-1))
-      multimodelp <- multimodxper(peroptim, q = optimpars[1], phasedat$xn, multimodelp)
+      multimodelp <- multimodxper(peroptim, q = q, phasedat$xn, multimodelp)
   }
   
   cols <- list(

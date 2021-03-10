@@ -5,12 +5,13 @@
 \addbibresource{mybib.bib}
 \graphicspath{{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Plots/}{./Plots/}}
 % Title
-\title{Final Year Project}
-\author{Anthony Gibbons \qquad 17322353 \\ Project Supervisor: Athanasios Georgiadis}
+\title{Modelling the Spread of COVID-19 Cases \\ \large{TCD Final Year Project}}
+\author{Anthony Gibbons \\  \normalsize{Project Supervisor: Athanasios Georgiadis}}
 %\author{Anthony Gibbons}
 \date{\today}
 \begin{document}
 \maketitle      
+\renewcommand\lstlistlistingname{List of Code}
 
 \begin{abstract}
     We construct various models of the Covid-19 pandemic over various periods of 2020. We first construct simple model of a the epidemic by using a recurrence equation. We also add a periodic complexity to these simpler models. We then use more statistical methods, modelling using time series forecasting methods such as HoltWinters, ARIMA and Neural Network methods. All of this is with the aim of predicting the course of the epidemic.
@@ -27,7 +28,7 @@ I have also completed the Online Tutorial on avoiding plagiarism
 \url{http://tcd-ie.libguides.com/plagiarism/ready-steady-write}.
 
 \textbf{Signed:} Anthony Gibbons \\
-\textbf{Date:} 03/02/2021
+\textbf{Date:} 10/03/2021
 \pagebreak
 
 \hypersetup{
@@ -38,6 +39,8 @@ I have also completed the Online Tutorial on avoiding plagiarism
 
 \listoffigures \pagebreak
 
+\lstlistoflistings \pagebreak
+
 \import{./}{Chapters/intro.tex}
 \pagebreak
 \import{./}{Chapters/mathmodel.tex}
@@ -47,6 +50,8 @@ I have also completed the Online Tutorial on avoiding plagiarism
 \import{./}{Chapters/statmodel.tex}
 \pagebreak
 \import{./}{Chapters/codesource.tex}
+\pagebreak 
+\import{./}{Chapters/appendixcode.tex}
 \pagebreak 
 \printbibliography
 \end{document}

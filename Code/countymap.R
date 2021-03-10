@@ -35,6 +35,17 @@ countycase_map <- left_join(counties, latest_dat, by=c("CountyName" = "CountyNam
 # color gradient
 col_grad <- wes_palette("Zissou1", 20, type = "continuous")
 
+#theme for map plotting
+map_theme <- function(){
+  p<- theme(axis.title       = element_blank(),
+            axis.text        = element_blank(),
+            axis.ticks       = element_blank(),
+            panel.background = element_blank(),
+            legend.title      = element_blank(),
+            legend.background = element_blank())
+return(p)
+}
+
 # county plots
 countyplotlist[["rep"]] <- ggplot(countycase_map) + 
   aes(long, lat, group=group, fill=PopulationProportionCovidCases) +
@@ -43,13 +54,7 @@ countyplotlist[["rep"]] <- ggplot(countycase_map) +
   geom_text(data = latest_dat, aes(x = Long, y = Lat, label = floor(PopulationProportionCovidCases)), inherit.aes = FALSE) +
   ggtitle("Cases in Ireland per 100,000 population by county", 
           subtitle = paste("Cumulative, up to", format.Date(latest_date, "%B %d, %Y"))) +
-  theme(axis.title        = element_blank(),
-        axis.text         = element_blank(),
-        axis.ticks        = element_blank(),
-        panel.background  = element_blank(),
-        legend.title      = element_blank(),
-        legend.background = element_blank(),
-        legend.position   = c(0.25,0.87))
+  map_theme() + theme(legend.position   = c(0.25,0.87))
 
 countyplotlist[["fourteendaycases"]] <- ggplot(countycase_map) + 
   aes(long, lat, group=group, fill=ConfirmedCovidCases) +
@@ -59,13 +64,7 @@ countyplotlist[["fourteendaycases"]] <- ggplot(countycase_map) +
   ggtitle("Cases in Ireland by county", 
           subtitle = paste("From", format.Date(latest_date-13, "%B %d, %Y"),
                            "to", format.Date(latest_date, "%B %d, %Y"))) +
-  theme(axis.title        = element_blank(),
-        axis.text         = element_blank(),
-        axis.ticks        = element_blank(),
-        panel.background  = element_blank(),
-        legend.title      = element_blank(),
-        legend.background = element_blank(),
-        legend.position   = c(0.25,0.87))
+  map_theme() + theme(legend.position   = c(0.25,0.87))
 
 countyplotlist[["names"]] <- ggplot(countycase_map) + 
   aes(long, lat, group=group, fill=PopulationProportionCovidCases) +
@@ -74,13 +73,7 @@ countyplotlist[["names"]] <- ggplot(countycase_map) +
   geom_text(data = latest_dat, aes(x = Long, y = Lat, label = CountyName), size=3,inherit.aes = FALSE) +
   ggtitle("Cases in Ireland per 100,000 population by county", 
           subtitle = paste("Cumulative, up to", format.Date(latest_date, "%B %d, %Y"))) +
-  theme(axis.title       = element_blank(),
-        axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        panel.background  = element_blank(),
-        legend.title      = element_blank(),
-        legend.background = element_blank(),
-        legend.position   = c(0.25,0.87))
+  map_theme() + theme(legend.position   = c(0.25,0.87))
 
 countyplotlist[["blank"]] <- ggplot(countycase_map) + 
   aes(long, lat, group=group, fill=PopulationProportionCovidCases) +
@@ -88,13 +81,7 @@ countyplotlist[["blank"]] <- ggplot(countycase_map) +
   scale_fill_gradientn(colours = col_grad) +
   ggtitle("Cases in Ireland per 100,000 population by county", 
           subtitle = paste("Cumulative, up to", format.Date(latest_date, "%B %d, %Y"))) +
-  theme(axis.title       = element_blank(),
-        axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        panel.background  = element_blank(),
-        legend.title      = element_blank(),
-        legend.background = element_blank(),
-        legend.position   = c(0.25,0.87))
+  map_theme() + theme(legend.position   = c(0.25,0.87))
 
 # just latest date
 latest_date <- as.Date(owiddat$date[nrow(owiddat)-1], tryFormats = c("%Y-%m-%d"))
@@ -123,14 +110,8 @@ worldplot[["blank"]] <- ggplot(world_map) +
   scale_fill_gradientn(colours = col_grad) +
   ggtitle("Cases per 1 million population by country", 
           subtitle =  paste("From", format.Date(latest_date-13, "%B %d, %Y"), "to", format.Date(latest_date, "%B %d, %Y"))) +
-  theme(axis.title       = element_blank(),
-        axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        panel.background = element_blank(),
-        plot.margin      = margin(0, 0, 0, 0, "cm"),
-        legend.title      = element_blank(),
-        legend.background = element_blank(),
-        legend.position   = c(0.1,0.4))
+  map_theme() + theme(plot.margin     = margin(0, 0, 0, 0, "cm"),
+                      legend.position = c(0.1,0.4))
 
 worldplot[["cumulative"]] <- ggplot(world_map) + 
   aes(long, lat, group=group, fill=total_cases_per_million) +
@@ -138,14 +119,8 @@ worldplot[["cumulative"]] <- ggplot(world_map) +
   scale_fill_gradientn(colours = col_grad) +
   ggtitle("Total cases per 1 million population by country", 
           subtitle =  paste("Up to", format.Date(latest_date, "%B %d, %Y"))) +
-  theme(axis.title       = element_blank(),
-        axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        panel.background = element_blank(),
-        plot.margin      = margin(0, 0, 0, 0, "cm"),
-        legend.title      = element_blank(),
-        legend.background = element_blank(),
-        legend.position   = c(0.1,0.4))
+  map_theme() + theme(plot.margin     = margin(0, 0, 0, 0, "cm"),
+                      legend.position = c(0.1,0.4))
 
 europe_map <- world_map[world_map$long >= -20 & world_map$long <= 40,]
 europe_map <- europe_map[europe_map$lat >= 35 & europe_map$lat <= 75,]
@@ -157,11 +132,5 @@ worldplot[["europe"]] <- ggplot(europe_map) +
   scale_fill_gradientn(colours = col_grad) +
   ggtitle("Total cases per 1 million population by country", 
           subtitle =  paste("From", format.Date(latest_date-13, "%B %d, %Y"), "to", format.Date(latest_date, "%B %d, %Y"))) +
-  theme(axis.title       = element_blank(),
-        axis.text        = element_blank(),
-        axis.ticks       = element_blank(),
-        panel.background = element_blank(),
-        plot.margin      = margin(0, 0, 0, 0, "cm"),
-        legend.title      = element_blank(),
-        legend.background = element_blank(),
-        legend.position   = c(0.1,0.3))
+  map_theme() + theme(plot.margin     = margin(0, 0, 0, 0, "cm"),
+                      legend.position = c(0.1,0.3))
