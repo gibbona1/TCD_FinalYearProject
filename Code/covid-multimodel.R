@@ -45,13 +45,6 @@ multiphasePlots <- function(country, dates, data){
       for(i in (fitstd):(fitstd+length(x)+len-1)){
         multix[i] <- (1-b)*multix[i-1] + a*multix[i-q]
       }
-      #multix[fitstd] <- b/oldp[[3]]*((1-oldp[[3]])*multix[fitstd-1] + oldp[[2]]*multix[fitstd-q])
-      #for(i in (fitstd+1):(fitstd+q-1)){
-      #  multix[i] <- (1-b)*multix[i-1] + b/oldp[[3]]*oldp[[2]]*multix[i-q]
-      #}
-      #for(i in (fitstd+q):(fitstd+length(x)+len-1)){
-      #  multix[i] <- (1-b)*multix[i-1] + a*multix[i-q]
-      #}
     }
     return(multix)
   }
@@ -103,17 +96,8 @@ multiphasePlots <- function(country, dates, data){
       return((x-min(x))/(max(x)-min(x)))
     }
     normdat$abnorm  <- abnorm
-    #newnormdat      <- normdat %>% top_n(abnorm,n = -0.1*nrow(.))
     
-    #if(i == 1)
-    #  abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases + xntoyn(multimodx(phasedat$xn, multimodel, x[1:3], start=TRUE)), phasedat$yn))
-    #else
-    #  abnormy <- apply(newnormdat, 1, function(x) modnorm(beforecumcases + xntoyn(multimodx(phasedat$xn, multimodel, x[1:3], oldp = phasepars[[i-1]]))[length(multimodel)+1:nrow(phasedat)], phasedat$yn))
-    
-    #newnormdat$abnormy  <- normalize(abnormy)
-    #newnormdat$combnorm <- newnormdat$abnorm + newnormdat$abnormy
     tileoptim <- normdat[which.min(normdat$abnorm),1:3]
-    #tileoptim <- newnormdat[which.min(newnormdat$combnorm),1:3]
     optimpars <- c(tileoptim$q, tileoptim$a, tileoptim$b)
     
     q <- optimpars[1]

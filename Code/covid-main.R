@@ -23,7 +23,6 @@ covidPlots <- function(country, dateBounds, data){
   prevcases <- countrydat$yn[countrydat$date == as.Date(dateBounds[1])-1]
   #Specific dates
   countrydat <- countrydat[countrydat$date >= dateBounds[1] & countrydat$date <= dateBounds[2],]
-  #countrydat$xn[countrydat$xn < 0] <- 0
   latest_date <- countrydat$date[nrow(countrydat)]
   
   cols <- list(
@@ -192,7 +191,7 @@ covidPlots <- function(country, dateBounds, data){
   plots[["tsdisplay"]] <- grid.arrange(grobs = list(g1,g2,g3),
     layout_matrix = rbind(c(1, 1), c(2, 3)))
   
-  plots[["residuals"]] <- gghistogram(dat_ts, add.normal = TRUE)
+  plots[["residuals"]] <- gghistogram(log(dat_ts), add.normal = TRUE, bins=10)
   
   plots[["tsdecompose"]] <- autoplot(decompose(dat_ts))
   
@@ -270,7 +269,6 @@ covidPlots <- function(country, dateBounds, data){
   nnfit   <- nnetar(dat_ts, p = auto.fit$arma[1], P = auto.fit$arma[3], size = nHidden, lambda = 0, repeats = 20, maxit = 50) 
   nn.fcst <- forecast(nnfit, h = forecastlen)
 
-  nn.fcst$mean[nn.fcst$mean < 0] <- 0
   nn.fcst$fitted[1:q] <- countrydat$xn[1:q]
  
   modeldat$nnxn <- c(nn.fcst$fitted, nn.fcst$mean)

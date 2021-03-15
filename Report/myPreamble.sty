@@ -10,6 +10,7 @@
 \usepackage{enumerate}
 \usepackage{tcolorbox}
 \usepackage{float}
+%\usepackage{cleveref}
 %\usepackage{tkz-euclide}
 %\usepackage{thmtools}
 \usepackage[labelfont=bf]{caption}
@@ -70,6 +71,26 @@ numbersep=5pt,                  % how far the line-numbers are from the code
     citecolor=red,      
     urlcolor=blue,
 }}
+
+\let\origthelstnumber\thelstnumber
+\makeatletter
+\newcommand*\Suppressnumber{%
+  \lst@AddToHook{OnNewLine}{%
+    \let\thelstnumber\relax%
+  }%
+}
+
+\newcommand*\Reactivatenumber{%
+  \lst@AddToHook{OnNewLine}{%
+   \let\thelstnumber\origthelstnumber%
+  }%
+}
+\makeatother
+
+\setlength{\abovecaptionskip}{1pt} % Chosen fairly arbitrarily
+
+%\crefformat{figure}{#2{\color{blue}#1}#3}
+%\crefformat{equation}{#2{\bfseries\color{violet}#1}#3}
 
 %\makeindex[intoc, options= -s example_style.ist]
 % Problem and solution environments
