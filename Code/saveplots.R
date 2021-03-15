@@ -1,7 +1,8 @@
-setwd("~/GitHub/TCD_FinalYearProject/Code")
-source("covidplots-group.r")
-source("countymap.r")
 setwd("~/GitHub/TCD_FinalYearProject")
+source("Code/covid-main.r")
+source("Code/covid-multimodel.r")
+source("Code/covid-mapplots.r")
+source("Code/covid-compare.r")
 
 for(country in names(plotslist)){
   for(p in names(plotslist[[country]])){
