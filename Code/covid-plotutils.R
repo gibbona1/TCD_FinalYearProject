@@ -19,40 +19,44 @@ plot_yn <- function(countrydat, cols, labs){
   return(p)
 }
 
-plot_basexn <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth = 0) + 
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
-    geom_point(data = modeldat, aes(x = date, y = basexn, colour = cols$basexn)) + 
-    geom_line(data = modeldat, aes(x = date, y = basexn, colour = cols$basexn)) +
+plot_basexn <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") + 
+    geom_point(aes(x = date, y = basexn, colour = cols$basexn)) + 
+    geom_line(aes(x = date, y = basexn, colour = cols$basexn)) +
     gg_scale_xy + 
-    scale_fill_manual(  name = "leg", values = cols$xn,     labels = labs$xn) +
+    scale_fill_manual(name = "leg", values = c("test" = cols$xntest, "train" = cols$xn),
+                      labels = c("test" = labs$xntest, "train" = labs$xn)) +
     scale_colour_manual(name = "leg", values = cols$basexn, labels = labs$basexn) +
     xntheme()
   return(p)
 }
 
-plot_baseyn <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat) + 
-    geom_point(aes(x = date, y = yn, colour = "blue")) + geom_line(aes(x = date, y = yn, colour = "blue")) +
-    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
-    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
+plot_baseyn <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat) + 
+    geom_point(aes(x = date, y = yn, colour = tgroup)) + 
+    geom_line(aes(x = date, y = yn, colour = tgroup)) +
+    geom_point(aes(x = date, y = baseyn, colour = "base")) + 
+    geom_line(aes(x = date, y = baseyn, colour = "base")) +
     gg_scale_xy + 
-    scale_colour_manual(name = "leg",values = c("blue" = cols$yn, "base" = cols$baseyn), 
-                        labels = c("blue" = labs$yn, "base" = labs$baseyn),
+    scale_colour_manual(name = "leg",
+                        values = c("base" = cols$baseyn, "test" = cols$yntest, "train" = cols$yn), 
+                        labels = c("base" = labs$baseyn, "test" = labs$yntest, "train" = labs$yn),
                         guide = guide_legend(override.aes = list(
-                          shape = c("blue"=1, "base" = 16)))) +
+                          shape = c("base" = 16, "test" = 1, "train" = 1)))) +
     yntheme()
   return(p)
 }
 
-plot_crn <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth = 0) +
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
-    geom_point(data = modeldat, aes(x = date, y = basexn, colour = "basexn")) + 
-    geom_line(data = modeldat, aes(x = date, y = basexn, colour = "basexn")) +
-    geom_line(data = modeldat, aes(x = date, y = Crn, colour = "Crn")) +
+plot_crn <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat, binwidth = 0) +
+    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") + 
+    geom_point(aes(x = date, y = basexn, colour = "basexn")) + 
+    geom_line(aes(x = date, y = basexn, colour = "basexn")) +
+    geom_line(aes(x = date, y = Crn, colour = "Crn")) +
     gg_scale_xy + 
-    scale_fill_manual(  name = "leg",values = cols$xn, labels = labs$xn) +
+    scale_fill_manual(name = "leg", values = c("test" = cols$xntest, "train" = cols$xn),
+                      labels = c("test" = labs$xntest, "train" = labs$xn)) +
     scale_colour_manual(name = "leg",
                         values = c("basexn" = cols$basexn, "Crn" = cols$Crn), 
                         labels = c("basexn" = labs$basexn, "Crn" = labs$Crn),
@@ -62,13 +66,14 @@ plot_crn <- function(countrydat, modeldat, cols, labs){
   return(p)
 }
 
-plot_mavgx3 <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth = 0) + 
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
-    geom_point(data = modeldat, aes(x = date, y = basexn, colour = "basexn")) + 
-    geom_line(data = modeldat, aes(x = date, y = basexn, colour = "basexn")) +
-    geom_line(data = countrydat, aes(x = date, y = mavgx3, colour = "x3")) +
-    scale_fill_manual(values = cols$xn, labels = labs$xn) +
+plot_mavgx3 <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") + 
+    geom_point(aes(x = date, y = basexn, colour = "basexn")) + 
+    geom_line(aes(x = date, y = basexn, colour = "basexn")) +
+    geom_line(aes(x = date, y = mavgx3, colour = "x3")) +
+    scale_fill_manual(name = "leg", values = c("test" = cols$xntest, "train" = cols$xn),
+                      labels = c("test" = labs$xntest, "train" = labs$xn)) +
     scale_colour_manual(values = c("basexn" = cols$basexn, "x3" = cols$x3), 
                         labels = c("basexn" = labs$basexn, "x3" = labs$x3),
                         guide = guide_legend(override.aes = list(
@@ -77,18 +82,20 @@ plot_mavgx3 <- function(countrydat, modeldat, cols, labs){
   return(p)
 }
 
-plot_periodic <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth = 0) + 
-    geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
-    geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
-    geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
-    geom_line(data = countrydat, aes(x = date, y = mavgx3, colour = "x3")) +
-    geom_point(data = modeldat,aes(x = date, y = periodic, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
+plot_periodic <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") + 
+    geom_point(aes(x = date, y = basexn, colour = "base")) + 
+    geom_line(aes(x = date, y = basexn, colour = "base")) +
+    geom_point(aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(aes(x = date, y = mavgx3, colour = "x3")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
-           fill=guide_legend(ncol=1,nrow=1,byrow=TRUE)) +
-    scale_fill_manual(values = cols$xn, labels = labs$xn) +
+           fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
+    scale_fill_manual(name = "leg", 
+                      values = c("test" = cols$xntest, "train" = cols$xn),
+                      labels = c("test" = labs$xntest, "train" = labs$xn)) +
     scale_colour_manual(values = c("base" = cols$basexn, "periodic" = cols$periodic, "x3" = cols$x3), 
                         labels = c("base" = labs$basexn, "periodic" = labs$periodic, "x3" = labs$x3)) +
     guides(colour = guide_legend(override.aes = list(shape = c("base" = 16, "periodic" = 16, "x3" = NA)))) +
@@ -96,166 +103,169 @@ plot_periodic <- function(countrydat, modeldat, cols, labs){
   return(p)
 }
 
-plot_periodicy <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat) + 
-    geom_point(aes(x = date, y = yn, colour = "blue")) + 
-    geom_line(aes(x = date, y = yn, colour = "blue")) +
-    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
-    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
-    geom_point(data = modeldat,aes(x = date, y = periodicy, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = periodicy, colour = "periodic")) +
+plot_periodicy <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat) + 
+    geom_point(aes(x = date, y = yn, colour = tgroup)) + 
+    geom_line(aes(x = date, y = yn, colour = tgroup)) +
+    geom_point(aes(x = date, y = baseyn, colour = "base")) + 
+    geom_line(aes(x = date, y = baseyn, colour = "base")) +
+    geom_point(aes(x = date, y = periodicy, colour = "periodic")) +
+    geom_line(aes(x = date, y = periodicy, colour = "periodic")) +
     gg_scale_xy + 
-    guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE)) +
-    scale_colour_manual(values = c("base" = cols$baseyn, "blue" = cols$yn, "periodic" = cols$periodic), 
-                        labels = c("base" = labs$baseyn, "blue" = labs$yn, "periodic" = labs$periodicy),
+    guides(colour=guide_legend(ncol=1,nrow=4,byrow=TRUE)) +
+    scale_colour_manual(values = c("base" = cols$baseyn, "periodic" = cols$periodic, "test" = cols$yntest, "train" = cols$yn), 
+                        labels = c("base" = labs$baseyn, "periodic" = labs$periodicy, "test" = labs$yntest, "train" = labs$yn),
                         guide = guide_legend(override.aes = list(
-                          shape = c("base" = 1, "blue"=16, "periodic"=16)))) +
+                          shape = c("base" = 1, "periodic" = 1, "test" = 16, "train" = 16)))) +
     yntheme()
   return(p)
 }
 
-plot_hw <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth = 0) + 
-    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") +
-    geom_ribbon(data = modeldat, aes(x = date, ymin = hwlo, ymax = hwhi, fill = "hw"), alpha = 0.5) +
-    geom_point(data = modeldat, aes(x = date, y = hwxn, colour = "hw"), shape = 5) + 
-    geom_line(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) +
-    geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
-    geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
-    geom_point(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
+plot_hw <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") +
+    geom_ribbon(aes(x = date, ymin = hwlo, ymax = hwhi, fill = "hw"), alpha = 0.5) +
+    geom_point(aes(x = date, y = hwxn, colour = "hw")) + 
+    geom_line(aes(x = date, y = hwxn, colour = "hw")) +
+    geom_point(aes(x = date, y = basexn, colour = "base")) + 
+    geom_line(aes(x = date, y = basexn, colour = "base")) +
+    geom_point(aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(aes(x = date, y = periodic, colour = "periodic")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
-           fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
-    scale_fill_manual(labels = c("actual" = labs$xn, "hw" = labs$hwpi),
-                      values = c("actual" = cols$xn, "hw" = cols$hwpi))+ 
+           fill=guide_legend(ncol=1,nrow=3,byrow=TRUE)) +
+    scale_fill_manual(labels = c("hw" = labs$hwpi, "test" = labs$xntest, "train" = labs$xn),
+                      values = c("hw" = cols$hwpi, "test" = cols$xntest, "train" = cols$xn))+ 
     scale_colour_manual(labels = c("base" = labs$basexn, "hw" = labs$hw, "periodic" = labs$periodic),
-                        values = c("base" = cols$basexn, "hw" = cols$hw, "periodic" = cols$periodic)
-    ) +
+                        values = c("base" = cols$basexn, "hw" = cols$hw, "periodic" = cols$periodic),
+                        guide = guide_legend(override.aes = list(
+                          shape = c("base" = 16, "hw" = 18, "periodic" = 16)))) +
     xntheme()
   return(p)
 }
 
-plot_hwy <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat) + 
-    geom_point(aes(x = date, y = yn, colour = "blue")) + 
-    geom_line(aes(x = date, y = yn, colour = "blue")) +
-    geom_ribbon(data = modeldat, aes(x = date, ymin = hwylo, ymax = hwyhi, fill = "pi"), alpha = 0.5) +
-    geom_point(data = modeldat, aes(x = date, y = hwyn, colour = "hw"), shape = 5) + 
-    geom_line(data = modeldat, aes(x = date, y = hwyn, colour = "hw")) +
-    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
-    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
-    geom_point(data = modeldat,aes(x = date, y = periodicy, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = periodicy, colour = "periodic")) +
+plot_hwy <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat) + 
+    geom_point(aes(x = date, y = yn, colour = tgroup)) + 
+    geom_line(aes(x = date, y = yn, colour = tgroup)) +
+    geom_ribbon(aes(x = date, ymin = hwylo, ymax = hwyhi, fill = "pi"), alpha = 0.5) +
+    geom_point(aes(x = date, y = hwyn, colour = "hw"), shape = 5) + 
+    geom_line(aes(x = date, y = hwyn, colour = "hw")) +
+    geom_point(aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
+    geom_line(aes(x = date, y = baseyn, colour = "base")) +
+    geom_point(aes(x = date, y = periodicy, colour = "periodic")) +
+    geom_line(aes(x = date, y = periodicy, colour = "periodic")) +
     gg_scale_xy + 
-    guides(colour=guide_legend(ncol=1,nrow=4,byrow=TRUE),
+    guides(colour=guide_legend(ncol=1,nrow=5,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=1,byrow=TRUE)) +
     scale_fill_manual(values = c("pi" = cols$hwpi), 
                       labels = c("pi" = labs$hwpi)) +
-    scale_colour_manual(values = c("base" = cols$baseyn, "blue" = cols$yn, "hw" = cols$hw, "periodic" = cols$periodic), 
-                        labels = c("base" = labs$baseyn, "blue" = labs$yn, "hw" = labs$hwy, "periodic" = labs$periodicy),
+    scale_colour_manual(values = c("base" = cols$baseyn, "hw" = cols$hw,  "periodic" = cols$periodic,  "test" = cols$yntest, "train" = cols$yn), 
+                        labels = c("base" = labs$baseyn, "hw" = labs$hwy, "periodic" = labs$periodicy, "test" = labs$yntest, "train" = labs$yn),
                         guide = guide_legend(override.aes = list(
-                          shape = c("base" = 1, "blue"=16, "hw" = 5, "periodic"=16)))) +
+                          shape = c("base" = 1, "hw" = 5, "periodic"=1, "test"=16, "train"=16)))) +
     yntheme()
   return(p)
 }
 
-plot_arima <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth = 0) + 
-    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
-    geom_ribbon(data = modeldat, aes(x = date, ymin = arimalo, ymax = arimahi, fill = "pi"), alpha = 0.5) +
-    geom_point(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) + 
-    geom_line(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) +
-    geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
-    geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
-    geom_point(data = modeldat,aes(x = date, y = periodic, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
+plot_arima <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") + 
+    geom_ribbon(aes(x = date, ymin = arimalo, ymax = arimahi, fill = "pi"), alpha = 0.5) +
+    geom_point(aes(x = date, y = arimaxn, colour = "arima")) + 
+    geom_line(aes(x = date, y = arimaxn, colour = "arima")) +
+    geom_point(aes(x = date, y = basexn, colour = "base")) + 
+    geom_line(aes(x = date, y = basexn, colour = "base")) +
+    geom_point(aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(aes(x = date, y = periodic, colour = "periodic")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
-           fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
-    scale_fill_manual(values = c("actual" = cols$xn, "pi" = cols$arimapi), 
-                      labels = c("actual" = labs$xn, "pi" = labs$arimapi)) +
+           fill=guide_legend(ncol=1,nrow=3,byrow=TRUE)) +
+    scale_fill_manual(values = c("pi" = cols$arimapi, "test" = cols$xntest, "train" = cols$xn), 
+                      labels = c("pi" = labs$arimapi, "test" = labs$xntest, "train" = labs$xn)) +
     scale_colour_manual(values = c("arima" = cols$arima, "base" = cols$basexn, "periodic" = cols$periodic), 
                         labels = c("arima" = labs$arima, "base" = labs$basexn, "periodic" = labs$periodic)) +
     xntheme()
   return(p)
 }
 
-plot_arimay <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat) + 
-    geom_point(aes(x = date, y = yn, colour = "blue")) + 
-    geom_line(aes(x = date, y = yn, colour = "blue")) +
-    geom_ribbon(data = modeldat, aes(x = date, ymin = arimaylo, ymax = arimayhi, fill = "pi"), alpha = 0.5) +
-    geom_point(data = modeldat, aes(x = date, y = arimayn, colour = "arima"), shape = 2) + 
-    geom_line(data = modeldat, aes(x = date, y = arimayn, colour = "arima")) +
-    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
-    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
-    geom_point(data = modeldat,aes(x = date, y = periodicy, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = periodicy, colour = "periodic")) +
+plot_arimay <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat) + 
+    geom_point(aes(x = date, y = yn, colour = tgroup)) + 
+    geom_line(aes(x = date, y = yn, colour = tgroup)) +
+    geom_ribbon(aes(x = date, ymin = arimaylo, ymax = arimayhi, fill = "pi"), alpha = 0.5) +
+    geom_point(aes(x = date, y = arimayn, colour = "arima"), shape = 2) + 
+    geom_line(aes(x = date, y = arimayn, colour = "arima")) +
+    geom_point(aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
+    geom_line(aes(x = date, y = baseyn, colour = "base")) +
+    geom_point(aes(x = date, y = periodicy, colour = "periodic")) +
+    geom_line(aes(x = date, y = periodicy, colour = "periodic")) +
     gg_scale_xy + 
     scale_fill_manual(values = c("pi" = cols$arimapi), 
                       labels = c("pi" = labs$arimapi)) +
-    scale_colour_manual(values = c("arima" = cols$arima, "base" = cols$baseyn, "blue" = cols$yn, "periodic" = cols$periodic), 
-                        labels = c("arima" = labs$arimay, "base" = labs$baseyn, "blue" = labs$yn, "periodic" = labs$periodicy),
+    scale_colour_manual(values = c("arima" = cols$arima,  "base" = cols$baseyn, "periodic" = cols$periodic, "test" = cols$xntest, "train" = cols$xn), 
+                        labels = c("arima" = labs$arimay, "base" = labs$baseyn, "periodic" = labs$periodicy, "test" = labs$yntest, "train" = labs$yn),
                         guide = guide_legend(override.aes = list(
-                          shape = c("arima" = 2, "base" = 1, "blue"=16, "periodic" = 16)))) +
+                          shape = c("arima" = 2, "base" = 1, "periodic" = 1, "test"=16, "train"=16)))) +
     yntheme()
   return(p)
 }
 
-plot_hwarima <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth = 0) + 
-    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
-    geom_point(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) + 
-    geom_line(data = modeldat, aes(x = date, y = arimaxn, colour = "arima")) +
-    geom_point(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) + 
-    geom_line(data = modeldat, aes(x = date, y = hwxn, colour = "hw")) +
+plot_hwarima <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") + 
+    geom_point(aes(x = date, y = arimaxn, colour = "arima")) + 
+    geom_line(aes(x = date, y = arimaxn, colour = "arima")) +
+    geom_point(aes(x = date, y = hwxn, colour = "hw")) + 
+    geom_line(aes(x = date, y = hwxn, colour = "hw")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=2,byrow=TRUE),
-           fill=guide_legend(ncol=1,nrow=1,byrow=TRUE)) +
-    scale_fill_manual(values = c("actual" = cols$xn), 
-                      labels = c("actual" = labs$xn)) +
+           fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
+    scale_fill_manual(values = c("test"=cols$xntest, "train"=cols$xn), 
+                      labels = c("test"=labs$xntest, "train"=labs$xn)) +
     scale_colour_manual(values = c("arima" = cols$arima, "hw" = cols$hw), 
                         labels = c("arima" = labs$arima, "hw" = labs$hw)) +
     xntheme()
   return(p)
 }
 
-plot_nn <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat, binwidth = 0) + 
-    geom_bar(aes(x = date, y = xn, fill = "actual"), stat = "identity") + 
-    geom_point(data = modeldat, aes(x = date, y = basexn, colour = "base")) + 
-    geom_line(data = modeldat, aes(x = date, y = basexn, colour = "base")) +
-    geom_point(data = modeldat,aes(x = date, y = periodic, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = periodic, colour = "periodic")) +
-    geom_point(data = modeldat, aes(x = date, y = nnxn, colour = "nn")) + 
-    geom_line(data = modeldat, aes(x = date, y = nnxn, colour = "nn")) +
+plot_nn <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat, binwidth = 0) + 
+    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") + 
+    geom_point(aes(x = date, y = basexn, colour = "base")) + 
+    geom_line(aes(x = date, y = basexn, colour = "base")) +
+    geom_point(aes(x = date, y = periodic, colour = "periodic")) +
+    geom_line(aes(x = date, y = periodic, colour = "periodic")) +
+    geom_point(aes(x = date, y = nnxn, colour = "nn")) + 
+    geom_line(aes(x = date, y = nnxn, colour = "nn")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
-           fill=guide_legend(ncol=1,nrow=1,byrow=TRUE)) +
-    scale_fill_manual(values = c("actual" = cols$xn), 
-                      labels = c("actual" = labs$xn)) +
+           fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
+    scale_fill_manual(values = c("test"=cols$xntest, "train"=cols$xn), 
+                      labels = c("test"=labs$xntest, "train"=labs$xn)) +
     scale_colour_manual(values = c("base" = cols$basexn, "nn" = cols$nn, "periodic" = cols$periodic), 
-                        labels = c("base" = labs$basexn, "nn" = labs$nn, "periodic" = labs$periodic)) +
+                        labels = c("base" = labs$basexn, "nn" = labs$nn, "periodic" = labs$periodic),
+                        guide = guide_legend(override.aes = list(
+                          shape = c("base" = 16, "nn" = 0, "periodic" = 16)))) +
     xntheme()
   return(p)
 }
 
-plot_nny <- function(countrydat, modeldat, cols, labs){
-  p <- ggplot(countrydat) + 
-    geom_point(aes(x = date, y = yn, colour = "blue")) + 
-    geom_line(aes(x = date, y = yn, colour = "blue")) +
-    geom_point(data = modeldat, aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
-    geom_line(data = modeldat, aes(x = date, y = baseyn, colour = "base")) +
-    geom_point(data = modeldat, aes(x = date, y = nnyn, colour = "nn"), shape = 0) + 
-    geom_line(data = modeldat, aes(x = date, y = nnyn, colour = "nn")) +
-    geom_point(data = modeldat,aes(x = date, y = periodicy, colour = "periodic")) +
-    geom_line(data = modeldat, aes(x = date, y = periodicy, colour = "periodic")) +
+plot_nny <- function(modeldat, cols, labs){
+  p <- ggplot(modeldat) + 
+    geom_point(aes(x = date, y = yn, colour = tgroup)) + 
+    geom_line(aes(x = date, y = yn, colour = tgroup)) +
+    geom_point(aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
+    geom_line(aes(x = date, y = baseyn, colour = "base")) +
+    geom_point(aes(x = date, y = nnyn, colour = "nn"), shape = 0) + 
+    geom_line(aes(x = date, y = nnyn, colour = "nn")) +
+    geom_point(aes(x = date, y = periodicy, colour = "periodic")) +
+    geom_line(aes(x = date, y = periodicy, colour = "periodic")) +
     gg_scale_xy + 
-    scale_colour_manual(values = c("base" = cols$baseyn, "blue" = cols$yn, "nn" = cols$nn, "periodic" = cols$periodic), 
-                        labels = c("base" = labs$baseyn, "blue" = labs$yn, "nn" = labs$nny, "periodic" = labs$periodicy),
+    scale_colour_manual(values = c("base" = cols$baseyn, "nn" = cols$nn,  "periodic" = cols$periodic, "test" = cols$yntest, "train" = cols$yn), 
+                        labels = c("base" = labs$baseyn, "nn" = labs$nny, "periodic" = labs$periodicy, "test" = labs$yntest, "train" = labs$yn),
                         guide = guide_legend(override.aes = list(
-                          shape = c("base" = 1, "blue"=16, "nn" = 0, "periodic" = 16)))) +
+                          shape = c("base" = 1, "nn" = 0, "periodic" = 1, "test" = 16, "train" = 16)))) +
     yntheme()
   return(p)
 }

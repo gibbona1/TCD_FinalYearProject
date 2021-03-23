@@ -5,11 +5,11 @@
  To-do List:
  
  - [x] Map cases by county (e.g. 14 day rate per 100,000) in Ireland. 
- - [ ] Train (two months) and test (latest week or 2 weeks) subsets for model to avoid overfitting.
+ - [x] Train (two months) and test (latest week or 2 weeks) subsets for model to avoid overfitting.
  - [x] Summary code in body of the report and full code in appendix.
  - [ ] Theory for the multiphase model and neural networks.
  - [x] Group the plots so they take up a bit less space.
- - [ ] Summary table of the performances of all models.
+ - [x] Summary table of the performances of all models.
  
 ![County Plot](Plots/county-blank.png "Ireland cases by county, per 100k of the population").
 
