@@ -1,17 +1,17 @@
 % latex table generated in R 4.0.2 by xtable 1.8-4 package
-% Sun Mar 21 14:26:20 2021
+% Tue Mar 23 21:42:23 2021
 \begin{table}[H]
 \centering
-\begin{tabular}{rlrr}
+\begin{tabular}{rlrrrr}
   \hline
- & model & $||x-x^*||$ & $||y-y^*||$ \\ 
+ & model & $||x-x^*||_{	ext{train}}$ & $||y-y^*||_{	ext{train}}$ & $||x-x^*||_{	ext{test}}$ & $||y-y^*||_{	ext{test}}$ \\ 
   \hline
-1 & Basic Recursion & 8716 & 38695 \\ 
-  2 & Moving Average & 7801 & 8319 \\ 
-  3 & Periodic & 5559 & 25111 \\ 
-  4 & HoltWinters & 6473 & 30935 \\ 
-  5 & ARIMA & 8165 & 40136 \\ 
-  6 & Neural Network & 12437 & 16625 \\ 
+1 & Basic Recursion & 9049 & 45009 & 7882 & 42965 \\ 
+  2 & Moving Average & 7869 & 8525 & 3926 & 5445 \\ 
+  3 & Periodic & 5660 & 29129 & 8945 & 30279 \\ 
+  4 & HoltWinters & 5763 & 22833 & 21703 & 93870 \\ 
+  5 & ARIMA & 8223 & 37447 & 24889 & 107978 \\ 
+  6 & Neural Network & 12587 & 17202 & 8956 & 48589 \\ 
    \hline
 \end{tabular}
 \caption{United States, 2021-01-06 to 2021-02-16} 

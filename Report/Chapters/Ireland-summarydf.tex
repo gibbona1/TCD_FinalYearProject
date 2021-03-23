@@ -1,17 +1,17 @@
 % latex table generated in R 4.0.2 by xtable 1.8-4 package
-% Sun Mar 21 14:26:36 2021
+% Tue Mar 23 21:42:42 2021
 \begin{table}[H]
 \centering
-\begin{tabular}{rlrr}
+\begin{tabular}{rlrrrr}
   \hline
- & model & $||x-x^*||$ & $||y-y^*||$ \\ 
+ & model & $||x-x^*||_{	ext{train}}$ & $||y-y^*||_{	ext{train}}$ & $||x-x^*||_{	ext{test}}$ & $||y-y^*||_{	ext{test}}$ \\ 
   \hline
-1 & Basic Recursion & 146 & 895 \\ 
-  2 & Moving Average & 131 & 127 \\ 
-  3 & Periodic & 139 & 1030 \\ 
-  4 & HoltWinters & 109 & 334 \\ 
-  5 & ARIMA &  86 & 242 \\ 
-  6 & Neural Network &  92 & 217 \\ 
+1 & Basic Recursion & 148 & 916 & 350 & 2902 \\ 
+  2 & Moving Average & 130 & 126 &  75 & 109 \\ 
+  3 & Periodic & 140 & 1049 & 350 & 2576 \\ 
+  4 & HoltWinters & 109 & 334 & 274 & 1124 \\ 
+  5 & ARIMA &  86 & 255 & 135 & 306 \\ 
+  6 & Neural Network &  91 & 197 & 161 & 552 \\ 
    \hline
 \end{tabular}
 \caption{Ireland, 2021-01-12 to 2021-02-16} 
