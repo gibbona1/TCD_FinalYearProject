@@ -6,12 +6,14 @@ owiddat$date <- as.Date(owiddat$date, tryFormats = c("%Y-%m-%d"))
 multilist <- list()
 
 multidates <- list(
-  "Italy"         = list(c("2020-12-16", "2021-01-01"),
-                         c("2021-01-02", "2021-01-30")),
-  "United States" = list(c("2020-11-16", "2021-01-06"),
-                         c("2021-01-07", "2021-01-30")),
-  "Ireland"       = list(c("2020-12-16", "2021-01-07"),
-                         c("2021-01-08", "2021-01-30"))
+  #"Italy"         = list(c("2020-12-16", "2021-01-01"),
+  #                       c("2021-01-02", "2021-01-30")),
+  #"United States" = list(c("2020-11-16", "2021-01-06"),
+  #                       c("2021-01-07", "2021-01-30")),
+  #"Ireland"       = list(c("2020-12-16", "2021-01-07"),
+  #                       c("2021-01-08", "2021-01-30"))
+  "Ireland"       = list(c("2020-02-29", "2020-04-15"),
+                         c("2020-04-16", "2020-06-09"))
 )
 
 multiphasePlots <- function(country, dates, data){
@@ -130,17 +132,17 @@ multiphasePlots <- function(country, dates, data){
     else
       pernorm <- apply(normdatp, 1, function(par) modnorm(multimodxper(par, q = optimpars[1], phasedat$xn, multimodelp)[length(multimodelp)+1:nrow(phasedat)], phasedat$xn))
     
-    normdatp$pernorm <- normalize(pernorm)
+    normdatp$pernorm <- pernorm
     
-    newnormdatp <- normdatp %>% top_n(pernorm,n = -0.05*nrow(.))
+    newnormdatp <- normdatp %>% top_n(pernorm, n = -25)
     
     if(i == 1)
       pernormy <- apply(newnormdatp, 1, function(par) modnorm(beforecumcases+xntoyn(multimodxper(par, q = optimpars[1], phasedat$xn, multimodelp, start=TRUE)), phasedat$yn))
     else
       pernormy <- apply(newnormdatp, 1, function(par) modnorm(beforecumcases+xntoyn(multimodxper(par, q = optimpars[1], phasedat$xn, multimodelp))[length(multimodelp)+1:nrow(phasedat)], phasedat$yn))
     
-    newnormdatp$pernormy <- normalize(pernormy)
-    newnormdatp$combnorm <- newnormdatp$pernorm + newnormdatp$pernormy
+    newnormdatp$pernormy <- pernormy
+    newnormdatp$combnorm <- normalize(newnormdatp$pernorm) + normalize(newnormdatp$pernormy)
     
     peroptim <- as.numeric(newnormdatp[which.min(newnormdatp$combnorm),1:8])
     

@@ -14,7 +14,7 @@
 \renewcommand\lstlistlistingname{List of Code}
 
 \begin{abstract}
-    We construct various models of the Covid-19 pandemic over various periods of 2020. We first construct simple model of a the epidemic by using a recurrence equation. We also add a periodic complexity to these simpler models. We then use more statistical methods, modelling using time series forecasting methods such as HoltWinters, ARIMA and Neural Network methods. All of this is with the aim of predicting the course of the epidemic.
+    We construct various models of the Covid-19 pandemic for multiple countries in early 2021. We first construct simple model of a the epidemic by using a recurrence equation. We also add a periodic complexity to these simpler models. We then use more statistical methods, modelling using time series forecasting methods such as HoltWinters, ARIMA and Neural Network methods. All of this is with the aim of predicting the course of the epidemic.
 \end{abstract}
 \keywords{ARIMA, Autoregressive model, COVID-19; Coronavirus, Forecasting, Mathematical model, Neural Network, Pandemic, Parameter estimation, SARS-CoV-2, Statistical Model.}
 \pagebreak
@@ -41,16 +41,24 @@ I have also completed the Online Tutorial on avoiding plagiarism
 
 \lstlistoflistings \pagebreak
 
+\listoftables \pagebreak
+
 \import{./}{Chapters/intro.tex}
+
+\subsection{Summary}
+Below is a summary of results of the applied model for the primary date range
+
+\import{./}{Chapters/Ireland-summarydf.tex}
+\import{./}{Chapters/Italy-summarydf.tex}
+\import{./}{Chapters/United States-summarydf.tex}
 \pagebreak
 \import{./}{Chapters/mathmodel.tex}
 \pagebreak
-\import{./}{Chapters/theorems.tex}
-\pagebreak
 \import{./}{Chapters/statmodel.tex}
 \pagebreak
-\import{./}{Chapters/codesource.tex}
-\pagebreak 
+\appendix
+\import{./}{Chapters/theorems.tex}
+\pagebreak
 \import{./}{Chapters/appendixcode.tex}
 \pagebreak 
 \printbibliography

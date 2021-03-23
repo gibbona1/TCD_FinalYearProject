@@ -378,3 +378,15 @@ yntheme <- function(){
 gg_scale_xy <- list(
   scale_x_date(date_breaks = "1 week", date_labels = "%d-%b", expand = c(0,0)),
   scale_y_continuous(expand = c(0,0)))
+
+error_plot <- function(){
+  p <- ggplot(data.frame(x = 0,y = 0)) + 
+    geom_label(x = 0, y = 0, color = "red", size = 5 , fontface = "bold",
+               label = "Error: Country data has nonpositive values") +
+    xlim(-1,1) + ylim(-1,1) + 
+    theme(axis.line  = element_blank(),
+          axis.text  = element_blank(),
+          axis.ticks = element_blank(),
+          panel.grid = element_blank())
+  return(p)
+}

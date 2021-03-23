@@ -33,7 +33,8 @@ with the full code in \ref{lst:covidmain}.
 \subsubsection{Definitions and Theory}
 
 \begin{figure}[H]
-\begin{tcolorbox}[width=.6\textwidth]%
+\centering
+\begin{tcolorbox}[width=.65\textwidth]%
 
 Suppose there are $N$ observations.
 
@@ -307,6 +308,14 @@ plots[["arima"]]   <- plot_arima(countrydat, modeldat, cols, labs)
 \end{figure}
 
 \subsubsection{Definitions and Theory}
+
+
+
+The inputs to the hidden layer are then transformed using a sigmoid function
+
+\begin{equation}\label{eq:sigmoid}
+g(z)=\frac{1}{1+\exp(z)}
+\end{equation}
 
 \subsubsection{How to select the best model}
 

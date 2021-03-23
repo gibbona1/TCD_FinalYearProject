@@ -1,62 +1,7 @@
-\section{Theorems for Mathematical Model}
+\section{Definitions and Theorems for Mathematical Models}
 \label{ch:theorems}
 
-\subsection{Model Assumptions}
-\begin{itemize}
-    \item[(I)] Any infected person becomes ill (symptomatic) and infectious on the $q$-th day after infection.\footnote{The number of days before an infected person becomes infectious is called the latent period, and before he/she becomes symptomatically ill – the incubation period. Here we assume for simplicity that these two periods are equal.}
-    \item[(A)] During each day, each ill person unconfined infects on average $a$ other persons.
-    \item[(B)] During each day, a fraction $b$ of ill people loose gets isolated (hospitalized or otherwise) and withdrawn from a further spread of the epidemic.
-\end{itemize}
-
-Many models use a set of differential equations for to describe the movement of people between \textit{groups} or \textit{compartments}. The SIR (Susceptible–Infectious–Recovered) model, the most frequently used model in epidemiology, uses a set of 3 such differential equations. 
-
-Our main mathematical model (and even some of the statistical models) make use recurrence equations, which have some correspondence to differential equations \cite{AGARWAL20021}.
-
-\subsection{Notation}
-\begin{itemize}
-    \item $x_n$ - the number of infected people that are detected and isolated during the day $n$;
-    \item $y_n$ – the cumulative number of detected cases from the beginning of epidemic by the beginning of the day $n$;
-    \item $z_n$ – the number of ill people at large by the beginning of the day $n$ (that is, those who were infected at least $q$ days ago and stay unisolated);
-    \item $u_n$ – the number of people newly infected during the day $n$.
-\end{itemize}
-
-We will obtain the following relation between the leading root $r$ and the basic reproductive rate $R_0$ that is a main characteristic of an epidemic in epidemiology:
-
-\begin{equation}\label{eq:R0}
-    r \approx R_0^{\frac1{2q}}.
-\end{equation}
-
-Recurrence relation for $z_n$:
-\begin{equation} \label{eq:znrecurr}
-    z_{n+1} = z_n - x_n + u_{n-q}.
-\end{equation}
-
-Using $x_n = bz_n$ we obtain the following equation for $x_n$:
-\begin{equation} \label{eq:xnrecurr}
-    x_{n+1} = (1 - b) x_n + ax_{n-q}.
-\end{equation}
-
-We let the model equal the actual data for the first $q+1$ days
-\begin{equation} \label{eq:xn0q}
-x_n = x^*_n \ \text{for} \ n = 0, 1, \dots , q,
-\end{equation}
-
- To fit our model we optimize against the normalized 1-norm:
-\begin{equation}\label{eq:xnnorm}
-    \norm{x-x^*}:= \frac{1}{N+1} \sum\limits_{n=0}^N |x_n-x_n^*|,
-\end{equation}
-
-Similarly we define $\norm{y-y^*}$
-
-In order to determine values $a,b,q$, we ideally want to minimize both 
-
-\begin{equation} \label{eq:norms}
-    \norm{x-x^*} \ \text{and} \ \norm{y-y^*}
-\end{equation}
-
-While this is the ideal situation, it is far more important to minimize $\norm{x-x^*}$ as it is generally much more sensitive to variation in the parameters (such as $a$ and $b$).
-
-\subsubsection{Recurrence equation}
+\subsection{Recurrence equation}
 
 This is our general linear recurrence equation with constant coefficients:
 \begin{equation}\label{eq:an}
@@ -72,8 +17,16 @@ The characteristic polynomial of \ref{eq:an}
 A root $\lambda$ of $f$ with the maximal absolute value $|\lambda|$ will be referred to as a leading root of the general linear recurrence relation \ref{eq:an}.
 \end{definition}
 
-\subsection{Theorems}\label{thm:lim}
-\begin{theorem}
+\begin{definition}
+The geormetric mean of $n$ values $x_1,\dots,x_n$ is
+\begin{equation}\label{eq:geometricmean}
+   \left(\prod\limits_{i=1}^n x_i \right)^{\frac1n} = \sqrt[n]{x_1 x_2 \cdots x_n}
+\end{equation}
+\end{definition}
+
+\subsection{Results}
+
+\begin{theorem}\label{thm:lim}
 Let $a_k \geq 0$ for all $k \in \{0,\dots,q\}$ and $a_{k_0} > 0$ for some $k_0\in \{0,\dots,q\}$.
 \begin{enumerate}[(a)]
     \item (Cauchy, 1829) The polynomial $f(\lambda)$ from \ref{eq:fchar} has exactly one positive real root $r$. Besides, the root $r$ is simple and, for any other root $\lambda \in \bC$, we have $|\lambda| < r$. Consequently, $r$ is the leading root of \ref{eq:an}.
@@ -189,7 +142,7 @@ as required.
 \end{pf}
 \end{theorem}
 
-\begin{theorem}
+\begin{theorem}\label{thm:rineq}
 Let $a_k \geq 0$ for all $k = 0, \dots , q$. Denote $a = a_1 + \dots + a_q, b = 1 - a_0$
 and assume that $a > 0, b > 0$.
 \begin{enumerate}[(a)]
@@ -208,11 +161,13 @@ Although there are in the literature plenty of estimates of the leading roots of
     
     $\begin{aligned}
     f(1) &= 1 - a_0 - a1 - \dots - a_q \\
-         &= \underbrace{(1-a_0)}_{b}-\underbrace{(a_1+\dots+a_q)}_{a}\\
-         &= b - a
+           &= \underbrace{(1-a_0)}_{b}-\underbrace{(a_1+\dots+a_q)}_{a}\\
+           &= b - a
     \end{aligned}$
     
     We know $f$ is increasing.
+    
+     If $r=1$ then the inequality obviously holds.
     
     So if $r<1$, we have $f(1)>0$ and then $b - a>0 \imp a<b$.
     
@@ -250,7 +205,7 @@ Although there are in the literature plenty of estimates of the leading roots of
     
     And if $r<1$ we get $r<\rbr{\frac{a}{b}}^{1/m}$.
     
-    We can combine both cases with $a\leq \max\rbr(1,a)$ and $a\geq \min\rbr{1,a}$ to get \ref{eq:maxminr}, as required.
+    We can combine both cases with $x\leq \max\rbr{1,x}$ and $x\geq \min\rbr{1,x}$ (for any $x\in \bR$) to get \ref{eq:maxminr}, as required.
 \end{enumerate}
 \end{pf}
 \end{theorem}
@@ -263,7 +218,12 @@ $$R_0=\frac{a}{b}$$
 \begin{pf}
 Let $u$ be the number of people infected on some day, say $0$. On the day $k = 1, \dots , q$ the number $c_ku$ of them become ill and can infect other people. On the day $k + 1$ they infect $ac_ku$ people while $bc_ku$ of them get isolated. On the day $k + 1$, the remaining $(1 - b) c_ku$ people infect further $a (1 - b) c_ku$ people. Continuing this way, we obtain that this group of $c_ku$ people infects in total
 
-$$ac_ku+a(1-b)c_ku+a(1-b)^2c_ku+\dots=ac_ku\sum\limits_{n=0}^\infty (1-b)^n = \frac{ac_ku}{1-(1-b)}=\frac{a}{b}c_ku$$ since $0<1-b<1$.
+$\begin{aligned}
+ac_ku+a(1-b)c_ku+a(1-b)^2c_ku+\dots 
+&= ac_ku\sum\limits_{n=0}^\infty (1-b)^n \\
+&= \frac{ac_ku}{1-(1-b)} \quad \text{since} \ 0<1-b<1\\
+&=\frac{a}{b}c_ku\\
+\end{aligned}$ 
 
 other people.
 
@@ -273,9 +233,161 @@ $$\sum\limits_{k=0}^q \frac{a}{b}c_ku
 = \frac{a}{b}u\sum\limits_{k=0}^q c_k
 = \frac{a}{b}u$$
 
-So we know $R_0$ is the unit reprodiction number per infected person ($u=1$).
+other people.
+
+And we defined $R_0$ as being the unit reprodiction number per infected person ($u=1$).
 
 And so we get the result $R_0=\frac{a}{b}$ as required.
 \end{pf}
 \end{lemma}
+
+
+We can then apply Newton's method \cite{EncyMathNewton} to find a better approximation for $r$.
+
+\begin{definition}
+Let $\cbr{r_n}_{n\geq0}$ be a sequence defined by
+
+\begin{equation}\label{eq:newtoneq}
+r_{n+1} = r_n - \frac{f(r_n)}{f'(r_n)}, \quad n\geq0
+\end{equation}
+
+Then the limit converges to the leading root $r$, i.e.
+
+\begin{equation}
+\cbr{r_n} \to r \quad \text{as } n\to\infty
+\end{equation}
+\end{definition}
+
+\begin{result}
+A good approximation for the leading root $r$ is 
+
+\begin{equation} \label{eq:req1}
+r\approx  \frac{q\rbr{\frac{a}{b}}^{\frac{1}{2q}} - (q-1)(1-b) + \rbr{ab}^{-\frac12}}{(q+1) - q(1-b)\rbr{\frac{a}{b}}^{-\frac{1}{2q}}}
+\end{equation}
+
+\begin{pf}
+Our characteristic polynomial (via \ref{eq:fchar}) for our recurrence equation \ref{eq:xnrecurr} is
+
+\begin{equation} \label{eq:fchar1}
+f(\lambda) = \lambda^{q+1} - (1-b)\lambda^q - a
+\end{equation}
+
+Let $r$ be its leading root, i.e. $f(r)=0$ 
+
+Then by \ref{thm:rineq}, we get 
+
+\begin{equation}
+ \min\rbr{1,\rbr{\frac{a}{b}}^{1/q}}\leq r \leq \max\rbr{1,\rbr{\frac{a}{b}}^{1/q}}
+\end{equation}
+
+since $m=q$ in our polynomial.
+
+Taking the \textit{geometric mean} of the bounds, defined as \ref{eq:geometricmean}, we get an approximation for $r$
+
+\begin{equation}
+r_0 = \rbr{1\cdot \rbr{\frac{a}{b}}^{1/q}}^{\frac12}= \rbr{\frac{a}{b}}^{\frac1{2q}}
+\end{equation}
+
+The derivative of our characteristic polynomial \ref{eq:fchar1} is
+\begin{equation} \label{eq:fcharprime1}
+f'(\lambda) = (q+1)\lambda^q - q(1-b)\lambda^{q-1}
+\end{equation}
+
+Then we apply Newton's method \ref{eq:newtoneq} once to get
+
+$\begin{aligned}
+r_1 
+&= r_0 - \frac{f(r_0)}{f'(r_0)} \\
+&= r_0 - \frac{r_0^{q+1} - (1-b)r_0^q - a}{(q+1)r_0^q - q(1-b)r_0^{q-1}} \\
+&= r_0 - \frac{R_0^{q+1} - (1-b)R_0^q - a}{(q+1)R_0^q - q(1-b)R_0^{q-1}} \\
+&= \rbr{\frac{a}{b}}^{\frac1{2q}} - \frac{\rbr{\rbr{\frac{a}{b}}^{\frac1{2q}}}^{q+1} - (1-b)\rbr{\rbr{\frac{a}{b}}^{\frac1{2q}}}^q - a}{(q+1)\rbr{\rbr{\frac{a}{b}}^{\frac1{2q}}}^q - q(1-b)\rbr{\rbr{\frac{a}{b}}^{\frac1{2q}}}^{q-1}} \\
+&= \rbr{\frac{a}{b}}^{\frac1{2q}} - \frac{\rbr{\frac{a}{b}}^{\frac{q+1}{2q}} - (1-b)\rbr{\frac{a}{b}}^{\frac12} - a}{(q+1)\rbr{\frac{a}{b}}^{\frac12} - q(1-b)\rbr{\frac{a}{b}}^{\frac{q-1}{2q}}}\\
+&= \rbr{\frac{a}{b}}^{\frac1{2q}} - \frac{\rbr{\frac{a}{b}}^{-\frac12}}{\rbr{\frac{a}{b}}^{-\frac12}} \cdot
+\frac{\rbr{\frac{a}{b}}^{\frac{q+1}{2q}} - (1-b)\rbr{\frac{a}{b}}^{\frac12} - a}{(q+1)\rbr{\frac{a}{b}}^{\frac12} - q(1-b)\rbr{\frac{a}{b}}^{\frac{q-1}{2q}}}\\
+&= \rbr{\frac{a}{b}}^{\frac1{2q}} - \frac{\rbr{\frac{a}{b}}^{\frac1{2q}} - (1-b) - a\rbr{\frac{a}{b}}^{-\frac12}}{(q+1) - q(1-b)\rbr{\frac{a}{b}}^{-\frac{1}{2q}}}\\
+&= \rbr{\frac{a}{b}}^{\frac1{2q}} - \frac{\rbr{\frac{a}{b}}^{\frac1{2q}} - (1-b) - a\rbr{\frac{a}{b}}^{-\frac12}}{(q+1) - q(1-b)\rbr{\frac{a}{b}}^{-\frac{1}{2q}}}\\
+&= \frac{(q+1)\rbr{\frac{a}{b}}^{\frac{1}{2q}} - q(1-b)}{(q+1) - q(1-b)\rbr{\frac{a}{b}}^{-\frac{1}{2q}}} - \frac{\rbr{\frac{a}{b}}^{\frac1{2q}} - (1-b) - a\rbr{\frac{a}{b}}^{-\frac12}}{(q+1) - q(1-b)\rbr{\frac{a}{b}}^{-\frac{1}{2q}}}\\
+&= \frac{(q+1)\rbr{\frac{a}{b}}^{\frac{1}{2q}} - q(1-b) - \rbr{\frac{a}{b}}^{\frac1{2q}} + (1-b) + a\rbr{\frac{a}{b}}^{-\frac12}}{(q+1) - q(1-b)\rbr{\frac{a}{b}}^{-\frac{1}{2q}}}\\
+&= \frac{q\rbr{\frac{a}{b}}^{\frac{1}{2q}} - (q-1)(1-b) + a\rbr{\frac{b}{a}}^{-\frac12}}{(q+1) - q(1-b)\rbr{\frac{a}{b}}^{-\frac{1}{2q}}}\\
+&= \frac{q\rbr{\frac{a}{b}}^{\frac{1}{2q}} - (q-1)(1-b) + \rbr{ab}^{-\frac12}}{(q+1) - q(1-b)\rbr{\frac{a}{b}}^{-\frac{1}{2q}}}\\
+\end{aligned}$
+\end{pf}
+\end{result}
+
+\begin{definition}
+The function $f$ takes on the average value between points $x_1$ and $x_2$, $f_{\text{avg}}$  given by the formula 
+\begin{equation} \label{eq:avgvalue}
+    f_{\text{avg}} = \frac1{x_2-x_1} \int_{x_1}^{x_2} f(x)dx
+\end{equation}
+\end{definition}
+
+\begin{prop}\label{thm:avgparam}
+The average value of the sequence $a_0,\dots,a_N$ defined by \ref{eq:anper} can be reasonably estimated by our previous parameter $a$.
+
+Similarly, the average value of the sequence $b_0,\dots,b_N$ defined by \ref{eq:bnper} can be reasonably estimated by our previous parameter $b$.
+
+\begin{pf}
+Let $a(x)$ be the continuous extension of $a_0,a_1,\dots,a_N$, i.e. 
+
+\begin{equation} \label{eq:axfn}
+    a(x)=a\rbr{1+c_1\rbr{\sin\rbr{\frac{2\pi}{p_1}\rbr{x-n_1}}}},\quad 0\leq x \leq N
+\end{equation}
+
+Then, for $x_1=0$ and $x_2=N$
+
+$\begin{aligned}
+a_{\text{avg}} 
+&= \frac{1}{N-0}\int_0^N a(x)dx \\
+&= \frac{1}{N}\int_0^N a\rbr{1+c_1\rbr{\sin\rbr{\frac{2\pi}{p_1}\rbr{x-n_1}}}}dx\\
+&= \frac1N \int_0^N a dx +  \frac{ac_1}{N} \int_0^N \sin\rbr{\frac{2\pi}{p_1}\rbr{x-n_1}} dx
+\end{aligned}$
+
+Then, using  $\sin(A-B) = \sin(A)\cos(B) - \cos(A)\sin(B)$
+
+$\begin{aligned}
+a_{\text{avg}} 
+&= \frac1N ax\Big|_0^N  + \frac{ac_1}{N} \int_0^N \rbr{\sin\rbr{\frac{2\pi x}{p_1}}\cos\rbr{\frac{2\pi n_1}{p_1}} - \cos\rbr{\frac{2\pi x}{p_1}}\sin\rbr{\frac{2\pi n_1}{p_1}}}dx\\
+&= \frac{aN}{N}  
++ \frac{ac_1}{N} \cos\rbr{\frac{2\pi n_1}{p_1}} \int_0^N \sin\rbr{\frac{2\pi x}{p_1}}dx 
+-   \frac{ac_1}{N} \sin\rbr{\frac{2\pi n_1}{p_1}} \int_0^N \cos\rbr{\frac{2\pi x}{p_1}}dx\\
+&= a 
++  \frac{ac_1}{N} \cos\rbr{\frac{2\pi n_1}{p_1}}  \cdot \rbr{- \frac{p_1}{2\pi}  \cos\rbr{\frac{2\pi x}{p_1}}}\Big|_0^N 
+-   \frac{ac_1}{N} \sin\rbr{\frac{2\pi n_1}{p_1}}  \cdot \rbr{ \frac{p_1}{2\pi}  \sin\rbr{\frac{2\pi x}{p_1}}}\Big|_0^N \\
+&= a 
+-\frac{ac_1}{N} \cos\rbr{\frac{2\pi n_1}{p_1}} \frac{p_1}{2\pi} \cos\rbr{\frac{2\pi N}{p_1}} 
++\frac{ac_1}{N}\cos\rbr{\frac{2\pi n_1}{p_1}} \frac{p_1}{2\pi}  \cdot 1
+-\frac{ac_1}{N} \sin\rbr{\frac{2\pi n_1}{p_1}} \frac{p_1}{2\pi}  \sin\rbr{\frac{2\pi N}{p_1}}
++0\\
+&= a 
+-\frac{ac_1 p_1}{2\pi N} \rbr{\cos\rbr{\frac{2\pi n_1}{p_1}}\cos\rbr{\frac{2\pi N}{p_1}} 
++\cos\rbr{\frac{2\pi n_1}{p_1}} 
+-\sin\rbr{\frac{2\pi n_1}{p_1}}  \sin\rbr{\frac{2\pi N}{p_1}}}
+\end{aligned}$
+
+
+We use a similar identity $\cos(A+B) = \cos(A)\cos(B) - \sin(A)\sin(B)$ to get
+
+$\begin{aligned}
+a_{\text{avg}} 
+&= a 
+-\frac{ac_1 p_1}{2\pi N} \rbr{\cos\rbr{\frac{2\pi \rbr{N+n_1}}{p_1}}
++\cos\rbr{\frac{2\pi n_1}{p_1}}}
+\end{aligned}$
+
+Since $\cos(\cdot)$ is bounded between $\pm 1$ and
+
+$c_1 p_1<0.2\cdot 8 = 1.6$ and $N>50$ usually, we see that
+
+$$\left|\frac{ac_1 p_1}{2\pi N} \rbr{\cos\rbr{\frac{2\pi \rbr{N+n_1}}{p_1}}
++\cos\rbr{\frac{2\pi n_1}{p_1}}}\right| < \frac{1.6}{300} \cdot \rbr{1+1}=\frac{4}{375}$$
+
+
+So the average value of $a$ is approximately within $4/375 \approx 1.07\%$ of the value of $a$.
+
+Therefore $a$ is a reasonable estimate for the average $a_{\text{avg}}$ of the periodic parameter $a(x)$.
+
+Similarly, exchanging $c_1,n_1,p_1$ for $c_2,n_2,p_2$ we have a definition for $b(x)$ and hence $b$ is a reasonable estimate for the average $b_{\text{avg}}$.
+
+\end{pf}
+\end{prop}
 
