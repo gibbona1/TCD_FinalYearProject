@@ -34,7 +34,7 @@ Let $a_k \geq 0$ for all $k \in \{0,\dots,q\}$ and $a_{k_0} > 0$ for some $k_0\i
     \begin{equation}\label{eq:crn}
         x_n \sim Cr^n \text{ as } n\to\infty.
     \end{equation}
-    It follows from \ref{eq:crn} that if $r < 1$ then the epidemic fades away, whereas if $r > 1$ then it spreads unlimited.
+    It follows from \ref{eq:crn} that if $r < 1$ then the epidemic fades away, whereas if $r > 1$ then it will spread indefinitely.
 \end{enumerate}
 \begin{pf}
 \begin{enumerate}[(a)]
@@ -97,10 +97,12 @@ So $g(r')>1$, but $g(r)=1$
 
 \imp $g(r')>g(r)\imp r'<r$ by the definition of decreasing functions.
 
+Therefore $r$  is simple, and is the leading root of  \ref{eq:an}.
+
 \item Let $\lambda_1, \lambda_2, \dots$ be all other distinct roots of $f$ apart from $r$ (so that $\lambda_k$ are negative or imaginary). Any solution $x_n$ of \ref{eq:an} has the form
 
 \begin{equation} \label{eq:Crnxn}
-x_n + Cr^n +\tilde{x}_n    
+x_n = Cr^n +\tilde{x}_n    
 \end{equation}
 
 where $\tilde{x}_n$ is a linear combination of the functions $n^j\lambda^n_k$ . Since by (a) we have $|\lambda_k| < r$, it follows that
@@ -109,17 +111,35 @@ where $\tilde{x}_n$ is a linear combination of the functions $n^j\lambda^n_k$ . 
 |\tilde{x}_n| = o(r^n) \ \text{as} \ n\to\infty    
 \end{equation}
 
-Since $x_n > 0$, it follows from \ref{eq:Crnxn} and \ref{eq:xnorn} that $C \geq 0$. Let us verify that $C > 0$, which will finish the proof. It is tempting to say that if $C = 0$ then $x_n = \tilde{x}_n$ is a linear combination of terms of the form $n^j\rho^n \sin(\phi n)$ and $n^j\rho^n \cos(\phi n)$ and, therefore, cannot stay positive. However, it is not easy to make this argument rigorous because different roots of $f$ may have the same absolute value $\rho$ and an uncontrollable cancellation of the terms can occur. We employ here a different, simpler approach that takes advantage of nonnegative coefficients $a_k$. To that end, consider a new sequence
+Since $x_n > 0$, it follows from \ref{eq:Crnxn} and \ref{eq:xnorn} that $C \geq 0$. 
+
+Let us verify that $C > 0$, which will finish the proof. It is tempting to say that if $C = 0$ then $x_n = \tilde{x}_n$ is a linear 
+
+Consider a new sequence 
 
 $$ X_n = \frac{x_n}{r^n}.$$
 
 This satisfies the equation
 
 \begin{equation} \label{eq:AkXk}
-X_{n+1}=A_0X_0+A_1X_{n-1}+\dots+A_qX_{n-q}
+X_{n+1}=A_0X_n+A_1X_{n-1}+\dots+A_qX_{n-q}
 \end{equation}
 
-with $A_k = \frac{a_k}{r^{k+1}}$. Since $r$ is a root of $f$, we have
+with $A_k = \frac{a_k}{r^{k+1}}$. 
+
+Since
+
+$\begin{aligned}
+A_0X_0+A_1X_{n-1}+\dots+A_qX_{n-q} 
+&= \frac{a_0}{r^1}\frac{x_n}{r^n} + \frac{a_1}{r^2}\frac{x_{n-1}}{r^{n-1}} +  \dots + \frac{a_q}{r^{q+1}}\frac{x_{n-q}}{r^{n-q}}\\
+&= \frac{a_0x_n}{r^{n+1}} + \frac{a_1x_{n-1}}{r^{n+1}} + \dots + \frac{a_qx_{n-q}}{r^{n+1}}\\
+&= \frac1{r^{n+1}}\rbr{a_0x_n+a_1x_{n-1}+\dots + a_qx_{n-q}}\\
+&= \frac1{r^{n+1}}\rbr{x_{n+1}} \quad \text{from } \ref{eq:an} \\
+&= \frac{x_{n+1}}{r^{n+1}}\rbr{x_{n+1}} \\
+&= X_{n+1}
+\end{aligned}$
+
+Since $r$ is a root of $f$, we have
 
 \begin{align}
   A_0+A_1+\dots+A_q &= \frac{a_0}{r^{1}}+\frac{a_1}{r^{2}}+\dots+\frac{a_q}{r^{q+1}} \nonumber \\ 
@@ -137,7 +157,16 @@ $X_n \geq c$ for all $n \in \bN$, which implies
 
 $x_n\geq cr^n$
 
-as required.
+But equating with \ref{eq:Crnxn} we get
+
+\begin{align}
+      Cr^n + \tilde{x}_n   \geq cr^n &> 0  \nonumber\\
+    C +\frac{\tilde{x}_n}{r^n}    \geq c &> 0 \nonumber \\
+  \text{Taking the limit as } n\to\infty \nonumber \\
+   C \geq c &> 0
+\end{align}
+
+Therefore $C>0$, as required.
 \end{enumerate}
 \end{pf}
 \end{theorem}
@@ -216,7 +245,7 @@ For the model described by equation \ref{eq:an} we have
 $$R_0=\frac{a}{b}$$
 
 \begin{pf}
-Let $u$ be the number of people infected on some day, say $0$. On the day $k = 1, \dots , q$ the number $c_ku$ of them become ill and can infect other people. On the day $k + 1$ they infect $ac_ku$ people while $bc_ku$ of them get isolated. On the day $k + 1$, the remaining $(1 - b) c_ku$ people infect further $a (1 - b) c_ku$ people. Continuing this way, we obtain that this group of $c_ku$ people infects in total
+Let $u$ be the number of people infected on some day, set this to be day $0$. On the day $k = 1, \dots , q$ the number $c_ku$ of them become ill and can infect other people. On the day $k + 1$ they infect $ac_ku$ people while $bc_ku$ of them get isolated. On the day $k + 1$, the remaining $(1 - b) c_ku$ people infect further $a (1 - b) c_ku$ people. Continuing this way, we obtain that this group of $c_ku$ people infects in total
 
 $\begin{aligned}
 ac_ku+a(1-b)c_ku+a(1-b)^2c_ku+\dots 
@@ -314,6 +343,85 @@ r_1
 \end{pf}
 \end{result}
 
+While one iteration of Newton's method is often enough with our initial choice $r_0=\rbr{R_0}^{\frac1{2q}}$, we will show that it converges to $r$ in the limit
+
+\begin{lemma}
+Let $r'$ be the largest non-negative root of $f'(\lambda)$, the derivative of \ref{eq:fchar}. 
+
+If we choose an initial $r_0 > r'$ then $\lim\limits_{n\to\infty} r_n = r$.
+
+\begin{pf}
+Since $f(\lambda)$ defined above has leading root $r$ and has leading coefficient $1$, we know that $f(\lambda)>0$ for $\lambda>r$.
+
+Also, since $r$ is the only positive root, by part (a) of \ref{thm:lim}, then $f(\lambda)<0$ for $0<\lambda<r$.
+
+We have 
+
+\begin{equation}\label{eq:r1newton}
+r_1 = r_0 - \frac{f(r_0)}{f'(r_0)}
+\end{equation}
+
+We require $r_0$ and $r_1$ to be in the open interval $(r',\infty)$ in order for $r_n$ to converge to $r$.
+
+There are two cases to consider:
+
+\begin{itemize}
+\item  If our chosen $r_0$ is less than $r$, then $f(r_0)<0$ and $f'(r_0)>0$.
+
+$$r_1 = r_0 - \underbrace{\frac{f(r_0)}{f'(r_0)}}_{<0} > r_0 > r'$$
+
+
+Then $r_1>r'$ and the sequence will converge.
+
+\item   If our chosen $r_0$ is greater than $r$, then $f(r_0)>0$ and $f'(r_0)>0$.
+
+By a similar argument to above, 
+
+$$r_1 < r_0$$ so we need to do more work to show $r_1 > r'$ in this case
+
+Since $f$ is continuous in $[r_1,r_0]$ and differentiable in $(r_1,r_0)$, we can apply the \textit{Mean Value Theorem} to imply that there exists some point $c\in (r_1,r_0)$ such that 
+
+\begin{equation}
+f'(c)=\frac{f(r_0)-f(r_1)}{r_0-r_1}
+\end{equation}
+
+We can rearrange this equation
+
+$$f(r_1)= f(r_0) + f'(c)(r_1-r_0)$$
+
+But from \ref{eq:r1newton} we have 
+
+$$r_1-r_0 = - \frac{f(r_0)}{f'(r_0)}$$
+
+And so 
+
+\begin{align}
+f(r_1) 
+&= f(r_0) - f'(c)\frac{f(r_0)}{f'(r_0)} \\
+&= f(r_0)\rbr{1-\frac{f'(c)}{f'(r_0)}}
+\end{align}
+
+But since the function $f$ is convex in the open interval $(r',\infty)$, we know that $0 < f'(c) <f'(r_0)$.
+
+Therefore 
+
+$$0<f(r_1) < f(r_0)$$
+
+which gives
+
+$$r < r_1 < r_0$$
+
+and finally
+
+\begin{equation}\label{r1ineq}
+r' < r < r_1
+\end{equation}
+\end{itemize}
+And so $r_1>r$ in both cases, then Newton's method ensures $\lim\limits_{n\to\infty} r_n = r$, as required.
+\end{pf}
+\end{lemma}
+
+
 \begin{definition}
 The function $f$ takes on the average value between points $x_1$ and $x_2$, $f_{\text{avg}}$  given by the formula 
 \begin{equation} \label{eq:avgvalue}
@@ -378,11 +486,11 @@ Since $\cos(\cdot)$ is bounded between $\pm 1$ and
 
 $c_1 p_1<0.2\cdot 8 = 1.6$ and $N>50$ usually, we see that
 
-$$\left|\frac{ac_1 p_1}{2\pi N} \rbr{\cos\rbr{\frac{2\pi \rbr{N+n_1}}{p_1}}
+$$\left|\frac{c_1 p_1}{2\pi N} \rbr{\cos\rbr{\frac{2\pi \rbr{N+n_1}}{p_1}}
 +\cos\rbr{\frac{2\pi n_1}{p_1}}}\right| < \frac{1.6}{300} \cdot \rbr{1+1}=\frac{4}{375}$$
 
 
-So the average value of $a$ is approximately within $4/375 \approx 1.07\%$ of the value of $a$.
+So the average value of $a(x)$ is approximately within $4/375 \approx 1.07\%$ of the value of $a$.
 
 Therefore $a$ is a reasonable estimate for the average $a_{\text{avg}}$ of the periodic parameter $a(x)$.
 

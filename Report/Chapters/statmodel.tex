@@ -64,9 +64,7 @@ $F_{N+k}=L_N+k\cdot b_N+S_{N+k-s}$
 \caption{Seasonal Holt Winter’s Additive Model Algorithm (denoted SHW$_{+}$)}
 \end{figure}
 
-\subsubsection{How to select the best model}
-
-\subsubsection{Forecasting}
+The parameters $\alpha,\beta,\gamma$ are selected using Maximum Likelihood Estimation.
 
 \subsubsection{Implementation in R}
 
@@ -88,7 +86,7 @@ We see that the additive seasonal method is a better choice for both model fit a
 \minipage{0.98\textwidth}
 \includegraphics[width=0.9\textwidth]{hwaddmultcompare.png}
 \endminipage
-\caption{Comparison between HoltWinters multiplicative (left, red outline) and additive (right, green outline)algorithms, at some point during the research}
+\caption{Comparison of HoltWinters multiplicative (left) and additive (right) algorithms}
 \end{center}
 \end{figure}
 
@@ -121,7 +119,6 @@ We see that the additive seasonal method is a better choice for both model fit a
 \endminipage
 \caption{HoltWinters model, United States}
 \end{figure}
-
 
 \subsection{ARIMA models}
 
@@ -234,9 +231,9 @@ The purpose of this is to make the time series  stationary in mean
 \end{itemize}
 
 
-Then we can similarly compose our seasonal components with the previous ARIMA$(pd,q)$ to get the definition of an ARIMA$(p,d,q)(P,D,Q)_s$ model
+Then we can similarly compose our seasonal components (with seasonal period $s$) with the previous ARIMA$(pd,q)$ to get the definition of an ARIMA$(p,d,q)(P,D,Q)_s$ model
 
-\begin{align}
+\begin{align}\label{eq:arima}
 \underbrace{\left(1-\phi_1 B-\phi_2B^2-\dots-\phi_p B^p\right)}_{AR(p)}
 \underbrace{\left(1-\beta_1 B^s-\beta_2B^{2s}-\dots-\beta_P B^{Ps}\right)}_{AR_s(P)} 
 \underbrace{\left(1-B\right)^d}_{I(d)}\underbrace{\left(1-B^s\right)^D}_{I_s(D)}   x_n = \nonumber \\
@@ -247,9 +244,11 @@ Then we can similarly compose our seasonal components with the previous ARIMA$(p
 
 where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$ and $\gamma_0$ 
 
-\subsubsection{How to select the best model}
+The orders $p, d, q$ and $P,D,Q$ are computed by analysing the correlation functions (ACF and PACF).
 
-\subsubsection{Forecasting}
+The $P+Q+p + q + 1$ coefficients $c, \phi_1, \dots , \phi_p, \psi_1,\dots , \psi_q, \beta_1,\dots,\beta_P,\gamma_1,\dots,\gamma_Q$ are computed using Maximum Likelihood Estimation.
+
+Again, \ref{eq:arima} can similarly be used to compute forecasted values $x_{N+1},\dots,x_{N+m}$.
 
 \subsubsection{Implementation in R}
 
@@ -296,20 +295,13 @@ plots[["arima"]]   <- plot_arima(countrydat, modeldat, cols, labs)
 
 \subsection{Neural network models}
 
-\begin{figure}[H]
-\minipage{0.48\textwidth}
-\includegraphics[width=0.9\textwidth]{NeuralNetNoHidden.pdf}
-\caption{A linear regression model, or ARIMA$(p,0,0)$ model.}
-\endminipage\hfill
-\minipage{0.48\textwidth}
-\includegraphics[width=0.9\textwidth]{NeuralNet.pdf}
-\caption{A neural network with $p$ inputs and one hidden layer with $k$ hidden neurons.}
-\endminipage
-\end{figure}
+An ARIMA$(p,0,0)$ has inputs $x_{n-1},\dots,x_{n-p}$ and parameters $\phi_{1},\dots,\phi_{p}$ in order to compute $x_n$ via a linear combination.
 
-\subsubsection{Definitions and Theory}
+Similarly, an ARIMA$(p,0,0)(P,0,0)_s$ has inputs $x_{n-1},\dots,x_{n-p}, x_{n-s},\dots,x_{n-Ps}$ and parameters $\phi_{1},\dots,\phi_{p}, \beta_1,\dots,\beta_P$ in order to compute $x_n$ via another linear combination.
 
+With a Neiral Network Auroregressive model, a \textit{hidden layer} of $k$ inputs is introduced.
 
+The model then becomes non-linear and allows for interactions between inputs (previous values in the time series).
 
 The inputs to the hidden layer are then transformed using a sigmoid function
 
@@ -317,9 +309,22 @@ The inputs to the hidden layer are then transformed using a sigmoid function
 g(z)=\frac{1}{1+\exp(z)}
 \end{equation}
 
-\subsubsection{How to select the best model}
+The diagram \ref{fig:nnet} is a \textit{multilayer feed-forward network}, as each lconsecutive layer (left to right) of nodes takes inputs from the previous layer, adding complexity.
 
-\subsubsection{Forecasting}
+The \verb|forecast::nnetar()| function only allows for one layer to avoid overfiting of a univariate time seris.
+
+
+
+\begin{figure}[H]
+\minipage{0.48\textwidth}
+\includegraphics[width=0.9\textwidth]{NeuralNetNoHidden.pdf} \label{fig:nnetnohidden}
+\caption{A linear regression model, or ARIMA$(p,0,0)$ model.}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+\includegraphics[width=0.9\textwidth]{NeuralNet.pdf} \label{fig:nnet}
+\caption{A neural network with $p$ inputs and one hidden layer with $k$ hidden neurons.}
+\endminipage
+\end{figure}
 
 \subsubsection{Implementation in R}
 
@@ -342,7 +347,7 @@ plots[["nn"]] <- plot_nn(countrydat, modeldat, cols, labs)
 \minipage{0.48\textwidth}
   \includegraphics[width=\linewidth]{Ireland-nny.pdf} \label{fig:ireland-nny}
 \endminipage
-\caption{Neural Network model, Ireland}
+\caption{Neural Network Autoregression model, Ireland}
 \end{figure}
 
 \begin{figure}[H]
@@ -352,7 +357,7 @@ plots[["nn"]] <- plot_nn(countrydat, modeldat, cols, labs)
 \minipage{0.48\textwidth}
   \includegraphics[width=\linewidth]{Italy-nny.pdf} \label{fig:italy-nny}
 \endminipage
-\caption{Neural Network model, Italy}
+\caption{Neural Network Autoregression model, Italy}
 \end{figure}
 
 \begin{figure}[H]
@@ -362,5 +367,5 @@ plots[["nn"]] <- plot_nn(countrydat, modeldat, cols, labs)
 \minipage{0.48\textwidth}
   \includegraphics[width=\linewidth]{United States-nny.pdf} \label{fig:usa-nny}
 \endminipage
-\caption{Neural Network model, United States}
+\caption{Neural Network Autoregression model, United States}
 \end{figure}

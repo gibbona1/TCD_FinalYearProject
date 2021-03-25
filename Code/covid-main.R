@@ -20,16 +20,15 @@ covidPlots <- function(country, dateBounds, data){
   countrydat <- data.frame(date = data$date[countryrows], 
                            xn   = data$new_cases[countryrows],
                            yn   = data$total_cases[countryrows])
-  countrydatfull <- countrydat[countrydat$date <= dateBounds[2],]
-  
+
   forecastlen <- 14
   
   prevcases <- countrydat$yn[countrydat$date == as.Date(dateBounds[1])-1]
   #Specific dates
   countrydattest  <- countrydat[countrydat$date >= dateBounds[1] & countrydat$date <= (dateBounds[2] + forecastlen),]
   countrydat <- countrydat[countrydat$date >= dateBounds[1] & countrydat$date <= dateBounds[2],]
-  latest_date <- countrydatfull$date[nrow(countrydatfull)]
-  testBounds <- dateBounds[1] + c(1:forecastlen)
+  latest_date <- dateBounds[2]
+  testBounds <- dateBounds[2] + c(1:forecastlen)
   
   countrydesc <- paste0(country, ", ", dateBounds[1], " to ", dateBounds[2])
   
@@ -46,17 +45,22 @@ covidPlots <- function(country, dateBounds, data){
     arimapi  = wes_palettes$Darjeeling1[3],
     hw       = wes_palettes$Moonrise1[2],
     hwpi     = wes_palettes$Moonrise1[1],
-    periodic = "magenta",
-    nn       = wes_palettes$FantasticFox1[4]
+    periodic = wes_palettes$GrandBudapest1[3], #"magenta",
+    nn       = wes_palettes$FantasticFox1[4],
+    nnpi     = wes_palettes$GrandBudapest1[4]
   )
   
   labs <- list(
-    xn = list(bquote(.(country)*","~x[n]*"*=new cases/day, test set: from"~.(format.Date(dateBounds[1],"%d.%m.%Y"))~to~.(format.Date(dateBounds[2],"%d.%m.%Y")))),
-    yn = list(bquote(.(country)*","~y[n]*"*=cumulative cases, actual till"~.(format.Date(dateBounds[1],"%d.%m.%Y"))~to~.(format.Date(dateBounds[2],"%d.%m.%Y")))) 
+    train    = "Training set",
+    test     = "Test set",
+    base     = "Base",
+    x3       = "Average x*(3)",
+    periodic = "Periodic",
+    hw       = "HoltWinters",
+    hwpi     = "HW 95% PI",
+    arimapi  = "ARIMA 95% PI",
+    nnpi     = "NNAR 95% PI"
   )
-  
-  plots[["xn"]] <- plot_xn(countrydatfull, cols, labs)
-  plots[["yn"]] <- plot_yn(countrydatfull, cols, labs)
   
   #Basic model: need a,b,q,r using ||x-x*|| and ||y-y*||
   ##q - Any infected person becomes ill and infectious on the q-th day after infection.
@@ -70,14 +74,20 @@ covidPlots <- function(country, dateBounds, data){
   abnorm  <- apply(normdat, 1, function(x) norm(x, countrydat$xn))
 
   normdat$abnorm  <- abnorm
+  normdat$abnormn <- normalize(abnorm)
   
   newnormdat <- normdat %>% top_n(abnorm, n = -0.07*nrow(.))
-
+  
+  abnormy  <- apply(newnormdat, 1, function(x) normy(x, countrydat$xn, countrydat$yn))
+  newnormdat$abnormyn <- normalize(abnormy)
+  
+  newnormdat$combnorm <- 1*newnormdat$abnormn + 0.00*newnormdat$abnormyn
+  
   col_grad <- wes_palette("Zissou1", 20, type = "continuous")
 
   #newnormdat$abnormy <- apply(newnormdat, 1, function(x) normy(x, countrydat$xn, countrydat$yn))
   
-  tileoptim <- normdat[which.min(normdat$abnorm),1:3]
+  tileoptim <- newnormdat[which.min(newnormdat$abnorm),1:3]
   optimpars <- c(tileoptim$q, tileoptim$a, tileoptim$b)
   plots[["combnorm"]] <- ggplot(newnormdat, aes(x = a, y = b, z = abnorm)) +
     geom_contour_filled() + labs(fill = "||x-x*||") +
@@ -106,18 +116,10 @@ covidPlots <- function(country, dateBounds, data){
   roptimpars  <- round(optimpars,3)
   xnorm       <- norm(optimpars,countrydat$xn)
   xnormtest   <- modnorm(basexn[testrange], countrydattest$xn[testrange])
-  labs$basexn <- list(bquote("basic model, "~x[n]*"=new cases/day; a="*.(roptimpars[2])*", b="*
-                             .(roptimpars[3])*", q="*.(roptimpars[1])*";  r="*.(base_r_one)*
-                             "; ||x*-x||"["train"]*"="*.(xnorm)*"; ||x*-x||"["test"]*"="*.(xnormtest)))
 
-  labs$xntest <- list(bquote(.(country)*","~x[n]*"*=new cases/day, test set: from"~.(format.Date(testBounds[1],"%d.%m.%Y"))~"to"~.(format.Date(testBounds[2],"%d.%m.%Y"))))
-  labs$yntest <- list(bquote(.(country)*","~y[n]*"*=cumulative cases, test set: from"~.(format.Date(testBounds[1],"%d.%m.%Y"))~"to"~.(format.Date(testBounds[2],"%d.%m.%Y"))))
   ynorm       <- modnorm(countrydat$yn, modeldat$baseyn[1:length(countrydat$yn)])
   ynormtest   <- modnorm(modeldat$baseyn[testrange], countrydattest$yn[testrange])
-  labs$baseyn <- list(bquote("basic model, "~y[n]*"=cumulative cases; a="*.(roptimpars[2])*", b="*
-                             .(roptimpars[3])*", q="*.(roptimpars[1])*
-                             "; ||y*-y||"["train"]*"="*.(ynorm)*"; ||y*-y||"["test"]*"="*.(ynormtest)))
-  
+
   plots[["basexn"]] <- plot_basexn(modeldat, cols, labs)
   plots[["baseyn"]] <- plot_baseyn(modeldat, cols, labs)
   
@@ -143,8 +145,6 @@ covidPlots <- function(country, dateBounds, data){
   x3normt  <- modnorm(modeldat$xn[testrange], modeldat$mavgx3[testrange])
   x3normy  <- modnorm(modeldat$yn[trainrange], modeldat$mavgx3y[trainrange])
   x3normyt <- modnorm(modeldat$yn[testrange], modeldat$mavgx3y[testrange])
-  
-  labs$x3 <- list(bquote("moving average x*(3); ||x*(3)-x*||"["train"]*"="*.(x3norm)*"; ||x*(3)-x*||"["test"]*"="*.(x3normt)))
   
   plots[["mavgx3"]] <- plot_mavgx3(modeldat, cols, labs)
   
@@ -194,21 +194,13 @@ covidPlots <- function(country, dateBounds, data){
     xntheme() + theme(legend.position = "right")
   
   #a,b,c1,c2,p1,p2,n1,n2
-  labs$periodic <- list(bquote("periodic model,"~x[n]*"=new cases/day;"
-                              ~a*"="*.(peroptim[1])*","~ b*"="*.(peroptim[2])*","
-                              ~q*"="*.(q)*";"~"||x*-x||"["train"]*"="*.(pernorm)*
-                                "; ||x*-x||"["test"]*"="*.(pernormt)*";"
-                              ~c[1]*"="*.(peroptim[3])*","~p[1]*"="*.(peroptim[5])*","
-                              ~n[1]*"="*.(peroptim[7])*","~c[2]*"="*.(peroptim[4])*","
-                              ~p[2]*"="*.(peroptim[6])*","~n[2]*"="*.(peroptim[8])))
   
-  labs$periodicy <- list(bquote("periodic model,"~y[n]*"=cumulative cases;"
-                               ~a*"="*.(peroptim[1])*","~ b*"="*.(peroptim[2])*","
-                               ~q*"="*.(q)*";"~"||y*-y||"["train"]*"="*.(pernormy)*
-                                 "; ||y*-y||"["test"]*"="*.(pernormyt)*";"
-                               ~c[1]*"="*.(peroptim[3])*","~p[1]*"="*.(peroptim[5])*","
-                               ~n[1]*"="*.(peroptim[7])*","~c[2]*"="*.(peroptim[4])*","
-                               ~p[2]*"="*.(peroptim[6])*","~n[2]*"="*.(peroptim[8])))
+  mathperamdat <- data.frame(a = peroptim[1], b  = peroptim[2], q  = q, r = base_r_one,
+                            c1 = peroptim[3], p1 = peroptim[5], n1 = peroptim[7],
+                            c2 = peroptim[4], p2 = peroptim[6], n2 = peroptim[8])
+  
+  colnames(mathperamdat) <- c("$a$", "$b$", "$q$", "$r$", 
+                              "$c_1$", "$p_1$", "$n_1$", "$c_2$", "$p_2$", "$n_2$")
   
   plots[["periodic"]]  <- plot_periodic(modeldat, cols, labs)
   plots[["periodicy"]] <- plot_periodicy(modeldat, cols, labs)
@@ -250,10 +242,6 @@ covidPlots <- function(country, dateBounds, data){
     hwnormt  <- modnorm(modeldat$xn[testrange], hwfcst$mean)
     hwnormy  <- modnorm(countrydat$yn, modeldat$hwyn[trainrange])
     hwnormyt <- modnorm(modeldat$yn[testrange], modeldat$hwyn[testrange])
-    
-    labs$hw   <- list(bquote("HoltWinters algorithm,  ||x*-x||"["train"]*"="*.(hwnorm)*", ||x*-x||"["test"]*"="*.(hwnormt)))
-    labs$hwy  <- list(bquote("HoltWinters algorithm,  ||y*-y||"["train"]*"="*.(hwnormy)*", ||y*-y||"["test"]*"="*.(hwnormyt)))
-    labs$hwpi <- "HW 95% Prediction Interval"
    
     plots[["hw"]]  <- plot_hw(modeldat, cols, labs)
     plots[["hwy"]] <- plot_hwy(modeldat, cols, labs)
@@ -276,8 +264,7 @@ covidPlots <- function(country, dateBounds, data){
   arimanormt <- modnorm(modeldat$xn[testrange], arima.fcst$mean)
   
   arimalabs    <- getArmaModel(auto.fit$arma)
-  labs$arima   <- list(bquote(.(arimalabs)*", ||x*-x||"["train"]*"="*.(arimanorm)*", ||x*-x||"["test"]*"="*.(arimanormt)))
-  labs$arimapi <- "ARIMA 95% Prediction Interval"
+  labs$arima   <-  arimalabs
   
   modeldat$arimaxn <- c(auto.fit$fitted, arima.fcst$mean)
   modeldat$arimalo <- c(auto.fit$fitted,arima.fcst$lower[,2])
@@ -289,7 +276,6 @@ covidPlots <- function(country, dateBounds, data){
 
   arimanormy   <- modnorm(countrydat$yn,modeldat$arimayn[trainrange])
   arimanormyt  <- modnorm(modeldat$yn[testrange], modeldat$arimayn[testrange])
-  labs$arimay  <- list(bquote(.(arimalabs)*", ||y*-y||"["train"]*"="*.(arimanormy)*", ||y*-y||"["test"]*"="*.(arimanormyt)))
   
   plots[["arima"]]   <- plot_arima(modeldat, cols, labs)
   plots[["arimay"]]  <- plot_arimay(modeldat, cols, labs)
@@ -302,6 +288,7 @@ covidPlots <- function(country, dateBounds, data){
   #Box-Cox transformation with lambda=0 to ensure the forecasts stay positive.
   nnfit   <- nnetar(dat_ts, p = auto.fit$arma[1], P = auto.fit$arma[3], size = nHidden, lambda = 0, repeats = 20, maxit = 50) 
   nn.fcst <- forecast(nnfit, PI=TRUE, h = forecastlen)
+  labs$nn <- nnfit$method
 
   nn.fcst$fitted[1:q] <- countrydat$xn[1:q]
  
@@ -318,12 +305,6 @@ covidPlots <- function(country, dateBounds, data){
   nnnormy     <- modnorm(countrydat$yn,modeldat$nnyn[trainrange])
   nnnormytest <- modnorm(modeldat$yn[testrange], modeldat$nnyn[testrange])
   
-  labs$nn   <- list(bquote(.(nnfit$method)*", ||x*-x||"["train"]*"="*.(nnnorm)*
-                    ", ||x*-x||"["test"]*"="*.(nnnormtest)))
-  labs$nny  <- list(bquote(.(nnfit$method)*", ||y*-y||"["train"]*"="*.(nnnormy)*
-                             ", ||y*-y||"["test"]*"="*.(nnnormytest)))
-  labs$nnpi <- "NNAR 95% Prediction Interval"
-  
   plots[["nn"]]  <- plot_nn(modeldat, cols, labs)
   plots[["nny"]] <- plot_nny(modeldat, cols, labs)
   
@@ -334,9 +315,10 @@ covidPlots <- function(country, dateBounds, data){
   summarydf$xnormt <- as.integer(summarydf$xnormt)
   summarydf$ynormt <- as.integer(summarydf$ynormt)
   
-  colnames(summarydf) <- c("model", "$||x-x^*||_{\text{train}}$", "$||y-y^*||_{\text{train}}$",
-                           "$||x-x^*||_{\text{test}}$", "$||y-y^*||_{\text{test}}$")
-  return(list("plots" = plots, "summary" = summarydf, "desc" = countrydesc, "dat" = modeldat))
+  colnames(summarydf) <- c("model", "$||x-x^*||_{train}$", "$||y-y^*||_{train}$",
+                           "$||x-x^*||_{test}$", "$||y-y^*||_{test}$")
+  return(list("plots" = plots, "summary" = summarydf, "desc" = countrydesc, 
+              "dat" = modeldat, "mathmodelpars" = mathperamdat))
 }
 
 grigorDates <- c("2020-04-26", "2020-06-09")

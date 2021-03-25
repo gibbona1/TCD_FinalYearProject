@@ -31,11 +31,14 @@ We will obtain the following relation between the leading root $r$ and the basic
 \end{equation}
 
 Recurrence relation for $z_n$:
+
+The number of ill people at large on day $n+1$ is the number at large on day $n$, minus the number who were detected and isolated on day $n$, plus the number of people who were infected $q$ days ago, i.e. 
+
 \begin{equation} \label{eq:znrecurr}
     z_{n+1} = z_n - x_n + u_{n-q}.
 \end{equation}
 
-Using $x_n = bz_n$ we obtain the following equation for $x_n$:
+Using $x_n = bz_n$ and $u_{n-q} = ax_{n-q}$ we obtain the following equation for $x_n$:
 \begin{equation} \label{eq:xnrecurr}
     x_{n+1} = (1 - b) x_n + ax_{n-q}.
 \end{equation}
@@ -63,9 +66,9 @@ While this is the ideal situation, it is far more important to minimize $\norm{x
 
 The proofs and results are in \label{ch:theorems}.
 
-
-
 \subsubsection{How to select the best model}
+
+We primarily seek to minimize \ref{eq:xnnorm}, which can bee seen using contour plots below.
 
 \begin{figure}[H]
 \minipage{0.33\textwidth}
@@ -82,7 +85,11 @@ The proofs and results are in \label{ch:theorems}.
 \endminipage\hfill
 \end{figure}
 
+The \verb|optim()| function in \verb|R| appeared to have a danger of converging to local optima, so with some trade-off in computation time over accuracy, I have chosen to iterate the algorithm \verb|basicmodx()| over all combinations of $a,b,q$.
+
 \subsubsection{Forecasting}
+
+The model can easily be extended $m$ days ahead, with $x_{N+1},\dots,x_{N+m}$ defined in  \ref{eq:xnrecurr}.
 
 \subsubsection{Implementation in R}
 
@@ -138,7 +145,7 @@ plots[["basexn"]] <- plot_basexn(countrydat, modeldat, cols, labs)
 
 \subsection{Limiting curve}
 
-The second result in \ref{thm:lim} is the equation \ref{eq:crn}, which defines the limiting behavior of the recurrence relation \ref{eq:an}.
+The second result in \ref{thm:lim} is the equation \ref{eq:crn}, which defines the limiting behavior of the recurrence relation \ref{eq:xnrecurr}.
 
 \begin{lstlisting}[breaklines = true, escapeinside=||, tabsize = 4, caption = {Algorithm for Limiting Curve}]
 modeldat$Crn <- optimC*base_r_one^(1:nrow(modeldat))  |\Suppressnumber|
@@ -163,7 +170,7 @@ plots[["Crn"]] <- plot_crn(countrydat, modeldat, cols, labs)
 \endminipage 
 \end{figure}
 
-The limiting curve can of course so exponential growth 
+The limiting curve can also show exponential growth and quickly get out of control
 
 \begin{figure}[H]
 \minipage{0.98\textwidth}
@@ -201,9 +208,7 @@ The 7-day moving average is a good baseline for model performance , as ideally w
 \endminipage 
 \end{figure}
 
-\subsection{Periodic model}
-
-\subsubsection{Definitions and Theory}
+\subsection{Periodic model}\label{ch:periodic}
 
 Instead of constant parameters $a,b$, we vary them slightly over time:
 
@@ -303,14 +308,30 @@ plots[["periodic"]] <- plot_periodic(countrydat, modeldat, cols, labs)
 
 While Grigorian's paper only formulated a two-phase model, I have generalized it to any number of phases, both in the equations below and the code.
 
+Suppose there are $M$ phases of the pandemic, and we wish to compute the parameters $a,b,q$ seperately for each phase.
 
+Therefore we have phases
 
+\begin{itemize}
+\item[(1)] parameters $a_1,b_1,q_1$ and mdel $x_n$ for $0\leq n \leq N_1$
+\item[(2)]  parameters $a_2,b_2,q_2$ and mdel $x_n$ for $N_1+1\leq n \leq N_2$
 
-\subsubsection{Implementation in R}
+$\vdots$
+
+\item[(M)] parameters $a_M,b_M,q_M$ and mdel $x_n$ for $N_{M-1}+1\leq n \leq N_M = N$
+\end{itemize}
+
+Grigorian's paper uses a form of smoothing of parameter $b$, which is using $\frac{b_{\text{new}}}{b_{\text{old}}}$ for a few days around the change point to deal with the transition between phase.
+
+This perturbation is already dealt with sufficiently in the periodic version so i have excluded this in the event that  $\frac{b_{\text{new}}}{b_{\text{old}}}$ is much larger than 1. 
+
+The model parameters are computed seperately for each phase, with the values $x_n$ feeding into the next phase to continue the recursive definition (e.g. phase 2 needs some values from phase 1 of the model).
+
+The model parameters are chosen to minimize \ref{eq:xnnorm} for each phase, and the overall model performance displayed is computed for the model as a whole against the data as a whole.
 
 \subsubsection{Plots}
 
-The multi-phase model without periodicity can be sharp and unrealstic
+The multi-phase model without periodicity can be sharp and unrealstic, and is purely for demonstration
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}
@@ -342,8 +363,7 @@ The multi-phase model without periodicity can be sharp and unrealstic
 \caption{Multi-phase model, United States}
 \end{figure}
 
-
-The periodic model often performs much better
+The periodic model is a similar extension as in \ref{ch:periodic} and often performs better.
 
 \begin{figure}[H]
 \minipage{0.48\textwidth}

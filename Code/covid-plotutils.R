@@ -3,7 +3,7 @@ plot_xn <- function(countrydat, cols, labs){
     geom_bar(aes(x = date, y = xn, fill = cols$xn), stat = "identity") + 
     scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0))+
     scale_y_continuous(expand = c(0,0)) +
-    scale_fill_manual(values = cols$xn, name = "", labels = labs$xn) +
+    scale_fill_manual(values = cols$xn, name = "", labels = labs$train) +
     xntheme()
   return(p)
 }
@@ -14,7 +14,7 @@ plot_yn <- function(countrydat, cols, labs){
     geom_point(aes(x = date, y = yn, colour = "blue"))+
     scale_x_date(date_breaks = "1 month", date_labels = "%b", expand = c(0,0))+
     scale_y_continuous(expand = c(0,0)) +
-    scale_colour_manual(values = cols$yn, name = "", labels = labs$yn) +
+    scale_colour_manual(values = cols$yn, name = "", labels = labs$train) +
     yntheme()
   return(p)
 }
@@ -26,8 +26,8 @@ plot_basexn <- function(modeldat, cols, labs){
     geom_line(aes(x = date, y = basexn, colour = cols$basexn)) +
     gg_scale_xy + 
     scale_fill_manual(name = "leg", values = c("test" = cols$xntest, "train" = cols$xn),
-                      labels = c("test" = labs$xntest, "train" = labs$xn)) +
-    scale_colour_manual(name = "leg", values = cols$basexn, labels = labs$basexn) +
+                      labels = c("test" = labs$test, "train" = labs$train)) +
+    scale_colour_manual(name = "leg", values = cols$basexn, labels = labs$base) +
     xntheme()
   return(p)
 }
@@ -41,7 +41,7 @@ plot_baseyn <- function(modeldat, cols, labs){
     gg_scale_xy + 
     scale_colour_manual(name = "leg",
                         values = c("base" = cols$baseyn, "test" = cols$yntest, "train" = cols$yn), 
-                        labels = c("base" = labs$baseyn, "test" = labs$yntest, "train" = labs$yn),
+                        labels = c("base" = labs$base, "test" = labs$test, "train" = labs$train),
                         guide = guide_legend(override.aes = list(
                           shape = c("base" = 16, "test" = 1, "train" = 1)))) +
     yntheme()
@@ -56,10 +56,10 @@ plot_crn <- function(modeldat, cols, labs){
     geom_line(aes(x = date, y = Crn, colour = "Crn")) +
     gg_scale_xy + 
     scale_fill_manual(name = "leg", values = c("test" = cols$xntest, "train" = cols$xn),
-                      labels = c("test" = labs$xntest, "train" = labs$xn)) +
+                      labels = c("test" = labs$test, "train" = labs$train)) +
     scale_colour_manual(name = "leg",
                         values = c("basexn" = cols$basexn, "Crn" = cols$Crn), 
-                        labels = c("basexn" = labs$basexn, "Crn" = labs$Crn),
+                        labels = c("basexn" = labs$base, "Crn" = labs$Crn),
                         guide = guide_legend(override.aes = list(
                           shape = c("basexn" = 16, "Crn" = NA)))) +
     xntheme()
@@ -73,9 +73,9 @@ plot_mavgx3 <- function(modeldat, cols, labs){
     geom_line(aes(x = date, y = basexn, colour = "basexn")) +
     geom_line(aes(x = date, y = mavgx3, colour = "x3")) +
     scale_fill_manual(name = "leg", values = c("test" = cols$xntest, "train" = cols$xn),
-                      labels = c("test" = labs$xntest, "train" = labs$xn)) +
+                      labels = c("test" = labs$test, "train" = labs$train)) +
     scale_colour_manual(values = c("basexn" = cols$basexn, "x3" = cols$x3), 
-                        labels = c("basexn" = labs$basexn, "x3" = labs$x3),
+                        labels = c("basexn" = labs$base, "x3" = labs$x3),
                         guide = guide_legend(override.aes = list(
                           shape = c("basexn" = 16, "x3" = NA)))) +
     gg_scale_xy + xntheme()
@@ -95,9 +95,9 @@ plot_periodic <- function(modeldat, cols, labs){
            fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
     scale_fill_manual(name = "leg", 
                       values = c("test" = cols$xntest, "train" = cols$xn),
-                      labels = c("test" = labs$xntest, "train" = labs$xn)) +
+                      labels = c("test" = labs$test, "train" = labs$train)) +
     scale_colour_manual(values = c("base" = cols$basexn, "periodic" = cols$periodic, "x3" = cols$x3), 
-                        labels = c("base" = labs$basexn, "periodic" = labs$periodic, "x3" = labs$x3)) +
+                        labels = c("base" = labs$base, "periodic" = labs$periodic, "x3" = labs$x3)) +
     guides(colour = guide_legend(override.aes = list(shape = c("base" = 16, "periodic" = 16, "x3" = NA)))) +
     xntheme()
   return(p)
@@ -114,7 +114,7 @@ plot_periodicy <- function(modeldat, cols, labs){
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=4,byrow=TRUE)) +
     scale_colour_manual(values = c("base" = cols$baseyn, "periodic" = cols$periodic, "test" = cols$yntest, "train" = cols$yn), 
-                        labels = c("base" = labs$baseyn, "periodic" = labs$periodicy, "test" = labs$yntest, "train" = labs$yn),
+                        labels = c("base" = labs$base, "periodic" = labs$periodic, "test" = labs$test, "train" = labs$train),
                         guide = guide_legend(override.aes = list(
                           shape = c("base" = 1, "periodic" = 1, "test" = 16, "train" = 16)))) +
     yntheme()
@@ -134,9 +134,9 @@ plot_hw <- function(modeldat, cols, labs){
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=3,byrow=TRUE)) +
-    scale_fill_manual(labels = c("hw" = labs$hwpi, "test" = labs$xntest, "train" = labs$xn),
+    scale_fill_manual(labels = c("hw" = labs$hwpi, "test" = labs$test, "train" = labs$train),
                       values = c("hw" = cols$hwpi, "test" = cols$xntest, "train" = cols$xn))+ 
-    scale_colour_manual(labels = c("base" = labs$basexn, "hw" = labs$hw, "periodic" = labs$periodic),
+    scale_colour_manual(labels = c("base" = labs$base, "hw" = labs$hw, "periodic" = labs$periodic),
                         values = c("base" = cols$basexn, "hw" = cols$hw, "periodic" = cols$periodic),
                         guide = guide_legend(override.aes = list(
                           shape = c("base" = 16, "hw" = 18, "periodic" = 16)))) +
@@ -161,7 +161,7 @@ plot_hwy <- function(modeldat, cols, labs){
     scale_fill_manual(values = c("pi" = cols$hwpi), 
                       labels = c("pi" = labs$hwpi)) +
     scale_colour_manual(values = c("base" = cols$baseyn, "hw" = cols$hw,  "periodic" = cols$periodic,  "test" = cols$yntest, "train" = cols$yn), 
-                        labels = c("base" = labs$baseyn, "hw" = labs$hwy, "periodic" = labs$periodicy, "test" = labs$yntest, "train" = labs$yn),
+                        labels = c("base" = labs$base, "hw" = labs$hw, "periodic" = labs$periodic, "test" = labs$test, "train" = labs$train),
                         guide = guide_legend(override.aes = list(
                           shape = c("base" = 1, "hw" = 5, "periodic"=1, "test"=16, "train"=16)))) +
     yntheme()
@@ -182,9 +182,9 @@ plot_arima <- function(modeldat, cols, labs){
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=3,byrow=TRUE)) +
     scale_fill_manual(values = c("pi" = cols$arimapi, "test" = cols$xntest, "train" = cols$xn), 
-                      labels = c("pi" = labs$arimapi, "test" = labs$xntest, "train" = labs$xn)) +
+                      labels = c("pi" = labs$arimapi, "test" = labs$test, "train" = labs$train)) +
     scale_colour_manual(values = c("arima" = cols$arima, "base" = cols$basexn, "periodic" = cols$periodic), 
-                        labels = c("arima" = labs$arima, "base" = labs$basexn, "periodic" = labs$periodic)) +
+                        labels = c("arima" = labs$arima, "base" = labs$base, "periodic" = labs$periodic)) +
     xntheme()
   return(p)
 }
@@ -203,8 +203,8 @@ plot_arimay <- function(modeldat, cols, labs){
     gg_scale_xy + 
     scale_fill_manual(values = c("pi" = cols$arimapi), 
                       labels = c("pi" = labs$arimapi)) +
-    scale_colour_manual(values = c("arima" = cols$arima,  "base" = cols$baseyn, "periodic" = cols$periodic, "test" = cols$xntest, "train" = cols$xn), 
-                        labels = c("arima" = labs$arimay, "base" = labs$baseyn, "periodic" = labs$periodicy, "test" = labs$yntest, "train" = labs$yn),
+    scale_colour_manual(values = c("arima" = cols$arima,  "base" = cols$baseyn, "periodic" = cols$periodic, "test" = cols$yntest, "train" = cols$yn), 
+                        labels = c("arima" = labs$arima, "base" = labs$base, "periodic" = labs$periodic, "test" = labs$test, "train" = labs$train),
                         guide = guide_legend(override.aes = list(
                           shape = c("arima" = 2, "base" = 1, "periodic" = 1, "test"=16, "train"=16)))) +
     yntheme()
@@ -222,7 +222,7 @@ plot_hwarima <- function(modeldat, cols, labs){
     guides(colour=guide_legend(ncol=1,nrow=2,byrow=TRUE),
            fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
     scale_fill_manual(values = c("test"=cols$xntest, "train"=cols$xn), 
-                      labels = c("test"=labs$xntest, "train"=labs$xn)) +
+                      labels = c("test"=labs$test, "train"=labs$train)) +
     scale_colour_manual(values = c("arima" = cols$arima, "hw" = cols$hw), 
                         labels = c("arima" = labs$arima, "hw" = labs$hw)) +
     xntheme()
@@ -231,20 +231,21 @@ plot_hwarima <- function(modeldat, cols, labs){
 
 plot_nn <- function(modeldat, cols, labs){
   p <- ggplot(modeldat, binwidth = 0) + 
-    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") + 
+    geom_bar(aes(x = date, y = xn, fill = tgroup), stat = "identity") +
+    geom_ribbon(aes(x = date, ymin = nnlo, ymax = nnhi, fill = "pi"), alpha = 0.5) +
+    geom_point(aes(x = date, y = nnxn, colour = "nn")) + 
+    geom_line(aes(x = date, y = nnxn, colour = "nn")) +
     geom_point(aes(x = date, y = basexn, colour = "base")) + 
     geom_line(aes(x = date, y = basexn, colour = "base")) +
     geom_point(aes(x = date, y = periodic, colour = "periodic")) +
     geom_line(aes(x = date, y = periodic, colour = "periodic")) +
-    geom_point(aes(x = date, y = nnxn, colour = "nn")) + 
-    geom_line(aes(x = date, y = nnxn, colour = "nn")) +
     gg_scale_xy + 
     guides(colour=guide_legend(ncol=1,nrow=3,byrow=TRUE),
-           fill=guide_legend(ncol=1,nrow=2,byrow=TRUE)) +
-    scale_fill_manual(values = c("test"=cols$xntest, "train"=cols$xn), 
-                      labels = c("test"=labs$xntest, "train"=labs$xn)) +
+           fill=guide_legend(ncol=1,nrow=3,byrow=TRUE)) +
+    scale_fill_manual(values = c("pi" = cols$nnpi, "test"=cols$xntest, "train"=cols$xn), 
+                      labels = c("pi" = labs$nnpi, "test"=labs$test, "train"=labs$train)) +
     scale_colour_manual(values = c("base" = cols$basexn, "nn" = cols$nn, "periodic" = cols$periodic), 
-                        labels = c("base" = labs$basexn, "nn" = labs$nn, "periodic" = labs$periodic),
+                        labels = c("base" = labs$base, "nn" = labs$nn, "periodic" = labs$periodic),
                         guide = guide_legend(override.aes = list(
                           shape = c("base" = 16, "nn" = 0, "periodic" = 16)))) +
     xntheme()
@@ -255,15 +256,18 @@ plot_nny <- function(modeldat, cols, labs){
   p <- ggplot(modeldat) + 
     geom_point(aes(x = date, y = yn, colour = tgroup)) + 
     geom_line(aes(x = date, y = yn, colour = tgroup)) +
-    geom_point(aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
-    geom_line(aes(x = date, y = baseyn, colour = "base")) +
+    geom_ribbon(aes(x = date, ymin = nnylo, ymax = nnyhi, fill = "pi"), alpha = 0.5) +
     geom_point(aes(x = date, y = nnyn, colour = "nn"), shape = 0) + 
     geom_line(aes(x = date, y = nnyn, colour = "nn")) +
+    geom_point(aes(x = date, y = baseyn, colour = "base"), shape = 1) + 
+    geom_line(aes(x = date, y = baseyn, colour = "base")) +
     geom_point(aes(x = date, y = periodicy, colour = "periodic")) +
     geom_line(aes(x = date, y = periodicy, colour = "periodic")) +
     gg_scale_xy + 
+    scale_fill_manual(values = c("pi" = cols$nnpi), 
+                      labels = c("pi" = labs$nnpi)) +
     scale_colour_manual(values = c("base" = cols$baseyn, "nn" = cols$nn,  "periodic" = cols$periodic, "test" = cols$yntest, "train" = cols$yn), 
-                        labels = c("base" = labs$baseyn, "nn" = labs$nny, "periodic" = labs$periodicy, "test" = labs$yntest, "train" = labs$yn),
+                        labels = c("base" = labs$base, "nn" = labs$nn, "periodic" = labs$periodic, "test" = labs$test, "train" = labs$train),
                         guide = guide_legend(override.aes = list(
                           shape = c("base" = 1, "nn" = 0, "periodic" = 1, "test" = 16, "train" = 16)))) +
     yntheme()
@@ -357,8 +361,9 @@ xntheme <- function(){
              legend.text        = element_text(size = 6),
              legend.direction   = "vertical",
              legend.box         = "vertical",
-             legend.box.just    ='left',
-             legend.position    = "top") 
+             legend.box.just    ='left'
+             #legend.position    = "top"
+             ) 
   return(p)
 }
 
@@ -380,8 +385,9 @@ yntheme <- function(){
              legend.text        = element_text(size = 6),
              legend.direction   = "vertical",
              legend.box         = "vertical",
-             legend.box.just    ='left',
-             legend.position    = "top")
+             legend.box.just    ='left'
+             #legend.position    = "top"
+             )
   return(p)
 }
 

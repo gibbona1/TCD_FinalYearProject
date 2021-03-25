@@ -6,11 +6,11 @@ source("Code/covid-compare.r")
 
 for(country in names(plotslist)){
   for(p in names(plotslist[[country]][["plots"]])){
-    ggsave(filename = paste0(country, "-", p, ".pdf"),
+    ggsave(filename = paste0(country, "-", p, "-traintest.pdf"),
            plot     = plotslist[[country]][["plots"]][[p]],
            path     = "./Plots",
            height   = 10,
-           width    = 14,
+           width    = 15,
            units    = "cm"
            )
   }
@@ -21,6 +21,14 @@ for(country in names(plotslist)){
     print(sumtable, sanitize.text.function=function(x){x}, 
           table.placement="H",
           file = paste0("Report/Chapters/", country, "-summarydf.tex"))
+  }
+  if(!is.null(plotslist[[country]][["mathmodelpars"]])){
+    sumtable <- xtable(plotslist[[country]][["mathmodelpars"]], type = "latex",
+                       caption =paste0(country, ": mathematical models parameters"),
+                       label = paste0("fig:", country, "mathmodelpars"))
+    print(sumtable, sanitize.text.function=function(x){x}, 
+          table.placement="H",
+          file = paste0("Report/Chapters/", country, "-mathmodelpars.tex"))
   }
 }
 
