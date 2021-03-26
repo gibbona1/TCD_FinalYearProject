@@ -299,6 +299,19 @@ An ARIMA$(p,0,0)$ has inputs $x_{n-1},\dots,x_{n-p}$ and parameters $\phi_{1},\d
 
 Similarly, an ARIMA$(p,0,0)(P,0,0)_s$ has inputs $x_{n-1},\dots,x_{n-p}, x_{n-s},\dots,x_{n-Ps}$ and parameters $\phi_{1},\dots,\phi_{p}, \beta_1,\dots,\beta_P$ in order to compute $x_n$ via another linear combination.
 
+\begin{figure}[H]
+\minipage{0.48\textwidth}
+\includegraphics[width=0.9\textwidth]{NeuralNetNoHidden.pdf} 
+\caption{A linear regression model, or ARIMA$(p,0,0)$ model.}
+\label{fig:nnetnohidden}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+\includegraphics[width=0.9\textwidth]{NeuralNet.pdf}
+\caption{A neural network with $p$ inputs and one hidden layer with $k$ hidden neurons.}
+ \label{fig:nnet}
+\endminipage
+\end{figure}
+
 With a Neiral Network Auroregressive model, a \textit{hidden layer} of $k$ inputs is introduced.
 
 The model then becomes non-linear and allows for interactions between inputs (previous values in the time series).
@@ -311,20 +324,7 @@ g(z)=\frac{1}{1+\exp(z)}
 
 The diagram \ref{fig:nnet} is a \textit{multilayer feed-forward network}, as each lconsecutive layer (left to right) of nodes takes inputs from the previous layer, adding complexity.
 
-The \verb|forecast::nnetar()| function only allows for one layer to avoid overfiting of a univariate time seris.
-
-
-
-\begin{figure}[H]
-\minipage{0.48\textwidth}
-\includegraphics[width=0.9\textwidth]{NeuralNetNoHidden.pdf} \label{fig:nnetnohidden}
-\caption{A linear regression model, or ARIMA$(p,0,0)$ model.}
-\endminipage\hfill
-\minipage{0.48\textwidth}
-\includegraphics[width=0.9\textwidth]{NeuralNet.pdf} \label{fig:nnet}
-\caption{A neural network with $p$ inputs and one hidden layer with $k$ hidden neurons.}
-\endminipage
-\end{figure}
+The \verb|forecast::nnetar()| function only allows for one layer to reduce the likelihood of overfiting of a univariate time seris.
 
 \subsubsection{Implementation in R}
 

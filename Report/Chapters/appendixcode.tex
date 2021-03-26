@@ -15,63 +15,36 @@ Statistical models (HoltWinters, ARIMA and Neural Network Regression) were readi
 
 The majority ofthe colours for plotting are selected using colour oalettes from the \verb|wesanderson| package \cite{wesanderson20}.
 
-\begin{figure}[!htb]
-\minipage{0.98\textwidth}
-  \includegraphics[width=\linewidth]{wespalette.png} \label{fig:wespalette}
-  \includegraphics[width=\linewidth]{wespalette2.png} \label{fig:wespalette2}
-  \includegraphics[width=\linewidth]{wespalette3.png} \label{fig:wespalette3}
-\endminipage
-\caption{Wes Anderson Palettes}
-\end{figure}
-
-
-\subsection{Shapefiles}
+\subsection{Shapefiles and Datasets}
 
 This data includes the geospatial vector data which can be used to \textit{draw} country (and county) coastlines and borders. 
 
-World country shape data was obtained from \cite{countryshape}, while the more detailed county-level shapefile was downloaded from \cite{countyshape}.
+World country shape data was obtained from \cite{countryshape}, while the more detailed county-level shapefile for Ireland was downloaded from \cite{countyshape}.
 
-\subsection{Datasets}
+\underline{Country-level data:}
 
-\underline{Country-based data:}
+I have chosen to use the data from  \cite{countrydata}, which has detailed daily data for nearly 200 countries and territories.
 
-Originally used data from \cite{ecdcdata},  but the ECDC switched from a daily to a weekly update from 14 December 2020. Therefore, I have chosen to use the data from  \cite{countrydata}, which has remained daily
+\underline{Ireland county-level data:}
 
-\begin{figure}[H]
-\minipage{0.98\textwidth}
-  \includegraphics[width=\linewidth]{owiddatextract.png} \label{fig:owiddatextract}
-\endminipage
-\caption{OWID World data extract}
-\end{figure}
-
-\underline{Ireland cases by county}
-
-Downloaded from \cite{irelanddata}.
-
-\begin{figure}[H]
-\minipage{0.98\textwidth}
-  \includegraphics[width=\linewidth]{irelanddatextract.png} \label{fig:irelanddatextract}
-\endminipage
-\caption{ArcGIS Ireland data extract}
-\end{figure}
-
+Downloaded from \cite{irelanddata} and used to visualise the 14-day incidence rate per 1 million of the population, for each county.
 
 \subsection{Source Code}
 
-All the code, plots, and even this report, are available at \url{https://github.com/gibbona1/TCD_FinalYearProject}. 
+All the code, plots, and even this report, are available at my \href{https://github.com/gibbona1/TCD_FinalYearProject}{GitHub}. 
 
 I will include the main code files in text below.
 
 \lstinputlisting[frame=single, caption = {Model helper functions}, label={lst:covidmodelutils}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-modelutils.R}
 
-\lstinputlisting[frame=single, caption = {Plotting functions},  label={lst:covidplotutils}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-plotutils.R}
+%\lstinputlisting[frame=single, caption = {Plotting functions},  label={lst:covidplotutils}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-plotutils.R}
 
 \lstinputlisting[frame=single, caption = {Main algorithm},  label={lst:covidmain}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-main.R}
 
-\lstinputlisting[frame=single, caption = {multi-phase models},  label={lst:covidmultimodel}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-multimodel.R}
+\lstinputlisting[frame=single, caption = {Multi-phase models},  label={lst:covidmultimodel}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-multimodel.R}
 
-\lstinputlisting[frame=single, caption = {Geospatial/Map plots},  label={lst:covidmapplots}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-mapplots.R}
+%\lstinputlisting[frame=single, caption = {Geospatial/Map plots},  label={lst:covidmapplots}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-mapplots.R}
 
-\lstinputlisting[frame=single, caption = {Country Comparison plots},  label={lst:covidcompare}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-compare.R}
+%\lstinputlisting[frame=single, caption = {Country Comparison plots},  label={lst:covidcompare}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/covid-compare.R}
 
-\lstinputlisting[frame=single, caption = {Saving plots},  label={lst:saveplots}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/saveplots.R}
+%\lstinputlisting[frame=single, caption = {Saving plots},  label={lst:saveplots}]{C:/Users/Anthony/Documents/GitHub/TCD_FinalYearProject/Code/saveplots.R}
