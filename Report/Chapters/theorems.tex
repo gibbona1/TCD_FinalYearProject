@@ -8,13 +8,13 @@ This is our general linear recurrence equation with constant coefficients:
     x_{n+1} = a_0x_n + a_1x_{n-1} + a_2x_{n-2} + \dots + a_{q}x_{n-q}
 \end{equation}
 
-The characteristic polynomial of \ref{eq:an}
+The characteristic polynomial of \eqref{eq:an}
 \begin{equation}\label{eq:fchar}
     f(\lambda) = \lambda^{q+1} - a_0\lambda^q - a_1\lambda^{q-1} - a_2\lambda^{q-2} - \dots - a_{q-1}\lambda - a_q.
 \end{equation}
 
 \begin{definition}
-A root $\lambda$ of $f$ with the maximal absolute value $|\lambda|$ will be referred to as a leading root of the general linear recurrence relation \ref{eq:an}.
+A root $\lambda$ of $f$ with the maximal absolute value $|\lambda|$ will be referred to as a leading root of the general linear recurrence relation \eqref{eq:an}.
 \end{definition}
 
 \begin{definition}
@@ -29,16 +29,16 @@ The geormetric mean of $n$ values $x_1,\dots,x_n$ is
 \begin{theorem}\label{thm:lim}
 Let $a_k \geq 0$ for all $k \in \{0,\dots,q\}$ and $a_{k_0} > 0$ for some $k_0\in \{0,\dots,q\}$.
 \begin{enumerate}[(a)]
-    \item (Cauchy, 1829) The polynomial $f(\lambda)$ from \ref{eq:fchar} has exactly one positive real root $r$. Besides, the root $r$ is simple and, for any other root $\lambda \in \bC$, we have $|\lambda| < r$. Consequently, $r$ is the leading root of \ref{eq:an}.
-    \item For any positive solution $x_n$ of \ref{eq:an}, there exists $C > 0$ such that
+    \item (Cauchy, 1829) The polynomial $f(\lambda)$ from \eqref{eq:fchar} has exactly one positive real root $r$. Besides, the root $r$ is simple and, for any other root $\lambda \in \bC$, we have $|\lambda| < r$. Consequently, $r$ is the leading root of \eqref{eq:an}.
+    \item For any positive solution $x_n$ of \eqref{eq:an}, there exists $C > 0$ such that
     \begin{equation}\label{eq:crn}
         x_n \sim Cr^n \text{ as } n\to\infty.
     \end{equation}
-    It follows from \ref{eq:crn} that if $r < 1$ then the epidemic fades away, whereas if $r > 1$ then it will spread indefinitely.
+    It follows from \eqref{eq:crn} that if $r < 1$ then the epidemic fades away, whereas if $r > 1$ then it will spread indefinitely.
 \end{enumerate}
 \begin{pf}
 \begin{enumerate}[(a)]
-\item Although this statement is not new, we give here the proof as it is quite simple and a part of the argument will be used below. The equation $f(\lambda) = 0$ is equivalent to
+\item The equation $f(\lambda) = 0$ is equivalent to
 
 $\begin{aligned}
 0 &= \lambda^{q+1} - a_0\lambda^q - a_1\lambda^{q-1} - a_2\lambda^{q-2} - \dots - a_{q-1}\lambda - a_q \\
@@ -51,7 +51,10 @@ And so
 1 =\underbrace{\frac{a_0}{\lambda} + \frac{a_1}{\lambda^2} + \frac{a_2}{\lambda^3}+\dots + \frac{a_{q-1}}{\lambda^q} +\frac{a_q}{\lambda^{q+1}}}_{g(\lambda)}    
 \end{equation}
 
-Since $a_{k_0} > 0$ for some $k_0$, and the remaining $a_k$ are non-negative, $g(\lambda)$ is strictly monotone decreasing in $\lambda > 0$ (if $c\lambda$ is increasing,then $\frac{c}\lambda$ is decreasing),  and we have the limits
+Since $a_{k_0} > 0$ for some $k_0$, and the remaining $a_k$ are non-negative, $g(\lambda)$ is strictly monotone decreasing in $\lambda > 0$ 
+%(if $c\lambda$ is increasing,then $\frac{c}\lambda$ is decreasing)
+,  and we have the limits
+
 \begin{itemize}
     \item $\lim\limits_{\lambda\to0^+}g(\lambda)=+\infty$
     \item $\lim\limits_{\lambda\to+\infty}g(\lambda)=0^+$
@@ -61,11 +64,13 @@ Hence, there is exactly one positive value $\lambda = r$ that satisfies this $g(
 
 $$1 =\frac{a_0}{r} + \frac{a_1}{r^2} + \frac{a_2}{r^3}+\dots + \frac{a_{q-1}}{r^q} +\frac{a_q}{r^{q+1}}.$$
 
-Now, let $\lambda\in \bC \bs \{0\}$ be another root of $f$. We obtain from \ref{eq:glambda} (using the triangle inequality) that
+Now, let $\lambda\in \bC \bs \{0\}$ be another root of $f$. We obtain from \eqref{eq:glambda} (using the triangle inequality) that
 
 $$1\leq \frac{a_0}{|\lambda|} + \frac{a_1}{|\lambda|^2} + \frac{a_2}{|\lambda|^3}+\dots + \frac{a_{q-1}}{|\lambda|^q} +\frac{a_q}{|\lambda|^{q+1}}$$
 
-And so $g(r)\leq g(|\lambda|)$ which implies $|\lambda|\leq r$ by the definition of decreasing functions.
+Since $g$ is strictly decreasing,
+
+$g(r)\leq g(|\lambda|)$ which implies $|\lambda|\leq r$.
 
 We next need to show that the root $r$ is simple. Denote by $r'$ the largest non-negative root of the
 derivative $f'(\lambda)$ that exists for the following reason. If $a_k > 0$ for some $k < q$ then the
@@ -95,11 +100,11 @@ f'(\lambda) &=(q+1)\lambda^q -qa_0\lambda^{q-1} -(q-1)a_1\lambda^{q-2} -(q-2)a_2
 
 So $g(r')>1$, but $g(r)=1$
 
-\imp $g(r')>g(r)\imp r'<r$ by the definition of decreasing functions.
+Again, since the function $g$ is strictly decreasing, $g(r')>g(r)\imp r'<r$ 
 
-Therefore $r$  is simple, and is the leading root of  \ref{eq:an}.
+Therefore $r$  is simple, and is the leading root of  \eqref{eq:an}.
 
-\item Let $\lambda_1, \lambda_2, \dots$ be all other distinct roots of $f$ apart from $r$ (so that $\lambda_k$ are negative or imaginary). Any solution $x_n$ of \ref{eq:an} has the form
+\item Let $\lambda_1, \lambda_2, \dots$ be all other distinct roots of $f$ apart from $r$ (so that $\lambda_k$ are negative or imaginary). Any solution $x_n$ of \eqref{eq:an} has the form
 
 \begin{equation} \label{eq:Crnxn}
 x_n = Cr^n +\tilde{x}_n    
@@ -111,9 +116,9 @@ where $\tilde{x}_n$ is a linear combination of the functions $n^j\lambda^n_k$ . 
 |\tilde{x}_n| = o(r^n) \ \text{as} \ n\to\infty    
 \end{equation}
 
-Since $x_n > 0$, it follows from \ref{eq:Crnxn} and \ref{eq:xnorn} that $C \geq 0$. 
+Since $x_n > 0$, it follows from \eqref{eq:Crnxn} and \eqref{eq:xnorn} that $C \geq 0$. 
 
-Let us verify that $C > 0$, which will finish the proof. It is tempting to say that if $C = 0$ then $x_n = \tilde{x}_n$ is a linear 
+We need to show that $C > 0$.
 
 Consider a new sequence 
 
@@ -134,7 +139,7 @@ A_0X_0+A_1X_{n-1}+\dots+A_qX_{n-q}
 &= \frac{a_0}{r^1}\frac{x_n}{r^n} + \frac{a_1}{r^2}\frac{x_{n-1}}{r^{n-1}} +  \dots + \frac{a_q}{r^{q+1}}\frac{x_{n-q}}{r^{n-q}}\\
 &= \frac{a_0x_n}{r^{n+1}} + \frac{a_1x_{n-1}}{r^{n+1}} + \dots + \frac{a_qx_{n-q}}{r^{n+1}}\\
 &= \frac1{r^{n+1}}\rbr{a_0x_n+a_1x_{n-1}+\dots + a_qx_{n-q}}\\
-&= \frac1{r^{n+1}}\rbr{x_{n+1}} \quad \text{from } \ref{eq:an} \\
+&= \frac1{r^{n+1}}\rbr{x_{n+1}} \quad \text{from } \eqref{eq:an} \\
 &= \frac{x_{n+1}}{r^{n+1}}\rbr{x_{n+1}} \\
 &= X_{n+1}
 \end{aligned}$
@@ -146,22 +151,22 @@ Since $r$ is a root of $f$, we have
                      &= g(r) \nonumber 
 \end{align}
 
-This implies, by \ref{eq:glambda}, and $g(r)=1$ that 
+This implies, by \eqref{eq:glambda}, and $g(r)=1$ that 
 
 \begin{equation}
      A_0+A_1+\dots+A_q = 1 \label{eq:A0Aq}
 \end{equation}
 
-Set $c := \min(X_1, \dots , X_{q+1}) > 0$ since $x_n$ have positive initial values. Then we obtain from \ref{eq:AkXk} and \ref{eq:A0Aq} by induction that
+Set $c := \min(X_1, \dots , X_{q+1}) > 0$ since $x_n$ have positive initial values. Then we obtain from \eqref{eq:AkXk} and \eqref{eq:A0Aq} by induction that
 $X_n \geq c$ for all $n \in \bN$, which implies
 
 $x_n\geq cr^n$
 
-But equating with \ref{eq:Crnxn} we get
+But equating with \eqref{eq:Crnxn} we get
 
 \begin{align}
-      Cr^n + \tilde{x}_n   \geq cr^n &> 0  \nonumber\\
-    C +\frac{\tilde{x}_n}{r^n}    \geq c &> 0 \nonumber \\
+      Cr^n + \tilde{x}_n   &\geq cr^n  \nonumber\\
+    C +\frac{\tilde{x}_n}{r^n}    &\geq c \nonumber \\
   \text{Taking the limit as } n\to\infty \nonumber \\
    C \geq c &> 0
 \end{align}
@@ -181,9 +186,6 @@ and assume that $a > 0, b > 0$.
         \min\rbr{1,\rbr{\frac{a}{b}}^{1/m}}\leq r \leq \max\rbr{1,\rbr{\frac{a}{b}}^{1/m}}
     \end{equation}
 \end{enumerate}
-\begin{remark}
-Although there are in the literature plenty of estimates of the leading roots of polynomial (see, for example, [2]), none of them seems to imply \ref{eq:maxminr}. The latter is very useful for a basic model as we will see below in an example.
-\end{remark}
 \begin{pf}
 \begin{enumerate}[(a)]
     \item We have 
@@ -234,13 +236,17 @@ Although there are in the literature plenty of estimates of the leading roots of
     
     And if $r<1$ we get $r<\rbr{\frac{a}{b}}^{1/m}$.
     
-    We can combine both cases with $x\leq \max\rbr{1,x}$ and $x\geq \min\rbr{1,x}$ (for any $x\in \bR$) to get \ref{eq:maxminr}, as required.
+    We can combine both cases with $x\leq \max\rbr{1,x}$ and $x\geq \min\rbr{1,x}$ (for any $x\in \bR$) to get \eqref{eq:maxminr}, as required.
 \end{enumerate}
 \end{pf}
 \end{theorem}
 
+\begin{nremark}
+The inequality \eqref{eq:maxminr} will be useful to help approximate the leading root $r$ in \ref{thm:rapprox}.
+\end{nremark}
+
 \begin{lemma}
-For the model described by equation \ref{eq:an} we have
+For the model described by recurrence equation \eqref{eq:an} we have
 
 $$R_0=\frac{a}{b}$$
 
@@ -287,7 +293,7 @@ Then the limit converges to the leading root $r$, i.e.
 \end{equation}
 \end{definition}
 
-\begin{result}
+\begin{result}\label{thm:rapprox}
 A good approximation for the leading root $r$ is 
 
 \begin{equation} \label{eq:req1}
@@ -295,7 +301,7 @@ r\approx  \frac{q\rbr{\frac{a}{b}}^{\frac{1}{2q}} - (q-1)(1-b) + \rbr{ab}^{-\fra
 \end{equation}
 
 \begin{pf}
-Our characteristic polynomial (via \ref{eq:fchar}) for our recurrence equation \ref{eq:xnrecurr} is
+Our characteristic polynomial (via \eqref{eq:fchar}) for our recurrence equation \eqref{eq:xnrecurr} is
 
 \begin{equation} \label{eq:fchar1}
 f(\lambda) = \lambda^{q+1} - (1-b)\lambda^q - a
@@ -311,18 +317,18 @@ Then by \ref{thm:rineq}, we get
 
 since $m=q$ in our polynomial.
 
-Taking the \textit{geometric mean} of the bounds, defined as \ref{eq:geometricmean}, we get an approximation for $r$
+Taking the \textit{geometric mean} of the bounds, defined as \eqref{eq:geometricmean}, we get an approximation for $r$
 
-\begin{equation}
+\begin{equation}\label{eq:rapprox0}
 r_0 = \rbr{1\cdot \rbr{\frac{a}{b}}^{1/q}}^{\frac12}= \rbr{\frac{a}{b}}^{\frac1{2q}}
 \end{equation}
 
-The derivative of our characteristic polynomial \ref{eq:fchar1} is
+The derivative of our characteristic polynomial \eqref{eq:fchar1} is
 \begin{equation} \label{eq:fcharprime1}
 f'(\lambda) = (q+1)\lambda^q - q(1-b)\lambda^{q-1}
 \end{equation}
 
-Then we apply Newton's method \ref{eq:newtoneq} once to get
+Then we apply Newton's method \eqref{eq:newtoneq} once to get
 
 $\begin{aligned}
 r_1 
@@ -345,7 +351,7 @@ r_1
 While one iteration of Newton's method is often enough with our initial choice $r_0=\rbr{R_0}^{\frac1{2q}}$, we will show that it converges to $r$ in the limit
 
 \begin{lemma}
-Let $r'$ be the largest non-negative root of $f'(\lambda)$, the derivative of \ref{eq:fchar}. 
+Let $r'$ be the largest non-negative root of $f'(\lambda)$, the derivative of \eqref{eq:fchar}. 
 
 If we choose an initial $r_0 > r'$ then $\lim\limits_{n\to\infty} r_n = r$.
 
@@ -388,7 +394,7 @@ We can rearrange this equation
 
 $$f(r_1)= f(r_0) + f'(c)(r_1-r_0)$$
 
-But from \ref{eq:r1newton} we have 
+But from \eqref{eq:r1newton} we have 
 
 $$r_1-r_0 = - \frac{f(r_0)}{f'(r_0)}$$
 
@@ -429,9 +435,9 @@ The function $f$ takes on the average value between points $x_1$ and $x_2$, $f_{
 \end{definition}
 
 \begin{prop}\label{thm:avgparam}
-The average value of the sequence $a_0,\dots,a_N$ defined by \ref{eq:anper} can be reasonably estimated by our previous parameter $a$.
+The average value of the sequence $a_0,\dots,a_N$ defined by \eqref{eq:anper} can be reasonably estimated by our previous parameter $a$.
 
-Similarly, the average value of the sequence $b_0,\dots,b_N$ defined by \ref{eq:bnper} can be reasonably estimated by our previous parameter $b$.
+Similarly, the average value of the sequence $b_0,\dots,b_N$ defined by \eqref{eq:bnper} can be reasonably estimated by our previous parameter $b$.
 
 \begin{pf}
 Let $a(x)$ be the continuous extension of $a_0,a_1,\dots,a_N$, i.e. 

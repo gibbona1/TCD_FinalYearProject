@@ -326,10 +326,6 @@ datebounds <- list(
   "Italy"         = c("2021-01-02", "2021-02-16"),
   "United States" = c("2021-01-06", "2021-02-16"), 
   "Ireland"       = c("2021-01-12", "2021-02-16")
-  #"Germany"       = c("2021-01-06", "2021-02-16") 
-  #"Netherlands"   = c("2021-01-06", "2021-02-16"), 
-  #"Spain"         = c("2021-01-06", "2021-02-16"), 
-  #"United Kingdom"= c("2021-01-06", "2021-02-16")
 )
 
 owiddat     <- owiddat[!is.na(owiddat$new_cases),]

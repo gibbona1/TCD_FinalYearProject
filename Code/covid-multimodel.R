@@ -6,14 +6,12 @@ owiddat$date <- as.Date(owiddat$date, tryFormats = c("%Y-%m-%d"))
 multilist <- list()
 
 multidates <- list(
-  #"Italy"         = list(c("2020-12-16", "2021-01-01"),
-  #                       c("2021-01-02", "2021-01-30")),
-  #"United States" = list(c("2020-11-16", "2021-01-06"),
-  #                       c("2021-01-07", "2021-01-30")),
-  #"Ireland"       = list(c("2020-12-16", "2021-01-07"),
-  #                       c("2021-01-08", "2021-01-30"))
-  "Ireland"       = list(c("2020-02-29", "2020-04-15"),
-                         c("2020-04-16", "2020-06-09"))
+  "Italy"         = list(c("2020-12-16", "2021-01-05"),
+                         c("2021-01-06", "2021-01-30")),
+  "United States" = list(c("2020-11-16", "2021-01-06"),
+                         c("2021-01-07", "2021-01-30")),
+  "Ireland"       = list(c("2020-12-16", "2021-01-07"),
+                         c("2021-01-08", "2021-01-30"))
 )
 
 multiphasePlots <- function(country, dates, data){
@@ -211,9 +209,9 @@ multiphasePlots <- function(country, dates, data){
                          multipxn = multimodelp,
                          multipyn = beforecumcases + xntoyn(multimodelp))
   
-  plots[["xn"]] <- plot_multixn(countrydat, modeldat, cols, labs)
+  plots[["xn"]] <- plot_multixn(countrydat, modeldat, cols, labs) + theme(legend.position = "top")
   
-  plots[["yn"]] <- plot_multiyn(countrydat, modeldat, cols, labs)
+  plots[["yn"]] <- plot_multiyn(countrydat, modeldat, cols, labs) + theme(legend.position = "top")
   
   multilabp <- c()
   for(i in 1:length(dates)){
@@ -230,9 +228,9 @@ multiphasePlots <- function(country, dates, data){
                                  "; ||y*-y||="*.(multimodnormyval)*"  "*
                                  .(multilabp)))
   
-  plots[["perxn"]] <- plot_multiperxn(countrydat, modeldat, cols, labs)
+  plots[["perxn"]] <- plot_multiperxn(countrydat, modeldat, cols, labs) + theme(legend.position = "top")
   
-  plots[["peryn"]] <- plot_multiperyn(countrydat, modeldat, cols, labs)
+  plots[["peryn"]] <- plot_multiperyn(countrydat, modeldat, cols, labs) + theme(legend.position = "top")
   
   return(plots)
 }

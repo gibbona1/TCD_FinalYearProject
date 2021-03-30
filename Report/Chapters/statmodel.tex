@@ -1,9 +1,9 @@
 \section{Statistical Models}
 \label{ch:statmodel}
 
-Primary source for this was Hyndman-et-al-2018 \cite{Hyndman-et-al-2018}.
+Primary source for this was \citeauthor{Hyndman-et-al-2018} \cite{Hyndman-et-al-2018}.
 
-Some of our statistical models require \textit{homoscedasticity}, i.e., that the model errors are identically distributed with the same variance $\sigma^2$.
+Some of our statistical models require \textit{homoscedasticity}, i.e., that the model errors are identically distributed with have the same variance $\sigma^2$.
 
 We can check this by plotting histograms and checking that they are centred around zero and approximately fit the overlaying normal curve. 
 
@@ -29,6 +29,8 @@ with the full code in \ref{lst:covidmain}.
 \end{figure}
 
 \subsection{Holt-Winters’ seasonal method}
+
+The Holt-Winters seasonal exponential smoothing algorithm models three aspects of the time series: the average value at different levels, the trend over time, and any seasonality.
 
 \subsubsection{Definitions and Theory}
 
@@ -61,7 +63,7 @@ For subsequent observations,
 $F_{N+k}=L_N+k\cdot b_N+S_{N+k-s}$
 \label{SHWx}
 \end{tcolorbox}
-\caption{Seasonal Holt Winter’s Additive Model Algorithm (denoted SHW$_{+}$)}
+\caption{Seasonal Holt-Winters' Additive Model Algorithm (denoted SHW$_{+}$)}
 \end{figure}
 
 The parameters $\alpha,\beta,\gamma$ are selected using Maximum Likelihood Estimation.
@@ -84,8 +86,8 @@ We see that the additive seasonal method is a better choice for both model fit a
 \begin{figure}[H]
 \begin{center}
 \minipage{0.98\textwidth}
-\includegraphics[width=0.9\textwidth]{hwaddmultcompare.png}
-\endminipage
+\includegraphics[width=0.9\linewidth]{hwaddmultcompare.png}
+\endminipage\hfill
 \caption{Comparison of HoltWinters multiplicative (left) and additive (right) algorithms}
 \end{center}
 \end{figure}
@@ -137,8 +139,10 @@ $$B^k \eps_n= \eps_{n-k},\quad n>k$$
 We must first define the each component of a non-seasonal ARIMA model (suitable for time series with a trend).
 
 \begin{itemize}
-\item An $AR(p)$ model, or an autoregressive model of order $p$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of $x_{n-p},x_{n-p+1},\dots,x_{n-1}$ and an error term, i.e. 
+\item An $AR(p)$ model, or an autoregressive model of order $p$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of $x_{n-p},x_{n-p+1},\dots,x_{n-1}$ and an error term, i.e.
 $$x_n= \phi_0+\phi_1 x_{n-1}+\phi_2 x_{n-2} +\dots + \phi_p x_{n-p}+\eps_n,\quad n>p,\quad \eps_n\sim N(0,\sigma^2)$$
+
+Where there are constraints on the $\phi_0,\phi_1,\dots,\phi_p\in \mathbb{R}$
 
 We can simplify using the backshift operator $B$:
 
@@ -148,16 +152,16 @@ x_n
 &= \phi_0+\left(\phi_1 B+\phi_2 B^2 +\dots + \phi_p B^p\right)x_n +\eps_n
 \end{align}
 
-\item An $MA(q)$ model, or a moving average model of order $q$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of the $q$ previous errors $\eps_{n-q},\eps_{n-q+1},\dots,\eps_{n-1}$, plus the current error $\eps_n$, i.e. 
-$$x_n= \psi_0-\psi_1 \eps_{n-1}-\psi_2 \eps_{n-2} -\dots - \psi_q \eps_{n-p}+\eps_n,\quad n>p$$
+\item An $MA(k)$ model, or a moving average model of order $q$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of the $q$ previous errors $\eps_{n-k},\eps_{n-k+1},\dots,\eps_{n-1}$, plus the current error $\eps_n$, i.e. 
+$$x_n= \psi_0-\psi_1 \eps_{n-1}-\psi_2 \eps_{n-2} -\dots - \psi_k \eps_{n-k}+\eps_n,\quad n>p$$
 
-By convention we use minus signs in the coefficients $\psi_1,\dots,\psi_q$
+By convention we use minus signs in the coefficients $\psi_1,\dots,\psi_k$
 We can simplify using the backshift operator $B$:
 
 \begin{align}
 x_n
-&= \psi_0-\psi_1 B\eps_n-\psi_2 B^2\eps_n -\dots - \psi_q B^q\eps_n + \eps_n \nonumber \\
-&= \psi_0+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_q B^q\right)\eps_n 
+&= \psi_0-\psi_1 B\eps_n-\psi_2 B^2\eps_n -\dots - \psi_k B^k\eps_n + \eps_n \nonumber \\
+&= \psi_0+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_k B^k\right)\eps_n 
 \end{align}
 
 \item The first order differencing of the time series, $I(1)$, is evalueated as 
@@ -175,24 +179,24 @@ $$(1-B)^d x_n$$
 This only affects the $x_n$ (although constants are differenced to zero) and the errors $\eps_n$ are unchanged.
 \end{itemize}
 
-Therefore, an ARIMA$(p,d,q)$ model can be evaluated by combining the $AR(p),\ I(d)$ and $MA(q)$
+Therefore, an ARIMA$(p,d,k)$ model can be evaluated by combining the $AR(p),\ I(d)$ and $MA(k)$
 
 \begin{align}
 (1-B)^d x_n
 &= \phi_0+(1-B)^d\left(\phi_1 B+\phi_2 B^2 +\dots + \phi_p B^p\right)x_n +
-\psi_0+\left(\psi_1 B+\psi_2 B^2 +\dots + \psi_q B^q\right)\eps_n \nonumber 
+\psi_0+\left(\psi_1 B+\psi_2 B^2 +\dots + \psi_k B^k\right)\eps_n \nonumber 
 \end{align}
 
 \begin{align}
 (1-B)^d x_n + (1-B)^d\left(-\phi_1 B-\phi_2 B^2 -\dots - \phi_p B^p\right)x_n
-&= \phi_0 + \psi_0+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_q B^q\right)\eps_n  \nonumber \\
+&= \phi_0 + \psi_0+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_k B^k\right)\eps_n  \nonumber \\
 (1-B)^d\left(1-\phi_1 B-\phi_2 B^2 -\dots - \phi_p B^p\right)x_n
-&=c+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_q B^q\right)\eps_n  \nonumber \\
+&=c+\left(1-\psi_1 B-\psi_2 B^2 +\dots - \psi_k B^k\right)\eps_n  \nonumber \\
 \end{align}
 
 where $c= \phi_0 + \psi_0$ (it is zero if $d\geq1$).
 
-We also need the seasonal components for an ARIMA$(p,d,q)(P,D,Q)_s$ 
+We also need the seasonal components for an ARIMA$(p,d,k)(P,D,K)_s$ 
 
 Suppose a time series $x_n$ has period $s$ (seasonal pattern every $s$ values)
 \begin{itemize}
@@ -206,17 +210,17 @@ We can simplify using the backshift operator $B$:
 x_n &= \beta_0+\left(\beta_1 B^s+\beta_2 B^{2s} +\dots + \beta_P B^{Ps}\right)x_n
 \end{align}
 
-\item An $MA(Q)_s$ model, or a seasonal moving average model of order $Q$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of the $Q$ errors $\eps_{n-Ws},\eps_{n-(Q-1)s},\dots,\eps_{n-s}$, plus the current error $\eps_n$, i.e. 
-$$x_n= \gamma_0-\gamma_1 \eps_{n-s}-\gamma_2 \eps_{n-2s} -\dots - \gamma_Q \eps_{n-Qs}+\eps_n$$
+\item An $MA(K)_s$ model, or a seasonal moving average model of order $K$ of a time series $x_1,\dots,x_N$ states that each $x_n$ is a \textit{linear function} of the $K$ errors $\eps_{n-Ks},\eps_{n-(K-1)s},\dots,\eps_{n-s}$, plus the current error $\eps_n$, i.e. 
+$$x_n= \gamma_0-\gamma_1 \eps_{n-s}-\gamma_2 \eps_{n-2s} -\dots - \gamma_K \eps_{n-Ks}+\eps_n$$
 
-Again, by convention we use minus signs in the coefficients $\gamma_1,\dots,\gamma_Q$
+Again, by convention we use minus signs in the coefficients $\gamma_1,\dots,\gamma_K$
 
 We can simplify using the backshift operator $B$:
 
 \begin{align}
 x_n
-&= \gamma_0-\gamma_1 \eps_{n-s}-\gamma_2 \eps_{n-2s} -\dots - \gamma_Q \eps_{n-Qs}+\eps_n \nonumber \\
-&= \gamma_0+\left(1-\gamma_1 B^s-\gamma_2 B^{2s} +\dots - \gamma_Q B^{Qs}\right)\eps_n 
+&= \gamma_0-\gamma_1 \eps_{n-s}-\gamma_2 \eps_{n-2s} -\dots - \gamma_K \eps_{n-Ks}+\eps_n \nonumber \\
+&= \gamma_0+\left(1-\gamma_1 B^s-\gamma_2 B^{2s} +\dots - \gamma_K B^{Ks}\right)\eps_n 
 \end{align}
 
 \item The first order seasonal differencing of the time series, $I_s(1)$, is evalueated as 
@@ -231,24 +235,28 @@ The purpose of this is to make the time series  stationary in mean
 \end{itemize}
 
 
-Then we can similarly compose our seasonal components (with seasonal period $s$) with the previous ARIMA$(pd,q)$ to get the definition of an ARIMA$(p,d,q)(P,D,Q)_s$ model
+Then we can similarly compose our seasonal components (with seasonal period $s$) with the previous ARIMA$(pd,k)$ to get the definition of an ARIMA$(p,d,k)(P,D,K)_s$ model
 
 \begin{align}\label{eq:arima}
 \underbrace{\left(1-\phi_1 B-\phi_2B^2-\dots-\phi_p B^p\right)}_{AR(p)}
 \underbrace{\left(1-\beta_1 B^s-\beta_2B^{2s}-\dots-\beta_P B^{Ps}\right)}_{AR_s(P)} 
 \underbrace{\left(1-B\right)^d}_{I(d)}\underbrace{\left(1-B^s\right)^D}_{I_s(D)}   x_n = \nonumber \\
  c+
-\underbrace{\left(1-\psi_1 B-\psi_2B^2-\dots-\psi_q B^q\right)}_{MA(q)}
-\underbrace{\left(1-\gamma_1 B^s-\gamma_2B^{2s}-\dots-\gamma_Q B^{Qs}\right)}_{MA_s(Q)} \eps_n
+\underbrace{\left(1-\psi_1 B-\psi_2B^2-\dots-\psi_k B^k\right)}_{MA(k)}
+\underbrace{\left(1-\gamma_1 B^s-\gamma_2B^{2s}-\dots-\gamma_K B^{Ks}\right)}_{MA_s(K)} \eps_n
 \end{align}
 
 where the constant $c$ is some function of the constants $\phi_0,\psi_0,\beta_0$ and $\gamma_0$ 
 
-The orders $p, d, q$ and $P,D,Q$ are computed by analysing the correlation functions (ACF and PACF).
+The orders $p, d, k$ and $P,D,K$ are computed by analysing the correlation functions (ACF and PACF).
 
-The $P+Q+p + q + 1$ coefficients $c, \phi_1, \dots , \phi_p, \psi_1,\dots , \psi_q, \beta_1,\dots,\beta_P,\gamma_1,\dots,\gamma_Q$ are computed using Maximum Likelihood Estimation.
+The $P+K+p + k + 1$ coefficients $c, \phi_1, \dots , \phi_p, \psi_1,\dots , \psi_k, \beta_1,\dots,\beta_P,\gamma_1,\dots,\gamma_K$ are computed using Maximum Likelihood Estimation.
 
-Again, \ref{eq:arima} can similarly be used to compute forecasted values $x_{N+1},\dots,x_{N+m}$.
+Again, \eqref{eq:arima} can similarly be used to compute forecasted values $x_{N+1},\dots,x_{N+m}$.
+
+\begin{nremark}
+Most of the literature, for example  \cite{Hyndman-et-al-2018}, use $q$ for non-seasonal and $Q$ for seasonal Moving Average models. I am using $k$ and $K$ respectively to avoid confusion with $q$ in the mathematical models \label{eq:xnrecurr}.
+\end{nremark}
 
 \subsubsection{Implementation in R}
 
@@ -324,7 +332,7 @@ g(z)=\frac{1}{1+\exp(z)}
 
 The diagram \ref{fig:nnet} is a \textit{multilayer feed-forward network}, as each lconsecutive layer (left to right) of nodes takes inputs from the previous layer, adding complexity.
 
-The \verb|forecast::nnetar()| function only allows for one layer to reduce the likelihood of overfiting of a univariate time seris.
+The \verb|forecast::nnetar()| function only allows for one layer to reduce the likelihood of overfiting of a univariate time series.
 
 \subsubsection{Implementation in R}
 

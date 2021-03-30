@@ -7,10 +7,14 @@ As per the base and periodic models shown in \cite{grigor20}.
 
 \subsubsection{Model Assumptions}
 \begin{itemize}
-    \item[(I)] Any infected person becomes ill (symptomatic) and infectious on the $q$-th day after infection.\footnote{The number of days before an infected person becomes infectious is called the \textit{latent period}, and before he/she becomes symptomatically ill – the incubation period. Here we assume for simplicity that these two periods are equal.}
+    \item[(I)] Any infected person becomes ill (symptomatic) and infectious on the $q$-th day after infection.
     \item[(A)] During each day, each ill person unconfined infects on average $a$ other persons.
-    \item[(B)] During each day, a fraction $b$ of ill people loose gets isolated (hospitalized or otherwise) and withdrawn from a further spread of the epidemic.
+    \item[(B)] During each day, a proportion $b\in (0,1)$ of ill people loose gets isolated (hospitalized or otherwise) and withdrawn from a further spread of the epidemic.
 \end{itemize}
+
+\begin{nremark}
+The number of days before an infected person becomes infectious is called the \textit{latent period}, and before he/she becomes symptomatically ill – the \textit{incubation period}. Here we assume for simplicity that these two periods are equal to $q$.
+\end{nremark}
 
 Many models use a set of differential equations for to describe the movement of people between \textit{groups} or \textit{compartments}. The SIR (Susceptible–Infectious–Recovered) model, the most frequently used model in epidemiology, uses a set of 3 such differential equations. 
 
@@ -43,17 +47,19 @@ Using $x_n = bz_n$ and $u_{n-q} = ax_{n-q}$ we obtain the following equation for
     x_{n+1} = (1 - b) x_n + ax_{n-q}.
 \end{equation}
 
-We let the model equal the actual data for the first $q+1$ days
+It is necessary to let the model equal the actual data for the first $q+1$ days, as the recurrence equation needs initial data:
 \begin{equation} \label{eq:xn0q}
 x_n = x^*_n \ \text{for} \ n = 0, 1, \dots , q,
 \end{equation}
 
- To fit our model we optimize against the normalized 1-norm:
+ To fit our model we optimize against the average 1-norm:
 \begin{equation}\label{eq:xnnorm}
-    \norm{x-x^*}:= \frac{1}{N+1} \sum\limits_{n=0}^N |x_n-x_n^*|,
+    \norm{x-x^*}:= \frac{1}{N+1} \sum\limits_{n=0}^N |x_n-x_n^*|, \quad N\in \mathbb{N},
 \end{equation}
 
 Similarly we define $\norm{y-y^*}$
+
+We choose $N$ to be the length of the data (number of actual observations $x_n^*$) in general.
 
 In order to determine values $a,b,q$, we ideally want to minimize both 
 
@@ -64,11 +70,11 @@ In order to determine values $a,b,q$, we ideally want to minimize both
 While this is the ideal situation, it is far more important to minimize $\norm{x-x^*}$ as it is generally much more sensitive to variation in the parameters (such as $a$ and $b$).
 
 
-The proofs and results are in \label{ch:theorems}.
+The proofs and results are in \ref{ch:theorems}.
 
 \subsubsection{How to select the best model}
 
-We primarily seek to minimize \ref{eq:xnnorm}, which can bee seen using contour plots below.
+The closest-fiting model will be one that minimizes \eqref{eq:xnnorm}, which can bee seen using contour plots below.
 
 \begin{figure}[H]
 \minipage{0.33\textwidth}
@@ -89,7 +95,7 @@ The \verb|optim()| function in \verb|R| appeared to have a danger of converging 
 
 \subsubsection{Forecasting}
 
-The model can easily be extended $m$ days ahead, with $x_{N+1},\dots,x_{N+m}$ defined in  \ref{eq:xnrecurr}.
+The model can easily be extended $m$ days ahead, with $x_{N+1},\dots,x_{N+m}$ defined recursively using \ref{eq:xnrecurr}.
 
 \subsubsection{Implementation in R}
 
@@ -143,9 +149,9 @@ plots[["basexn"]] <- plot_basexn(countrydat, modeldat, cols, labs)
 \caption{Basic model, United States}
 \end{figure}
 
-\subsection{Limiting curve}
+\subsection{Limiting curve \ce{Cr^n}}
 
-The second result in \ref{thm:lim} is the equation \ref{eq:crn}, which defines the limiting behavior of the recurrence relation \ref{eq:xnrecurr}.
+The second result in \ref{thm:lim} is the equation \eqref{eq:crn}, which defines the limiting behavior of the recurrence relation \eqref{eq:xnrecurr}.
 
 \begin{lstlisting}[breaklines = true, escapeinside=||, tabsize = 4, caption = {Algorithm for Limiting Curve}]
 modeldat$Crn <- optimC*base_r_one^(1:nrow(modeldat))  |\Suppressnumber|
@@ -196,15 +202,15 @@ The 7-day moving average is a good baseline for model performance , as ideally w
 \begin{figure}[H]
 \minipage{0.33\textwidth}
 \includegraphics[width=0.9\textwidth]{Ireland-mavgx3.pdf}
-\caption{Moving average $x^*_n (3)$, Ireland}
+\caption{Moving average $x^*_n(3)$, Ireland}
 \endminipage 
 \minipage{0.33\textwidth}
 \includegraphics[width=0.9\textwidth]{Italy-mavgx3.pdf}
-\caption{Moving average $x^*_n (3)$, Italy}
+\caption{Moving average $x^*_n(3)$, Italy}
 \endminipage 
 \minipage{0.33\textwidth}
 \includegraphics[width=0.9\textwidth]{United States-mavgx3.pdf}
-\caption{Moving average $x^*_n (3)$, United States}
+\caption{Moving average $x^*_n(3)$, United States}
 \endminipage 
 \end{figure}
 
@@ -235,13 +241,13 @@ b_n := b\rbr{1+c_2\rbr{\sin\rbr{\frac{2\pi}{p_2}\rbr{n-n_2}}}}
 
 For new parameters $c_i,p_i,n_i, \ i=1,2$ where
 
-$c_i  \in [0.04, 0.2] \quad \text{small}$ are amplitudes,
+$c_i  \in [0.04, 0.2]$ \quad are (small) amplitudes,
 
-$n_i  \in 1,2,\dots,q$ are lags and
+$n_i  \in 1,2,\dots,q$ \quad  are lags and
 
-$p_i  \in 1,2,\dots,q$ are periods.
+$p_i  \in 1,2,\dots,q$ \quad are periods.
 
-We then have to optimize \ref{eq:norms} with respect to the $9$ parameters $a,b,q,c_1,n_1,p_1,c_2,n_2$ and $p_2$.
+We then have to optimize \eqref{eq:norms} with respect to the $9$ parameters $a,b,q,c_1,n_1,p_1,c_2,n_2$ and $p_2$.
 
 While Grigorian's paper \cite{grigor20} optimized with (possibly) new values of $a$ and $b$, I will allow the original $a$ and $b$ from the earlier optimization to calculate the $a_n$ and $b_n$,since the average behavior should be close to the same. 
 
@@ -306,7 +312,7 @@ plots[["periodic"]] <- plot_periodic(countrydat, modeldat, cols, labs)
 
 \subsection{Multi-phase model}
 
-While Grigorian's paper only formulated a two-phase model, I have generalized it to any number of phases, both in the equations below and the code.
+I have generalized the two-phase model formulated in \cite{grigor20} to any number of phases, both in the equations below and the code.
 
 Suppose there are $M$ phases of the pandemic, and we wish to compute the parameters $a,b,q$ seperately for each phase.
 
@@ -323,11 +329,11 @@ $\vdots$
 
 Grigorian's paper uses a form of smoothing of parameter $b$, which is using $\frac{b_{\text{new}}}{b_{\text{old}}}$ for a few days around the change point to deal with the transition between phase.
 
-This perturbation is already dealt with sufficiently in the periodic version so i have excluded this in the event that  $\frac{b_{\text{new}}}{b_{\text{old}}}$ is much larger than 1. 
+This perturbation is already dealt with sufficiently in the periodic version so I have excluded this in the event that  $\frac{b_{\text{new}}}{b_{\text{old}}}$ is much larger than 1. 
 
 The model parameters are computed seperately for each phase, with the values $x_n$ feeding into the next phase to continue the recursive definition (e.g. phase 2 needs some values from phase 1 of the model).
 
-The model parameters are chosen to minimize \ref{eq:xnnorm} for each phase, and the overall model performance displayed is computed for the model as a whole against the data as a whole.
+The model parameters are chosen to minimize \eqref{eq:xnnorm} for each phase, and the overall model performance displayed is computed for the model as a whole against the data as a whole.
 
 \subsubsection{Plots}
 

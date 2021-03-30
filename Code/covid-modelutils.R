@@ -46,6 +46,7 @@ modxper <- function(par, q, x, len = 0){
   #a,b,c1,c2,p1,p2,n1,n2
   an   <- par[1]*(1+par[3]*sin(2*pi*(1:(length(x)+len) - par[7])/par[5]))
   bn   <- par[2]*(1+par[4]*sin(2*pi*(1:(length(x)+len) - par[8])/par[6]))
+  bn[bn>1] <- 1
   modx <- x[1:q]
   for(i in (q+1):(length(x)+len)){
     modx[i] <- (bn[i]*(1-bn[i-1]))*modx[i-1]/bn[i-1] +
