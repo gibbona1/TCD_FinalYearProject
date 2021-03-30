@@ -1,6 +1,6 @@
 # TCD_FinalYearProject
  
- Code and plots (also displayed in an ``Rmd`` file) repository for my final year project at TCD.
+ Code and plots repository for my final year project at TCD.
  
  To-do List:
  
