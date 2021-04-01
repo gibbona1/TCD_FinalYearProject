@@ -65,7 +65,7 @@ Research in the area of modeling the spread of the pandemic has been extensive a
 
 The work involving \textit{external} factors such as government travel restrictions or full lockdowns, carried out by \cite{flaxman20}, was widely read. However, it was also criticised for their model (which tried to assign a quantitative effect of interventions on disease spread for multiple countries) lacking practical statistical distinguishability, and prompted revisions.
 
-Artificial intelligence models have also been employed to track disease outbreaks in more local areas. The model developed by \cite{SrinivasaRao2020}, which relies on phone–based surveys, certainly has the long-run potential to keep the public informed and hopefully reduce the the severity of outbreaks in areas where the app is widely used. One drawback of the initial model was its estimation of the peak of case numbers (which is notoriously difficult to predict) being the highest value in the case numbers so far.This does not take into account the shape of many time series during the early stages of the virus outbreak. For example, a strictly increasing time series would have its maximum at the latest time.
+Artificial intelligence models have also been employed to track disease outbreaks in more local areas. The model developed by \cite{SrinivasaRao2020}, which relies on phone–based surveys, certainly has the long-run potential to keep the public informed and hopefully reduce the the severity of outbreaks in areas where the app is widely used. One drawback of the initial model was its estimation of the peak of case numbers (which is notoriously difficult to predict) being the highest value in the case numbers so far. This does not take into account the shape of many time series during the early stages of the virus outbreak. For example, a strictly increasing time series would have its maximum at the latest time.
 
 
 \subsection{Key aims}
@@ -78,10 +78,10 @@ the \textit{basic reproduction number} and is unquestionably the most important 
 \end{ndefinition}
 
 \subsection{Limitations}
-There are some limitations to the models used in this paper, some of which we can quickl see after the visualisation of the models versus actual cases reported:
+There are some limitations to the models used in this paper, some of which we can quickly see after the visualisation of the models versus actual cases reported:
 \begin{itemize}
 \item The models seem to fit well when there is an obvious trend in one direction. They do not perform well at or past a peak in case numbers. 
-\item Countries may see their testing capabilies strained or varied, and so some reported numbers may be attributed to a later date than usual.
-\item Vaccinations began in late 2020 to early 2021 and will likely affect the spread of the virus
-\item The modeling is done on a univariate time series, whereas external facors such as population densities and other demographics. Spatial data would then be needed to model the disease spread, but this is beyond the scope ofthe paper.
+\item Countries may see their testing capabilities strained or varied, and so some reported numbers may be attributed to a later date than usual.
+\item Vaccinations began in late 2020 to early 2021 and will likely affect the spread of the virus.
+\item The modeling is done on a univariate time series, whereas external factors such as population densities and other demographics. Spatial data would then be needed to model the disease spread, but this is beyond the scope of the paper.
 \end{itemize}
