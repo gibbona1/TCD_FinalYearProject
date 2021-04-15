@@ -1,0 +1,70 @@
+% Theorem environments
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conjecture}{Conjecture}
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\RequirePackage{etoolbox}
+\AtEndEnvironment{remark}{\hfill$\lozenge$}
+\AtEndEnvironment{example}{\hfill$\lozenge$}
+
+% Auxiliary commands
+\DeclareMathSymbol{:}{\mathpunct}{operators}{"3A}%semicolon spaces
+\RequirePackage{xspace}
+\def\mat#1{\ensuremath{#1}\xspace}
+\def\dmat#1#2{\gdef#1{\mat{#2}}}
+\def\csdmat#1#2{\csdef{#1}{\mat{#2}}}
+
+% Operators. Usage: \GL
+\def\oper#1{\csdmat{#1}{\operatorname{#1}}}
+\forcsvlist\oper{GL,SL,deg,Hom,End,Vect,Mod,Rep,Ker,Im,Id}
+
+% Mathbb Letters. Usage: \bA
+\def\defbb#1{\csdmat{b#1}{\mathbb{#1}}}
+\forcsvlist\defbb{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+\RequirePackage{bbm}
+\dmat\bk{\mathbbm k}
+
+% Mathcal Letters. Usage: \cA
+\def\defcal#1{\csdmat{c#1}{\mathcal{#1}}}
+\forcsvlist\defcal{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+
+% Greek letters
+\dmat\al\alpha
+\dmat\be\beta
+\dmat\ga\gamma
+\dmat\de\delta
+\dmat\la\lambda
+\dmat\ta\tau
+\dmat\hi\chi
+\dmat\eps\varepsilon
+\dmat\vi\phi
+\dmat\te\theta
+\dmat\ksi\xi
+\dmat\si\sigma
+\dmat\om\omega
+\dmat\Ga\Gamma
+\dmat\La\Lambda
+
+% Structures
+\def\set#1{\left\{#1\right\}}
+\def\sets#1#2{\left\{\left.#1\ \right\vert#2\right\}}
+\def\rbr#1{\left(#1\right)}
+\def\ang#1{\left\langle#1\right\rangle}
+\def\n#1{\left\lvert#1\right\rvert}
+\def\nn#1{\left\lVert#1\right\rVert}
+\def\eq#1{\begin{equation}#1\end{equation}}
+\def\ov#1#2{{\substack{#1\\#2}}} % #1 over #2
+
+% Symbols
+\def\mto{\mapsto}
+\def\emb{\hookrightarrow}
+\def\es{\emptyset}
+\def\bs{\backslash}
