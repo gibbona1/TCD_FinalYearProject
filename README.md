@@ -2,6 +2,8 @@
  
  Code and plots repository for my final year project at TCD.
  
+ [Submitted Report](https://github.com/gibbona1/TCD_FinalYearProject/blob/main/Final%20Submitted%20Report/4th_Year_Project_AG.pdf)
+ 
  To-do List:
  
  - [x] Map cases by county (e.g. 14 day rate per 100,000) in Ireland. 
